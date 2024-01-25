@@ -7,9 +7,9 @@ class PageHistorique extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Historique'),
+        title: const Text('Historique'),
       ),
-      body: Center(
+      body: const Center(
         child: Text('Historique'),
       ),
     );

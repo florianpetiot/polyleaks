@@ -12,7 +12,7 @@ class CarteCapteurRecherche extends StatelessWidget {
         width: 185,
         height: double.infinity,
         decoration: BoxDecoration(
-          color: Color(0xFFF5F5F5),
+          color: const Color(0xFFF5F5F5),
           borderRadius: BorderRadius.circular(15),
           border: Border.all(
             color: const Color(0xFFB7B7B7),
@@ -23,11 +23,11 @@ class CarteCapteurRecherche extends StatelessWidget {
         // Contenu de la carte ---------------------------------------------------
         // un point bleu aligné avec un texte au centre vertical de la carte
         // la hauteur de la carte prend toute la hauteur disponible
-        child: Row(
+        child: const Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             BlinkingDot(),
-            const Text(
+            Text(
               'Recherche...',
               style: TextStyle(
                 fontSize: 18,

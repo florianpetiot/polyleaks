@@ -4,11 +4,11 @@ import 'package:polyleaks/pages/page_historique.dart';
 import 'package:polyleaks/pages/page_plus.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
-  MyApp({super.key});
+  const MyApp({super.key});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -16,9 +16,9 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final List ecrans = [
-    PageAccueil(),
-    PageHistorique(),
-    PagePlus(),
+    const PageAccueil(),
+    const PageHistorique(),
+    const PagePlus(),
   ];
 
   int indexEcran = 0;

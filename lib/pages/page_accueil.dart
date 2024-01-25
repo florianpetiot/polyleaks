@@ -19,8 +19,8 @@ class PageAccueil extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              // const CarteCapteurTrouve(nomCapteur: 'PolyLeaks-49415'),
-              CarteCapteurConnecte(nomCapteur: "PolyLeaks-49415", derniereConnexion: DateTime.now(), donnee: 18.2),
+              const CarteCapteurTrouve(nomCapteur: 'PolyLeaks-49415'),
+              // CarteCapteurConnecte(nomCapteur: "PolyLeaks-49415", derniereConnexion: DateTime.now(), donnee: 18.2),
               const CarteCapteurRecherche(),
 
             ],

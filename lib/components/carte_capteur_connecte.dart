@@ -116,7 +116,7 @@ class CarteCapteurConnecte extends StatelessWidget {
                           borderRadius: BorderRadius.circular(15),
                         ),
                       ),
-                      child: Icon(Icons.cancel, color: Colors.white)),
+                      child: const Icon(Icons.cancel, color: Colors.white)),
                 ],
               ),
             )

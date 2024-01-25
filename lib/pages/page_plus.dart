@@ -7,9 +7,9 @@ class PagePlus extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Plus'),
+        title: const Text('Plus'),
       ),
-      body: Center(
+      body: const Center(
         child: Text('Plus'),
       ),
     );
