@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:polyleaks/pages/page_accueil.dart';
+import 'package:polyleaks/pages/accueil/page_accueil.dart';
 import 'package:polyleaks/pages/page_historique.dart';
 import 'package:polyleaks/pages/page_plus.dart';
 

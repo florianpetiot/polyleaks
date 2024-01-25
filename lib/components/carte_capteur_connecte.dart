@@ -4,12 +4,14 @@ class CarteCapteurConnecte extends StatelessWidget {
   final String nomCapteur;
   final DateTime derniereConnexion;
   final double donnee;
+  final VoidCallback deconnexion;
 
   const CarteCapteurConnecte(
       {super.key,
       required this.nomCapteur,
       required this.derniereConnexion,
-      required this.donnee});
+      required this.donnee,
+      required this.deconnexion});
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +111,7 @@ class CarteCapteurConnecte extends StatelessWidget {
                       )),
 
                   ElevatedButton(
-                      onPressed: () {},
+                      onPressed: deconnexion,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF8A8A8A),
                         shape: RoundedRectangleBorder(

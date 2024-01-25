@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 class CarteCapteurTrouve extends StatelessWidget {
   final String nomCapteur;
+  final VoidCallback connection;  
 
-  const CarteCapteurTrouve({super.key, required this.nomCapteur});
+  const CarteCapteurTrouve({Key? key, required this.nomCapteur, required this.connection}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +61,7 @@ class CarteCapteurTrouve extends StatelessWidget {
           
             // bouton se connecter
             ElevatedButton(
-                onPressed: () {},
+                onPressed: connection,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF8A8A8A),
                   shape: RoundedRectangleBorder(

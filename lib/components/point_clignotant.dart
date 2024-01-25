@@ -4,7 +4,7 @@ class BlinkingDot extends StatefulWidget {
   const BlinkingDot({super.key});
 
   @override
-  _BlinkingDotState createState() => _BlinkingDotState();
+  State<BlinkingDot> createState() => _BlinkingDotState();
 }
 
 class _BlinkingDotState extends State<BlinkingDot> with SingleTickerProviderStateMixin {
