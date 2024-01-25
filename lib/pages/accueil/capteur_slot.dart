@@ -28,7 +28,7 @@ class _CapteurSlotState extends State<CapteurSlot> {
       case CapteurState.recherche:
         return CarteCapteurRecherche(trouve: () => setCapteurState(CapteurState.trouve));
       case CapteurState.trouve:
-        return CarteCapteurTrouve(nomCapteur: 'PolyLeaks-49415', connection: () => setCapteurState(CapteurState.connecte));
+        return CarteCapteurTrouve(nomCapteur: 'PolyLeaks-49415', connexion: () => setCapteurState(CapteurState.connecte));
       case CapteurState.connecte:
         return CarteCapteurConnecte(nomCapteur: "PolyLeaks-49415", derniereConnexion: DateTime.now(), donnee: 18.2, deconnexion: () => setCapteurState(CapteurState.recherche));
       default:
