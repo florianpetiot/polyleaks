@@ -1,17 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
+import 'package:provider/provider.dart';
 
 class CarteCapteurConnecte extends StatelessWidget {
+  final int slot;
   final String nomCapteur;
   final DateTime derniereConnexion;
   final double donnee;
-  final VoidCallback deconnexion;
 
   const CarteCapteurConnecte(
       {super.key,
+      required this.slot,
       required this.nomCapteur,
       required this.derniereConnexion,
-      required this.donnee,
-      required this.deconnexion});
+      required this.donnee});
+
+
+
+  void setCapteurState(context) {
+    final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
+    if (slot == 1) {
+      capteurState.setSlot1State(CapteurSlotState.recherche);
+    } else {
+      capteurState.setSlot2State(CapteurSlotState.recherche);
+    }
+  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +125,7 @@ class CarteCapteurConnecte extends StatelessWidget {
                       )),
 
                   ElevatedButton(
-                      onPressed: deconnexion,
+                      onPressed: () => setCapteurState(context),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF8A8A8A),
                         shape: RoundedRectangleBorder(

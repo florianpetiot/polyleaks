@@ -1,17 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:polyleaks/components/point_clignotant.dart';
+import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
+import 'package:provider/provider.dart';
 
 class CarteCapteurRecherche extends StatelessWidget {
-  final VoidCallback trouve;
+  final int slot;
 
-  const CarteCapteurRecherche({super.key, required this.trouve});
+  const CarteCapteurRecherche({super.key, required this.slot});
+
+
+  void setCapteurState(context) {
+    final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
+    if (slot == 1) {
+      capteurState.setSlot1State(CapteurSlotState.trouve);
+    } else {
+      capteurState.setSlot2State(CapteurSlotState.trouve);
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: GestureDetector(
-        onTap: trouve,
+        onTap: () => setCapteurState(context),
         child: Container(
           width: 185,
           height: double.infinity,
@@ -25,8 +38,6 @@ class CarteCapteurRecherche extends StatelessWidget {
           ),
         
           // Contenu de la carte ---------------------------------------------------
-          // un point bleu aligné avec un texte au centre vertical de la carte
-          // la hauteur de la carte prend toute la hauteur disponible
           child: const Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [

@@ -17,8 +17,8 @@ class PageAccueil extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              CapteurSlot(),
-              CapteurSlot()
+              CapteurSlot(slot: 1,),
+              CapteurSlot(slot: 2,)
             ],
           )),
       
