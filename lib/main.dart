@@ -1,12 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:polyleaks/database/polyleaks_database.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
 import 'package:polyleaks/pages/accueil/page_accueil.dart';
 import 'package:polyleaks/pages/page_historique.dart';
 import 'package:polyleaks/pages/page_plus.dart';
 import 'package:provider/provider.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // initialiser la base de donnees
+  await PolyleaksDatabase.initialize();
+  await PolyleaksDatabase().parametresParDefaut();
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => PolyleaksDatabase()),
+        ChangeNotifierProvider(create: (context) => CapteurStateNotifier()),
+      ],
+      child: const MyApp()
+    )
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -27,9 +41,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => CapteurStateNotifier(),
-      child: MaterialApp(
+    return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
           body: ecrans[indexEcran],
@@ -61,7 +73,6 @@ class _MyAppState extends State<MyApp> {
             },
           )
         ),
-      ),
-    );
+      );
   }
 }
