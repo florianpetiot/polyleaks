@@ -71,20 +71,22 @@ class PolyleaksDatabase extends ChangeNotifier {
 
   // CAPTEURS -------------------------------------------------------------------
   
-  // methode pour savoir si un capteur detecté est deja enregistré
+  // verifier si un capteur existe
   Future<bool> capteurExiste(String nom) async {
     final capteur = await isar.capteurModels.filter().nomEqualTo(nom).findFirst();
     return capteur != null;
   }
 
-
-  // CREATE - ajouter un capteur
+  // ajouter un capteur a la base de donnees
   Future<void> ajouterCapteur(String nom, DateTime dateInitialisation, List<double> localisation) async {
-    final capteur = CapteurModel()
-      ..nom = nom
-      ..dateInitialisation = dateInitialisation
-      ..localisation = localisation;
-    await isar.writeTxn(() => isar.capteurModels.put(capteur));
+    final capteurExistant = await capteurExiste(nom);
+    if (!capteurExistant) {
+      final capteur = CapteurModel()
+        ..nom = nom
+        ..dateInitialisation = dateInitialisation
+        ..localisation = localisation;
+      await isar.writeTxn(() => isar.capteurModels.put(capteur));
+    }
   }
 
 
