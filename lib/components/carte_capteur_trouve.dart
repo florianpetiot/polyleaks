@@ -10,8 +10,7 @@ class CarteCapteurTrouve extends StatelessWidget {
 
    void setCapteurState(context) {
     final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
-    capteurState.setSlotState(slot, state: CapteurSlotState.connecte);
-     
+    capteurState.setSlotState(slot, state: CapteurSlotState.connecte, valeur: 15.3, derniereConnexion: DateTime.now());
   }
 
   String getNomCapteur(context) {

@@ -16,6 +16,10 @@ class CarteCapteurConnecte extends StatelessWidget {
     capteurState.setSlotState(slot, state: CapteurSlotState.recherche);
   }
   
+  void setCapteurStateToPerdu(context){
+    final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
+    capteurState.setSlotState(slot, state: CapteurSlotState.perdu);
+  }
 
   String getNomCapteur(context) {
     final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
@@ -23,7 +27,7 @@ class CarteCapteurConnecte extends StatelessWidget {
   }
 
   double getValeurCapteur(context) {
-    final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
+    final capteurState = Provider.of<CapteurStateNotifier>(context);
     return capteurState.getSlot(slot)["valeur"];
   }
 
@@ -51,12 +55,15 @@ class CarteCapteurConnecte extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Column(children: [
-              Text(
-                // recuperer le nom depuis le provider
-                getNomCapteur(context),
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+              GestureDetector(
+                onTap: () => setCapteurStateToPerdu(context),
+                child: Text(
+                  // recuperer le nom depuis le provider
+                  getNomCapteur(context),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
               const SizedBox(height: 10),
@@ -119,7 +126,7 @@ class CarteCapteurConnecte extends StatelessWidget {
                         ),
                       ),
                       child: const Text(
-                        'détails',
+                        'Détails',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,

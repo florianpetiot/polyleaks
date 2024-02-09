@@ -183,7 +183,7 @@ class _CarteCapteurPerduState extends State<CarteCapteurPerdu> {
                         ),
                       ),
                       child: const Text(
-                        'détails',
+                        'Détails',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,
