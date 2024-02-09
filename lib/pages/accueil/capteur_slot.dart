@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:polyleaks/components/carte_capteur_connecte.dart';
+import 'package:polyleaks/components/carte_capteur_perdu.dart';
 import 'package:polyleaks/components/carte_capteur_recherche.dart';
 import 'package:polyleaks/components/carte_capteur_trouve.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
@@ -34,6 +35,8 @@ class _CapteurSlotState extends State<CapteurSlot> {
 
       case CapteurSlotState.connecte:
          return CarteCapteurConnecte(slot: widget.slot);
+      case CapteurSlotState.perdu:
+        return CarteCapteurPerdu(slot: widget.slot);
       default:
         return CarteCapteurRecherche(slot: widget.slot);
     }
