@@ -4,18 +4,19 @@ import 'package:provider/provider.dart';
 
 class CarteCapteurTrouve extends StatelessWidget {
   final int slot;
-  final String nomCapteur;
 
-  const CarteCapteurTrouve({Key? key, required this.slot, required this.nomCapteur}) : super(key: key);
+  const CarteCapteurTrouve({Key? key, required this.slot}) : super(key: key);
 
 
    void setCapteurState(context) {
     final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
-    if (slot == 1) {
-      capteurState.setSlot1State(CapteurSlotState.connecte);
-    } else {
-      capteurState.setSlot2State(CapteurSlotState.connecte);
-    }
+    capteurState.setSlotState(slot, state: CapteurSlotState.connecte);
+     
+  }
+
+  String getNomCapteur(context) {
+    final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
+    return capteurState.getSlot(slot)["nom"];
   }
 
   @override
@@ -42,7 +43,8 @@ class CarteCapteurTrouve extends StatelessWidget {
           children: [
             Column(children: [
                 Text(
-                  nomCapteur,
+                  // recuperer le nom depuis le provider
+                  getNomCapteur(context),
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,

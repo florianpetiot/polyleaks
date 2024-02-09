@@ -22,7 +22,7 @@ class _CapteurSlotState extends State<CapteurSlot> {
     final capteurState = Provider.of<CapteurStateNotifier>(context);
 
     // utiliser le state du bon slot
-    final state = widget.slot == 1 ? capteurState.slot1State : capteurState.slot2State;
+    final state = capteurState.getSlot(widget.slot)["state"]; 
   
 
     switch (state) {
@@ -30,12 +30,12 @@ class _CapteurSlotState extends State<CapteurSlot> {
         return CarteCapteurRecherche(slot: widget.slot);
 
       case CapteurSlotState.trouve:
-         return CarteCapteurTrouve(slot: widget.slot, nomCapteur: 'PolyLeaks-49415');
+         return CarteCapteurTrouve(slot: widget.slot);
 
       case CapteurSlotState.connecte:
-         return CarteCapteurConnecte(slot: widget.slot, nomCapteur: "PolyLeaks-49415", derniereConnexion: DateTime.now(), donnee: 18.2);
+         return CarteCapteurConnecte(slot: widget.slot);
       default:
-        return CarteCapteurRecherche(slot: widget.slot,);
+        return CarteCapteurRecherche(slot: widget.slot);
     }
 
   }

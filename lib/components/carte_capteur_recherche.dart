@@ -11,11 +11,7 @@ class CarteCapteurRecherche extends StatelessWidget {
 
   void setCapteurState(context) {
     final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
-    if (slot == 1) {
-      capteurState.setSlot1State(CapteurSlotState.trouve);
-    } else {
-      capteurState.setSlot2State(CapteurSlotState.trouve);
-    }
+    capteurState.setSlotState(slot, state: CapteurSlotState.trouve, nom: 'PolyLeaks-49415');
   }
 
 

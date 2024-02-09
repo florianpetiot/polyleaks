@@ -4,28 +4,29 @@ import 'package:provider/provider.dart';
 
 class CarteCapteurConnecte extends StatelessWidget {
   final int slot;
-  final String nomCapteur;
-  final DateTime derniereConnexion;
-  final double donnee;
 
   const CarteCapteurConnecte(
       {super.key,
-      required this.slot,
-      required this.nomCapteur,
-      required this.derniereConnexion,
-      required this.donnee});
+      required this.slot,});
 
 
 
   void setCapteurState(context) {
     final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
-    if (slot == 1) {
-      capteurState.setSlot1State(CapteurSlotState.recherche);
-    } else {
-      capteurState.setSlot2State(CapteurSlotState.recherche);
-    }
+    capteurState.setSlotState(slot, state: CapteurSlotState.recherche);
   }
   
+
+  String getNomCapteur(context) {
+    final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
+    return capteurState.getSlot(slot)["nom"];
+  }
+
+  double getValeurCapteur(context) {
+    final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
+    return capteurState.getSlot(slot)["valeur"];
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +52,8 @@ class CarteCapteurConnecte extends StatelessWidget {
           children: [
             Column(children: [
               Text(
-                nomCapteur,
+                // recuperer le nom depuis le provider
+                getNomCapteur(context),
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -86,7 +88,7 @@ class CarteCapteurConnecte extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  donnee.toString(),
+                  getValeurCapteur(context).toString(),
                   style: const TextStyle(
                     fontSize: 50,
                     fontWeight: FontWeight.bold,
@@ -132,7 +134,8 @@ class CarteCapteurConnecte extends StatelessWidget {
                           borderRadius: BorderRadius.circular(15),
                         ),
                       ),
-                      child: const Icon(Icons.cancel, color: Colors.white)),
+                      child: const Icon(Icons.cancel, color: Colors.white)
+                    ),
                 ],
               ),
             )
