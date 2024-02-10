@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polyleaks/bluetooth/bluetooth_manager.dart';
 import 'package:polyleaks/database/polyleaks_database.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
 import 'package:polyleaks/pages/accueil/page_accueil.dart';
@@ -67,6 +68,12 @@ class _MyAppState extends State<MyApp> {
             selectedItemColor: Colors.blue,
             unselectedItemColor: Colors.grey,
             onTap: (int index) {
+              if (index == 0){
+                BluetoothManager().scanForDevices(context);
+              }
+              else {
+                BluetoothManager().stopScan();
+              }
               setState(() {
                 indexEcran = index;
               });

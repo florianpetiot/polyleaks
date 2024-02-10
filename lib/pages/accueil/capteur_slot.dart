@@ -5,7 +5,7 @@ import 'package:polyleaks/components/carte_capteur_recherche.dart';
 import 'package:polyleaks/components/carte_capteur_trouve.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
 import 'package:provider/provider.dart';
-
+import 'package:polyleaks/bluetooth/bluetooth_manager.dart';
 
 class CapteurSlot extends StatefulWidget {
   final int slot;
