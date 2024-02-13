@@ -40,3 +40,4 @@ class CapteurStateNotifier extends ChangeNotifier {
     notifyListeners();
   }
 }
+
