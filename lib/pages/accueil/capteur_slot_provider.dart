@@ -20,7 +20,7 @@ class CapteurStateNotifier extends ChangeNotifier {
 
 
   // faire une seule fonction pour modifier slot1 ou slot2 avec un arguement obligatoire pour choisir le slot
-  // et les autres arguments optionnels pour modifier les valeurs
+  // et les autres arguments optionnels pour modifier les valeurs...
   void setSlotState(int slot, {CapteurSlotState? state, double? valeur, String? nom, DateTime? derniereConnexion}) {
     Map<String, dynamic> targetSlot = slot == 1 ? _slot1 : _slot2;
 
