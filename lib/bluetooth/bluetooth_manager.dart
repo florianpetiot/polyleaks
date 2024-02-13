@@ -1,14 +1,19 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
 import 'package:provider/provider.dart';
 
 class BluetoothManager {
+  static final BluetoothManager _singleton = BluetoothManager._internal();
+
+  factory BluetoothManager() {
+    return _singleton;
+  }
+
+  BluetoothManager._internal();
   
-  final Map <String,dynamic> _device_slot1 = {"device": 0}
-  final Map <String,dynamic> _device_slot2 = {"device": 0}
+  final Map <String,dynamic> _device_slot1 = {"device": 0};
+  final Map <String,dynamic> _device_slot2 = {"device": 0};
 
   void scanForDevices(BuildContext context) async {
 
@@ -30,27 +35,25 @@ class BluetoothManager {
     await FlutterBluePlus.startScan(withNames: ["MyESP32"]);
 
     FlutterBluePlus.scanResults.listen((results) async {
-
-      for (ScanResult device in results) {
-
-        print("Found device: ${device.advertisementData.advName}");
+      for (ScanResult r in results) {
+        print("Found device: ${r.advertisementData.advName}");
 
         if (capteurState.getSlot(1)["state"] == CapteurSlotState.recherche) {
-          capteurState.setSlotState(1, state: CapteurSlotState.trouve, nom: device.advertisementData.advName);
-          await FlutterBluePlus.stopScan();
-          return;
-        } else if (capteurState.getSlot(2)["state"] == CapteurSlotState.recherche && capteurState.getSlot(1)["state"] != CapteurSlotState.trouve){
-          capteurState.setSlotState(2, state: CapteurSlotState.trouve, nom: device.advertisementData.advName);
+          capteurState.setSlotState(1, state: CapteurSlotState.trouve, nom: r.advertisementData.advName);
+          _device_slot1["device"] = r.device;
+          print(_device_slot1["device"]);
           await FlutterBluePlus.stopScan();
           return;
         }
-        else {
+        
+        else if (capteurState.getSlot(2)["state"] == CapteurSlotState.recherche && capteurState.getSlot(1)["state"] != CapteurSlotState.trouve){
+          capteurState.setSlotState(2, state: CapteurSlotState.trouve, nom: r.advertisementData.advName);
+          _device_slot2["device"] = r.device;
           await FlutterBluePlus.stopScan();
           return;
         }
       }
     });
-    await FlutterBluePlus.stopScan();
 
   }
 
@@ -59,34 +62,50 @@ class BluetoothManager {
     await FlutterBluePlus.stopScan();
   }
 
+
+
   void connectDevice(BuildContext context, slot) async {
     // affecter a device la bonne info 
-    var device = 
-    // abonnement a device
-    var subscription = device.connectionState.listen((BluetoothConnectionState state) async {
-      if (state == BluetoothConnectionState.disconnected) {
-        print("${device.disconnectReasonCode} ${device.disconnectReasonDescription}");
-      }
-    });
-  device.cancelWhenDisconnected(subscription, delayed:true, next:true);
-  // connection de device
-  try {
-    await device.connect();
-    print("Connected to device: ${device.nom}");
+    var device = slot == 1 ? _device_slot1["device"] : _device_slot2["device"];
 
-    List<BluetoothService> services = await device.discoverServices();
-    services.forEach((service) {
-      print("Service UUID: ${service.uuid}");
-//remplacer characteristic par la characteristique que l'on veut observer
-    });
-    var characteristics = services.characteristics;
-    for(BluetoothCharacteristic c in characteristics) {
-      if (c.properties.read) {
-          List<int> value = await c.read();
-          print(value);
-      }
+    // // abonnement a device
+    // var subscription = device.connectionState.listen((BluetoothConnectionState state) async {
+    //   if (state == BluetoothConnectionState.disconnected) {
+    //     print("${device.nom} n'est plus accessible.");
+    //     print("${device.disconnectReasonCode} ${device.disconnectReasonDescription}");
+    //   }
+    // });
+
+
+    // device.cancelWhenDisconnected(subscription, delayed:true, next:true);
+
+
+    // connection de device
+    try {
+      print(device);
+      await device.connect();
+
+      List<BluetoothService> services = await device.discoverServices();
+      services.forEach((service) {
+        print("Service UUID: ${service.uuid}");
+      //remplacer characteristic par la characteristique que l'on veut observer
+      });
+
     }
-  }
+    catch (e) {
+      print("$device.nom n'est plus accessible.");
+      print(e);
+      return;
+    }
+
+    // TODO: choisir le bon service et lire les données
+      // var characteristics = service.characteristics;
+      // for(BluetoothCharacteristic c in characteristics) {
+      //   if (c.properties.read) {
+      //       List<int> value = await c.read();
+      //       print(value);
+      //   }
+      // }
   }
 }
 

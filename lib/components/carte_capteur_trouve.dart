@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polyleaks/bluetooth/bluetooth_manager.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -74,7 +75,8 @@ class CarteCapteurTrouve extends StatelessWidget {
           
             // bouton se connecter
             ElevatedButton(
-                onPressed: () => setCapteurState(context),
+                onPressed: () => BluetoothManager().connectDevice(context, slot),
+                // onPressed: () => setCapteurState(context),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF8A8A8A),
                   shape: RoundedRectangleBorder(
