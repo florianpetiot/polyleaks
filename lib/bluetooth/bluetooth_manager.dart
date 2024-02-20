@@ -191,7 +191,7 @@ class BluetoothManager {
     device.cancelWhenDisconnected(subscription);
 
     // changer l'etat du slot
-    capteurState.setSlotState(slot, state: CapteurSlotState.connecte);
+    capteurState.setSlotState(slot, state: CapteurSlotState.connecte, derniereConnexion: DateTime.now(), dateInitialisation: DateTime.parse(date_initStr));
   }
 
 

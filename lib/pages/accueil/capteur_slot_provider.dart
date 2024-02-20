@@ -5,8 +5,8 @@ enum CapteurSlotState {recherche, chargement, trouve, connecte, perdu}
 
 
 class CapteurStateNotifier extends ChangeNotifier {
-  final Map<String,dynamic> _slot1 = { "state": CapteurSlotState.recherche, "valeur": 0, "nom":0,"derniereConnexion":null};
-  final Map<String,dynamic> _slot2 = { "state": CapteurSlotState.recherche, "valeur": 0, "nom":0,"derniereConnexion":null};
+  final Map<String,dynamic> _slot1 = { "state": CapteurSlotState.recherche, "valeur": 0, "nom":0,"derniereConnexion":0, "dateInitialisation":0};
+  final Map<String,dynamic> _slot2 = { "state": CapteurSlotState.recherche, "valeur": 0, "nom":0,"derniereConnexion":0, "dateInitialisation":0};
 
 
 
@@ -22,20 +22,23 @@ class CapteurStateNotifier extends ChangeNotifier {
 
   // faire une seule fonction pour modifier slot1 ou slot2 avec un arguement obligatoire pour choisir le slot
   // et les autres arguments optionnels pour modifier les valeurs...
-  void setSlotState(int slot, {CapteurSlotState? state, double? valeur, String? nom, DateTime? derniereConnexion}) {
+  void setSlotState(int slot, {CapteurSlotState? state, double? valeur, String? nom, DateTime? derniereConnexion, DateTime? dateInitialisation}) {
     Map<String, dynamic> targetSlot = slot == 1 ? _slot1 : _slot2;
 
     if (state != null) {
-      targetSlot.update("state", (existing) => state);
+      targetSlot["state"] = state;
     }
     if (valeur != null) {
-      targetSlot.update("valeur", (existing) => valeur);
+      targetSlot["valeur"] = valeur;
     }
     if (nom != null) {
-      targetSlot.update("nom", (existing) => nom);
+      targetSlot["nom"] = nom;
     }
     if (derniereConnexion != null) {
-      targetSlot.update("derniereConnexion", (existing) => derniereConnexion);
+      targetSlot["derniereConnexion"] = derniereConnexion;
+    }
+    if (dateInitialisation != null) {
+      targetSlot["dateInitialisation"] = dateInitialisation;
     }
 
     notifyListeners();

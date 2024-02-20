@@ -120,7 +120,7 @@ class CarteCapteurConnecte extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton(
-                      onPressed: () => showBottomSheetDetails(context),
+                      onPressed: () => showBottomSheetDetails(context, slot),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF8A8A8A),
                         shape: RoundedRectangleBorder(
