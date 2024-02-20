@@ -97,7 +97,6 @@ class BluetoothManager {
     var latitude;
     var nom;
     var date_init;
-
     var caracteristique_valeur;
 
     for (BluetoothService service in services) {
