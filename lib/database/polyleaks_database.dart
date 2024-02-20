@@ -84,6 +84,8 @@ class PolyleaksDatabase extends ChangeNotifier {
       final capteur = CapteurModel()
         ..nom = nom
         ..dateInitialisation = dateInitialisation
+        ..dateDerniereConnexion = DateTime.now()
+        ..valeur = null
         ..localisation = localisation;
       await isar.writeTxn(() => isar.capteurModels.put(capteur));
     }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polyleaks/bluetooth/bluetooth_manager.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -26,10 +27,10 @@ class CarteCapteurConnecte extends StatelessWidget {
     return capteurState.getSlot(slot)["nom"];
   }
 
-  double getValeurCapteur(context) {
-    final capteurState = Provider.of<CapteurStateNotifier>(context);
-    return capteurState.getSlot(slot)["valeur"];
-  }
+  // double getValeurCapteur(context) {
+  //   context.read<CapteurStateNotifier>().getSlot(slot);
+  //   return capteurState.getSlot(slot)["valeur"];
+  // }
 
 
   @override
@@ -95,7 +96,7 @@ class CarteCapteurConnecte extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  getValeurCapteur(context).toString(),
+                  context.watch<CapteurStateNotifier>().getSlot(slot)["valeur"].toString(),
                   style: const TextStyle(
                     fontSize: 50,
                     fontWeight: FontWeight.bold,
@@ -134,7 +135,7 @@ class CarteCapteurConnecte extends StatelessWidget {
                       )),
 
                   ElevatedButton(
-                      onPressed: () => setCapteurState(context),
+                      onPressed: () => BluetoothManager().disconnectDevice(context, slot),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF8A8A8A),
                         shape: RoundedRectangleBorder(

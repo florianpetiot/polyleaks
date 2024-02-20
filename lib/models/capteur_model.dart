@@ -12,7 +12,7 @@ class CapteurModel{
   late String nom;
 
   // valeur du capteur
-  late double valeur;
+  late double? valeur;
 
   // date derniere connexion du capteur
   late DateTime dateDerniereConnexion;
