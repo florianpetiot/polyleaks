@@ -90,8 +90,23 @@ class CarteCapteurTrouve extends StatelessWidget {
                     fontSize: 18,
                   ),
                 )
-            )
-          ],
+            ),
+            ElevatedButton(
+                onPressed: () => BluetoothManager().ignorer(context,slot),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF8A8A8A),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                  child: const Text(
+                    'Ignorer pour cette fois',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                    ),
+                  )
+            )],
         ),
       ),
     );
