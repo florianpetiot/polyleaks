@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:polyleaks/bluetooth/bluetooth_manager.dart';
+import 'package:polyleaks/components/bottom_sheet_details.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -119,7 +120,7 @@ class CarteCapteurConnecte extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () => showBottomSheetDetails(context),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF8A8A8A),
                         shape: RoundedRectangleBorder(

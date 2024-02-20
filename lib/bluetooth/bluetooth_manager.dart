@@ -159,7 +159,7 @@ class BluetoothManager {
     }
 
 
-    // convertir les listes d'entiers en string
+    // convertir les exadecimal en string
     var latitudeStr = String.fromCharCodes(latitude);
     var longitudeStr = String.fromCharCodes(longitude);
     var nomStr = String.fromCharCodes(nom);
@@ -172,6 +172,10 @@ class BluetoothManager {
     print(caracteristique_valeur);
     
 
+    // ajouter le capteur a la base de données
+    await dataBase.ajouterCapteur(nomStr, DateTime.parse(date_initStr), [double.parse(latitudeStr), double.parse(longitudeStr)]);
+
+
     await caracteristique_valeur.setNotifyValue(true);
     
     var subscription = caracteristique_valeur.onValueReceived.listen((value) {
@@ -179,17 +183,14 @@ class BluetoothManager {
       // string to int
       value = int.parse(value);
       print("valeur: $value");
-      capteurState.setSlotState(slot, valeur: value.toDouble());
+      capteurState.setSlotState(slot, valeur: value.toDouble(), derniereConnexion: DateTime.now());
+      dataBase.modifierValeurCapteur(nomStr, value.toDouble());
     });
 
     device.cancelWhenDisconnected(subscription);
 
-
-    // ajouter le capteur a la base de données
-    await dataBase.ajouterCapteur(nomStr, DateTime.parse(date_initStr), [double.parse(latitudeStr), double.parse(longitudeStr)]);
-
     // changer l'etat du slot
-    capteurState.setSlotState(slot, state: CapteurSlotState.connecte, nom: nomStr);
+    capteurState.setSlotState(slot, state: CapteurSlotState.connecte);
   }
 
 

@@ -26,12 +26,12 @@ class _PageInitialisationCapteurState extends State<PageInitialisationCapteur> {
         }
       },
       onStepContinue: () {
-        if (_index <= 0) {
-          setState(() {
-            _index += 1;
-          });
-        }
-      },
+      if (_index < 2) {
+        setState(() {
+          _index += 1;
+        });
+      }
+    },
       steps: <Step>[
         Step(
           title: const Text('Placement de la bague'),
