@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-enum CapteurSlotState { recherche, trouve, connecte, perdu}
+enum CapteurSlotState {recherche, chargement, trouve, connecte, perdu}
 
 
 

@@ -75,6 +75,8 @@ class BluetoothManager {
     final capteurState = context.read<CapteurStateNotifier>();
     final dataBase = context.read<PolyleaksDatabase>();
 
+    capteurState.setSlotState(slot, state: CapteurSlotState.chargement);
+
 
     // connection de device
     try {
