@@ -40,7 +40,7 @@ class BluetoothManager {
     FlutterBluePlus.scanResults.listen((results) async {
       for (ScanResult r in results) {
         // seulement les appareils avec un nom commence par "Polyleaks-"
-        if (!r.advertisementData.advName.startsWith("Polyleaks-")) {
+        if (!r.advertisementData.advName.startsWith("Polyleaks-") && !isInBlacklist(r.advertisementData.advName)){
           continue;
         }
         print("Found device: ${r.advertisementData.advName}");
@@ -217,31 +217,7 @@ class BluetoothManager {
   void ignorer(BuildContext context, int slot) async {
   // Ajoutez le capteur actuel à la liste noire
   addtoblacklist(context, slot == 1 ? _device_slot1["device"].name : _device_slot2["device"].name);
+  scanForDevices(context);
 
-  final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
-  List<BluetoothDevice> scannedDevices = [];
-  FlutterBluePlus.scanResults.listen((List<ScanResult> results) async {
-    for (ScanResult r in results) {
-        // seulement les appareils avec un nom commence par "Polyleaks-"
-        if (!r.advertisementData.advName.startsWith("Polyleaks-")) {
-          continue;
-        }
-        scannedDevices.add(r.device);
-        }
-  });
-
-  for (BluetoothDevice device in scannedDevices) {
-    if (!isInBlacklist(device.name)) {
-      if (slot == 1) {
-        _device_slot1["device"] = device; 
-        capteurState.setSlotState(1, state: CapteurSlotState.trouve, nom: _device_slot1["device"].name);
-
-      } else {
-        _device_slot2["device"] = device;
-        capteurState.setSlotState(2, state: CapteurSlotState.trouve, nom: _device_slot2["device"].name);
-      }
-      break;
-    }
   }
-}
 }
