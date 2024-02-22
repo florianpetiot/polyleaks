@@ -4,32 +4,20 @@ import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class BottomSheetDetails extends StatefulWidget {
+class BottomSheetDetails extends StatelessWidget {
   final int slot;
 
   const BottomSheetDetails({super.key, required this.slot});
 
   @override
-  State<BottomSheetDetails> createState() => _BottomSheetDetailsState();
-}
-
-class _BottomSheetDetailsState extends State<BottomSheetDetails> {
-  
-  late GoogleMapController mapController;
-  
-  void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
-  }
-
-  @override
   Widget build(BuildContext context) {
 
-    final String nomCapteur = context.read<CapteurStateNotifier>().getSlot(widget.slot)["nom"];
-    final double valeurCapteur = context.watch<CapteurStateNotifier>().getSlot(widget.slot)["valeur"];
-    final DateTime derniereConnexion = context.watch<CapteurStateNotifier>().getSlot(widget.slot)["derniereConnexion"];
-    final DateTime dateInitilalisation = context.watch<CapteurStateNotifier>().getSlot(widget.slot)["dateInitialisation"];
-    final double latitude = context.read<CapteurStateNotifier>().getSlot(widget.slot)["latitude"];
-    final double longitude = context.read<CapteurStateNotifier>().getSlot(widget.slot)["longitude"];
+    final String nomCapteur = context.read<CapteurStateNotifier>().getSlot(slot)["nom"];
+    final double valeurCapteur = context.watch<CapteurStateNotifier>().getSlot(slot)["valeur"];
+    final DateTime derniereConnexion = context.watch<CapteurStateNotifier>().getSlot(slot)["derniereConnexion"];
+    final DateTime dateInitilalisation = context.watch<CapteurStateNotifier>().getSlot(slot)["dateInitialisation"];
+    final double latitude = context.read<CapteurStateNotifier>().getSlot(slot)["latitude"];
+    final double longitude = context.read<CapteurStateNotifier>().getSlot(slot)["longitude"];
 
     final LatLng center = LatLng(latitude, longitude);
     final String derniereConnexionStr = DateFormat('dd/MM/yy HH:mm:ss').format(derniereConnexion);
@@ -40,10 +28,23 @@ class _BottomSheetDetailsState extends State<BottomSheetDetails> {
       children: [
         Container(
           width: double.infinity,
-          margin: const EdgeInsets.all(20),
+          margin: const EdgeInsets.only(top: 15, left: 20, right: 20, bottom: 30),
           child: Column(
-            // DETAILS CAPTEUR
             children: [
+              
+              // BARRE DE SEPARATION
+              Container(
+                height: 7,
+                width: 50,
+                decoration: BoxDecoration(
+                  color: Colors.grey[350],
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                margin: const EdgeInsets.only(bottom: 15),
+              ),
+
+              
+              // DETAILS CAPTEUR
               Column(
                 children: [
                   // Titre
@@ -87,7 +88,7 @@ class _BottomSheetDetailsState extends State<BottomSheetDetails> {
                 ],
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 25),
 
               // CARTE GOOGLE MAPS
               Container(
@@ -97,17 +98,16 @@ class _BottomSheetDetailsState extends State<BottomSheetDetails> {
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
+                      color: Colors.grey.withOpacity(0.4),
                       spreadRadius: 5,
                       blurRadius: 7,
-                      offset: const Offset(0, 3), // changes position of shadow
+                      offset: const Offset(0, 2), // changes position of shadow
                     ),
                   ],
                 ),
                 child:  ClipRRect(
                   borderRadius: BorderRadius.circular(20),
                   child: GoogleMap(
-                    onMapCreated: _onMapCreated,
                     initialCameraPosition: CameraPosition(
                       target: center,
                       zoom: 14,
@@ -135,7 +135,7 @@ void showBottomSheetDetails(BuildContext context, int slot) {
   showModalBottomSheet(
     context: context,
     builder: (BuildContext context) {
-      return BottomSheetDetails(slot: slot,);
+      return BottomSheetDetails(slot: slot);
     },
   );
 }

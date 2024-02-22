@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polyleaks/components/bottom_sheet_details.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
@@ -175,7 +176,7 @@ class _CarteCapteurPerduState extends State<CarteCapteurPerdu> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () => showBottomSheetDetails(context, widget.slot),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF8A8A8A),
                         shape: RoundedRectangleBorder(
