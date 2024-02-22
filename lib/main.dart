@@ -1,4 +1,4 @@
- import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:polyleaks/database/polyleaks_database.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
 import 'package:polyleaks/pages/accueil/page_accueil.dart';

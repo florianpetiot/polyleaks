@@ -2,20 +2,36 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class BottomSheetDetails extends StatelessWidget {
+class BottomSheetDetails extends StatefulWidget {
   final int slot;
 
   const BottomSheetDetails({super.key, required this.slot});
 
   @override
+  State<BottomSheetDetails> createState() => _BottomSheetDetailsState();
+}
+
+class _BottomSheetDetailsState extends State<BottomSheetDetails> {
+  
+  late GoogleMapController mapController;
+  
+  void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+  }
+
+  @override
   Widget build(BuildContext context) {
 
-    final String NomCapteur = context.read<CapteurStateNotifier>().getSlot(slot)["nom"];
-    final double valeurCapteur = context.watch<CapteurStateNotifier>().getSlot(slot)["valeur"];
-    final DateTime derniereConnexion = context.watch<CapteurStateNotifier>().getSlot(slot)["derniereConnexion"];
-    final DateTime dateInitilalisation = context.watch<CapteurStateNotifier>().getSlot(slot)["dateInitialisation"];
-    
+    final String nomCapteur = context.read<CapteurStateNotifier>().getSlot(widget.slot)["nom"];
+    final double valeurCapteur = context.watch<CapteurStateNotifier>().getSlot(widget.slot)["valeur"];
+    final DateTime derniereConnexion = context.watch<CapteurStateNotifier>().getSlot(widget.slot)["derniereConnexion"];
+    final DateTime dateInitilalisation = context.watch<CapteurStateNotifier>().getSlot(widget.slot)["dateInitialisation"];
+    final double latitude = context.read<CapteurStateNotifier>().getSlot(widget.slot)["latitude"];
+    final double longitude = context.read<CapteurStateNotifier>().getSlot(widget.slot)["longitude"];
+
+    final LatLng center = LatLng(latitude, longitude);
     final String derniereConnexionStr = DateFormat('dd/MM/yy HH:mm:ss').format(derniereConnexion);
     final String dateInitilalisationStr = DateFormat('dd/MM/yy HH:mm:ss').format(dateInitilalisation);
 
@@ -33,7 +49,7 @@ class BottomSheetDetails extends StatelessWidget {
                   // Titre
                   Align(
                     alignment: Alignment.centerLeft,
-                    child: Text(NomCapteur,
+                    child: Text(nomCapteur,
                         style: const TextStyle(
                           fontSize: 25,
                           fontWeight: FontWeight.bold,
@@ -79,9 +95,33 @@ class BottomSheetDetails extends StatelessWidget {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  color: Colors.blue,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: const Offset(0, 3), // changes position of shadow
+                    ),
+                  ],
                 ),
-                child: const Text("Carte Google Maps"),
+                child:  ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: GoogleMap(
+                    onMapCreated: _onMapCreated,
+                    initialCameraPosition: CameraPosition(
+                      target: center,
+                      zoom: 14,
+                    ),
+                    markers: {
+                      Marker(
+                        markerId: MarkerId(nomCapteur),
+                        position: center,
+                      ),
+                    },
+                    scrollGesturesEnabled: false,
+                    zoomControlsEnabled: false,
+                  ),
+                ),
               ),
             ],
           ),

@@ -15,6 +15,7 @@ class BluetoothManager {
   
   final Map <String,dynamic> _device_slot1 = {"device": 0};
   final Map <String,dynamic> _device_slot2 = {"device": 0};
+  List<bool> deconnexionVoulue = [false, false];
 
   void scanForDevices(BuildContext context) async {
 
@@ -72,6 +73,7 @@ class BluetoothManager {
   void connectDevice(BuildContext context, slot) async {
     // affecter a device la bonne info 
     var device = slot == 1 ? _device_slot1["device"] : _device_slot2["device"];
+    deconnexionVoulue[slot-1] = false;
     final capteurState = context.read<CapteurStateNotifier>();
     final dataBase = context.read<PolyleaksDatabase>();
 
@@ -178,19 +180,39 @@ class BluetoothManager {
 
     await caracteristique_valeur.setNotifyValue(true);
     
-    var subscription = caracteristique_valeur.onValueReceived.listen((value) {
+    var abonnementValeur = caracteristique_valeur.onValueReceived.listen((value) {
       value = String.fromCharCodes(value);
       // string to int
       value = int.parse(value);
       print("valeur: $value");
       capteurState.setSlotState(slot, valeur: value.toDouble(), derniereConnexion: DateTime.now());
-      dataBase.modifierValeurCapteur(nomStr, value.toDouble());
     });
 
-    device.cancelWhenDisconnected(subscription);
+    device.cancelWhenDisconnected(abonnementValeur);
 
     // changer l'etat du slot
-    capteurState.setSlotState(slot, state: CapteurSlotState.connecte, derniereConnexion: DateTime.now(), dateInitialisation: DateTime.parse(date_initStr));
+    capteurState.setSlotState(slot, 
+                    state: CapteurSlotState.connecte, 
+                    derniereConnexion: DateTime.now(), 
+                    dateInitialisation: DateTime.parse(date_initStr),
+                    latitude: double.parse(latitudeStr),
+                    longitude: double.parse(longitudeStr));
+
+    // on disconnecte
+    var deconnexion = device.connectionState.listen((BluetoothConnectionState state) async {
+        if (state == BluetoothConnectionState.disconnected) {
+            // sauvegarder les données dans la base de données
+            print("Le capteur est deconnecté");
+            var deviceData = capteurState.getSlot(slot);
+            await dataBase.modifierValeurCapteur(deviceData["nom"], deviceData["valeur"]);
+            if (!deconnexionVoulue[slot-1]){
+              capteurState.setSlotState(slot, state: CapteurSlotState.perdu);
+            }
+        }
+    });
+
+    device.cancelWhenDisconnected(deconnexion, delayed:true, next:true);
+
   }
 
 
@@ -199,6 +221,7 @@ class BluetoothManager {
     var device = slot == 1 ? _device_slot1["device"] : _device_slot2["device"];
     final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
 
+    deconnexionVoulue[slot-1] = true;
     await device.disconnect();
     capteurState.setSlotState(slot, state: CapteurSlotState.recherche);
   }
