@@ -28,12 +28,6 @@ class CarteCapteurConnecte extends StatelessWidget {
     return capteurState.getSlot(slot)["nom"];
   }
 
-  // double getValeurCapteur(context) {
-  //   context.read<CapteurStateNotifier>().getSlot(slot);
-  //   return capteurState.getSlot(slot)["valeur"];
-  // }
-
-
   @override
   Widget build(BuildContext context) {
     return Padding(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polyleaks/bluetooth/bluetooth_manager.dart';
 import 'package:polyleaks/components/bottom_sheet_details.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
 import 'package:provider/provider.dart';
@@ -38,6 +39,7 @@ class _CarteCapteurPerduState extends State<CarteCapteurPerdu> {
   void setCapteurState(context) {
     final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
     capteurState.setSlotState(widget.slot, state: CapteurSlotState.recherche);
+    BluetoothManager().scanForDevices(context);
   }
 
 

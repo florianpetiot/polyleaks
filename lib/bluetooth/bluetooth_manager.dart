@@ -16,6 +16,7 @@ class BluetoothManager {
   final Map <String,dynamic> _device_slot1 = {"device": 0};
   final Map <String,dynamic> _device_slot2 = {"device": 0};
   List<bool> deconnexionVoulue = [false, false];
+  bool isScaning = false;
 
   void scanForDevices(BuildContext context) async {
 
@@ -27,6 +28,13 @@ class BluetoothManager {
       return;
     }
 
+    // verifier si un scan est deja en cours
+    if (isScaning) {
+      print("Already scanning");
+      return;
+    }
+
+    // verifier si le bluetooth est supporté
     if (await FlutterBluePlus.isSupported == false) {
       print("Bluetooth not supported by this device");
       return;
@@ -35,8 +43,9 @@ class BluetoothManager {
 
     FlutterBluePlus.setLogLevel(LogLevel.verbose);
     await FlutterBluePlus.startScan();
+    isScaning = true;
 
-    FlutterBluePlus.scanResults.listen((results) async {
+    var scanner = FlutterBluePlus.scanResults.listen((results) async {
       for (ScanResult r in results) {
         // seulement les appareils avec un nom commence par "Polyleaks-"
         if (!r.advertisementData.advName.startsWith("Polyleaks-")) {
@@ -44,28 +53,39 @@ class BluetoothManager {
         }
         print("Found device: ${r.advertisementData.advName}");
 
-        if (capteurState.getSlot(1)["state"] == CapteurSlotState.recherche) {
-          capteurState.setSlotState(1, state: CapteurSlotState.trouve, nom: r.advertisementData.advName);
-          _device_slot1["device"] = r.device;
-          print(_device_slot1["device"]);
-          await FlutterBluePlus.stopScan();
-          return;
+        // si le slot 1 est en mode recherche
+        if (capteurState.getSlot(1)["state"] == CapteurSlotState.recherche){
+          if (!(([CapteurSlotState.trouve, CapteurSlotState.chargement, CapteurSlotState.connecte, CapteurSlotState.perdu].contains(capteurState.getSlot(2)["state"])) && capteurState.getSlot(2)["nom"] == r.advertisementData.advName)) {
+            capteurState.setSlotState(1, state: CapteurSlotState.trouve, nom: r.advertisementData.advName);
+            _device_slot1["device"] = r.device;
+          }
         }
-        
-        else if (capteurState.getSlot(2)["state"] == CapteurSlotState.recherche && capteurState.getSlot(1)["state"] != CapteurSlotState.trouve){
-          capteurState.setSlotState(2, state: CapteurSlotState.trouve, nom: r.advertisementData.advName);
-          _device_slot2["device"] = r.device;
+
+        // sinon si le slot 2 est en mode recherche
+        else if (capteurState.getSlot(2)["state"] == CapteurSlotState.recherche){
+          if (!(([CapteurSlotState.trouve, CapteurSlotState.chargement, CapteurSlotState.connecte, CapteurSlotState.perdu].contains(capteurState.getSlot(1)["state"])) && capteurState.getSlot(1)["nom"] == r.advertisementData.advName)) {
+            capteurState.setSlotState(2, state: CapteurSlotState.trouve, nom: r.advertisementData.advName);
+            _device_slot2["device"] = r.device;
+          }
+        }
+
+        // verifier si on peut arreter le scan
+        if (capteurState.getSlot(1)["state"] != CapteurSlotState.recherche && capteurState.getSlot(2)["state"] != CapteurSlotState.recherche){
           await FlutterBluePlus.stopScan();
+          isScaning = false;
           return;
         }
       }
     });
 
+    FlutterBluePlus.cancelWhenScanComplete(scanner);
   }
 
 
   void stopScan() async {
     await FlutterBluePlus.stopScan();
+    isScaning = false;
+    return;
   }
 
 
@@ -224,5 +244,6 @@ class BluetoothManager {
     deconnexionVoulue[slot-1] = true;
     await device.disconnect();
     capteurState.setSlotState(slot, state: CapteurSlotState.recherche);
+    scanForDevices(context);
   }
 }

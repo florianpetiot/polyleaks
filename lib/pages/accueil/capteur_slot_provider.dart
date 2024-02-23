@@ -5,8 +5,8 @@ enum CapteurSlotState {recherche, chargement, trouve, connecte, perdu}
 
 
 class CapteurStateNotifier extends ChangeNotifier {
-  final Map<String,dynamic> _slot1 = { "state": CapteurSlotState.recherche, "valeur": 0, "nom":0,"derniereConnexion":0, "dateInitialisation":0, "latitude":0, "longitude":0};
-  final Map<String,dynamic> _slot2 = { "state": CapteurSlotState.recherche, "valeur": 0, "nom":0,"derniereConnexion":0, "dateInitialisation":0, "latitude":0, "longitude":0};
+  final Map<String,dynamic> _slot1 = { "state": CapteurSlotState.recherche, "valeur": 0.0, "nom":0,"derniereConnexion":0, "dateInitialisation":0, "latitude":0, "longitude":0};
+  final Map<String,dynamic> _slot2 = { "state": CapteurSlotState.recherche, "valeur": 0.0, "nom":0,"derniereConnexion":0, "dateInitialisation":0, "latitude":0, "longitude":0};
 
 
 
