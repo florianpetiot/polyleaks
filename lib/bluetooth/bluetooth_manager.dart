@@ -12,11 +12,13 @@ class BluetoothManager {
   }
 
   BluetoothManager._internal();
-  
   final Map <String,dynamic> _device_slot1 = {"device": 0};
   final Map <String,dynamic> _device_slot2 = {"device": 0};
   List<bool> deconnexionVoulue = [false, false];
   bool isScaning = false;
+
+  final List<String> blacklist = [];
+
 
   void scanForDevices(BuildContext context) async {
 
@@ -48,7 +50,7 @@ class BluetoothManager {
     FlutterBluePlus.onScanResults.listen((results) async {
       for (ScanResult r in results) {
         // seulement les appareils avec un nom commence par "Polyleaks-"
-        if (!r.advertisementData.advName.startsWith("Polyleaks-")) {
+        if (!r.advertisementData.advName.startsWith("Polyleaks-") && !isInBlacklist(r.advertisementData.advName)){
           continue;
         }
         print("Found device: ${r.advertisementData.advName}");
@@ -248,5 +250,21 @@ class BluetoothManager {
     await device.disconnect();
     capteurState.setSlotState(slot, state: CapteurSlotState.recherche);
     scanForDevices(context);
+  }
+
+  
+  void addtoblacklist(BuildContext context, String deviceName) async {
+    blacklist.add(deviceName);
+  }
+  bool isInBlacklist(String deviceName) {
+    return blacklist.contains(deviceName);
+  }
+
+
+  void ignorer(BuildContext context, int slot) async {
+  // Ajoutez le capteur actuel à la liste noire
+  addtoblacklist(context, slot == 1 ? _device_slot1["device"].name : _device_slot2["device"].name);
+  scanForDevices(context);
+
   }
 }

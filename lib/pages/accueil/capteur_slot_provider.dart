@@ -11,6 +11,7 @@ class CapteurStateNotifier extends ChangeNotifier {
 
 
 
+
   Map<String, dynamic> getSlot(int id) {
     if (id == 1) {
       return _slot1;
@@ -49,5 +50,7 @@ class CapteurStateNotifier extends ChangeNotifier {
 
     notifyListeners();
   }
+  
+  
 }
 
