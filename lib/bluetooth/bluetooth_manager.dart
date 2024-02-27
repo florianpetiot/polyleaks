@@ -17,12 +17,11 @@ class BluetoothManager {
   List<bool> deconnexionVoulue = [false, false];
   bool isScaning = false;
 
-  final List<String> blacklist = [];
-
 
   void scanForDevices(BuildContext context) async {
 
     final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
+    final blacklist = capteurState.blacklist;
 
     // verifier si les cartes sont en mode recherche
     if (capteurState.getSlot(1)["state"] != CapteurSlotState.recherche && capteurState.getSlot(2)["state"] != CapteurSlotState.recherche) {
@@ -43,16 +42,17 @@ class BluetoothManager {
     }
 
 
-    // FlutterBluePlus.setLogLevel(LogLevel.verbose);
+    FlutterBluePlus.setLogLevel(LogLevel.verbose);
     await FlutterBluePlus.startScan();
     isScaning = true;
 
     FlutterBluePlus.onScanResults.listen((results) async {
       for (ScanResult r in results) {
         // seulement les appareils avec un nom commence par "Polyleaks-"
-        if (!r.advertisementData.advName.startsWith("Polyleaks-") && !isInBlacklist(r.advertisementData.advName)){
+        if (!r.advertisementData.advName.startsWith("Polyleaks-") || blacklist.contains(r.advertisementData.advName)){
           continue;
         }
+
         print("Found device: ${r.advertisementData.advName}");
 
         // si le slot 1 est en mode recherche
@@ -252,19 +252,21 @@ class BluetoothManager {
     scanForDevices(context);
   }
 
-  
-  void addtoblacklist(BuildContext context, String deviceName) async {
-    blacklist.add(deviceName);
-  }
-  bool isInBlacklist(String deviceName) {
-    return blacklist.contains(deviceName);
-  }
 
+  void resetBlacklist(BuildContext context) async {
+    final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
+    await FlutterBluePlus.stopScan();
+    capteurState.resetBlacklist();
+    await FlutterBluePlus.startScan();
+  }
 
   void ignorer(BuildContext context, int slot) async {
-  // Ajoutez le capteur actuel à la liste noire
-  addtoblacklist(context, slot == 1 ? _device_slot1["device"].name : _device_slot2["device"].name);
-  scanForDevices(context);
+    final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
+
+    // Ajoutez le capteur actuel à la liste noire
+    capteurState.addToBlacklist(slot == 1 ? _device_slot1["device"].name : _device_slot2["device"].name);
+    capteurState.setSlotState(slot, state: CapteurSlotState.recherche);
+    scanForDevices(context);
 
   }
 }

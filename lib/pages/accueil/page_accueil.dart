@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:polyleaks/bluetooth/bluetooth_manager.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot.dart';
+import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:rive/rive.dart';
 
 
@@ -53,6 +55,9 @@ class _PageAccueilState extends State<PageAccueil> {
 
   @override
   Widget build(BuildContext context) {
+    final blacklist = context.watch<CapteurStateNotifier>().blacklist;
+    final capteurState = context.watch<CapteurStateNotifier>();
+
     return SafeArea(
       child: Scaffold(
         body: Column(
@@ -78,12 +83,22 @@ class _PageAccueilState extends State<PageAccueil> {
                     ? const Center(child: CircularProgressIndicator())
                     : Rive(artboard: riveArtboard!),
                 ),
+
                 estTrouve == null
                   ? const CircularProgressIndicator()
                   : Switch(
                       value: estTrouve!.value == 1.0 ? true : false, 
                       onChanged: (value) => changerEtat(value),
-                    )
+                    ),
+                
+                (blacklist.isEmpty && (capteurState.getSlot(1)["state"] == CapteurSlotState.recherche || capteurState.getSlot(2)["state"] == CapteurSlotState.recherche))
+                  ? const SizedBox()
+                  : ElevatedButton(
+                      onPressed: () {
+                        BluetoothManager().resetBlacklist(context);
+                      },
+                      child: const Text('Réinitialiser la blacklist'),
+                    ),
               ],
             )
           )

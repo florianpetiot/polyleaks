@@ -74,24 +74,26 @@ class CarteCapteurTrouve extends StatelessWidget {
               ]),
           
             // bouton se connecter
-            ElevatedButton(
-                onPressed: () => BluetoothManager().connectDevice(context, slot),
-                // onPressed: () => setCapteurState(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF8A8A8A),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
+            Column(
+              children: [
+                ElevatedButton(
+                    onPressed: () => BluetoothManager().connectDevice(context, slot),
+                    // onPressed: () => setCapteurState(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF8A8A8A),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    child: const Text(
+                      'Se connecter',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    )
                 ),
-                child: const Text(
-                  'Se connecter',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                  ),
-                )
-            ),
-            ElevatedButton(
+                ElevatedButton(
                 onPressed: () => BluetoothManager().ignorer(context,slot),
                 style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF8A8A8A),
@@ -100,13 +102,16 @@ class CarteCapteurTrouve extends StatelessWidget {
                     ),
                   ),
                   child: const Text(
-                    'Ignorer pour cette fois',
+                    'Ignorer cette fois',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 18,
+                      fontSize: 14,
                     ),
                   )
-            )],
+            )
+              ],
+            ),
+            ],
         ),
       ),
     );

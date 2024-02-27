@@ -7,9 +7,21 @@ enum CapteurSlotState {recherche, chargement, trouve, connecte, perdu}
 class CapteurStateNotifier extends ChangeNotifier {
   final Map<String,dynamic> _slot1 = { "state": CapteurSlotState.recherche, "valeur": 0.0, "nom":0,"derniereConnexion":0, "dateInitialisation":0, "latitude":0, "longitude":0};
   final Map<String,dynamic> _slot2 = { "state": CapteurSlotState.recherche, "valeur": 0.0, "nom":0,"derniereConnexion":0, "dateInitialisation":0, "latitude":0, "longitude":0};
+  final List<String> _blacklist = [];
 
 
+  get blacklist => _blacklist;
 
+  void addToBlacklist(String nom) {
+    _blacklist.add(nom);
+    notifyListeners();
+  }
+
+  void resetBlacklist() {
+    print("resetting blacklist");
+    _blacklist.clear();
+    notifyListeners();
+  }
 
 
   Map<String, dynamic> getSlot(int id) {
