@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:polyleaks/bluetooth/bluetooth_manager.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot.dart';
+import 'package:rive/rive.dart';
 
 
 class PageAccueil extends StatefulWidget {
@@ -11,11 +13,30 @@ class PageAccueil extends StatefulWidget {
 }
 
 class _PageAccueilState extends State<PageAccueil> {
+  SMIInput? estTrouve;
+  Artboard? riveArtboard;
 
   @override
   void initState() {
     super.initState();
     BluetoothManager().scanForDevices(context);
+    rootBundle.load('assets/pipe_animation.riv').then(
+      (data) async {
+        try {
+          final file = RiveFile.import(data);
+          final artboard = file.mainArtboard;
+          var controller = StateMachineController.fromArtboard(artboard, 'State Machine 1');
+          if (controller != null) {
+            artboard.addController(controller);
+            estTrouve = controller.findSMI('etat');
+          }
+          setState(() => riveArtboard = artboard);
+        }
+        catch (e) {
+          print(e);
+        } 
+      }
+    );
   }
 
   @override
@@ -24,11 +45,17 @@ class _PageAccueilState extends State<PageAccueil> {
     BluetoothManager().stopScan();
   }
 
+  void changerEtat(bool newValue) {
+    setState(() {
+      estTrouve!.value = newValue ? 1.0 : 0.0;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-          body: Column(
+        body: Column(
         children: [
           // Moitié haute de l'écran --------------------------------------------
           const Expanded(
@@ -44,9 +71,22 @@ class _PageAccueilState extends State<PageAccueil> {
           // Moitié basse de l'écran --------------------------------------------
           Expanded(
             flex: 3,
-              child: Container(
-            
-          ))
+            child: Column(
+              children: [
+                Expanded(
+                  child: riveArtboard == null
+                    ? const Center(child: CircularProgressIndicator())
+                    : Rive(artboard: riveArtboard!),
+                ),
+                estTrouve == null
+                  ? const CircularProgressIndicator()
+                  : Switch(
+                      value: estTrouve!.value == 1.0 ? true : false, 
+                      onChanged: (value) => changerEtat(value),
+                    )
+              ],
+            )
+          )
         ],
       )),
     );
