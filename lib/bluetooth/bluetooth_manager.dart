@@ -41,11 +41,11 @@ class BluetoothManager {
     }
 
 
-    FlutterBluePlus.setLogLevel(LogLevel.verbose);
+    // FlutterBluePlus.setLogLevel(LogLevel.verbose);
     await FlutterBluePlus.startScan();
     isScaning = true;
 
-    var scanner = FlutterBluePlus.scanResults.listen((results) async {
+    FlutterBluePlus.onScanResults.listen((results) async {
       for (ScanResult r in results) {
         // seulement les appareils avec un nom commence par "Polyleaks-"
         if (!r.advertisementData.advName.startsWith("Polyleaks-")) {
@@ -77,8 +77,6 @@ class BluetoothManager {
         }
       }
     });
-
-    FlutterBluePlus.cancelWhenScanComplete(scanner);
   }
 
 
@@ -99,6 +97,8 @@ class BluetoothManager {
 
     capteurState.setSlotState(slot, state: CapteurSlotState.chargement);
 
+    // stop scan
+    FlutterBluePlus.stopScan();
 
     // connection de device
     try {
@@ -217,6 +217,9 @@ class BluetoothManager {
                     dateInitialisation: DateTime.parse(date_initStr),
                     latitude: double.parse(latitudeStr),
                     longitude: double.parse(longitudeStr));
+
+    // reprendre le scan
+    FlutterBluePlus.startScan();
 
     // on disconnecte
     var deconnexion = device.connectionState.listen((BluetoothConnectionState state) async {
