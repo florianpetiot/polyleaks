@@ -122,8 +122,8 @@ class BluetoothManager {
     catch (e) {
       print("l'appareil n'est plus là.");
       print(e);
-      // TODO: afficher une popup pour dire que la connexion a échoué
-      return;
+      capteurState.setSlotState(slot, state: CapteurSlotState.recherche);
+      FlutterBluePlus.startScan();
     }
 
     List<BluetoothService> services = await device.discoverServices();
@@ -244,6 +244,7 @@ class BluetoothManager {
             await dataBase.modifierValeurCapteur(deviceData["nom"], deviceData["valeur"]);
             if (!deconnexionVoulue[slot-1]){
               capteurState.setSlotState(slot, state: CapteurSlotState.perdu);
+              scanForDevices(context);
             }
         }
     });

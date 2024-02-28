@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polyleaks/bluetooth/bluetooth_manager.dart';
 import 'package:polyleaks/components/carte_capteur_chargement.dart';
 import 'package:polyleaks/components/carte_capteur_connecte.dart';
 import 'package:polyleaks/components/carte_capteur_perdu.dart';
@@ -34,7 +35,12 @@ class _CapteurSlotState extends State<CapteurSlot> {
         return CarteCapteurChargement(slot: widget.slot);
 
       case CapteurSlotState.trouve:
-         return CarteCapteurTrouve(slot: widget.slot);
+         return Builder(
+          builder: (parentContext) => CarteCapteurTrouve(
+            slot: widget.slot,
+            connect: () => BluetoothManager().connectDevice(parentContext, widget.slot)
+          ),
+         );
 
       case CapteurSlotState.connecte:
          return CarteCapteurConnecte(slot: widget.slot);
