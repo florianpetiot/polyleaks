@@ -91,14 +91,14 @@ class _PageAccueilState extends State<PageAccueil> {
                       onChanged: (value) => changerEtat(value),
                     ),
                 
-                (blacklist.isEmpty && (capteurState.getSlot(1)["state"] == CapteurSlotState.recherche || capteurState.getSlot(2)["state"] == CapteurSlotState.recherche))
-                  ? const SizedBox()
-                  : ElevatedButton(
+                (blacklist.isNotEmpty && (capteurState.getSlot(1)["state"] == CapteurSlotState.recherche || capteurState.getSlot(2)["state"] == CapteurSlotState.recherche))
+                  ? ElevatedButton(
                       onPressed: () {
                         BluetoothManager().resetBlacklist(context);
                       },
                       child: const Text('Réinitialiser la blacklist'),
-                    ),
+                    )
+                  : const SizedBox()
               ],
             )
           )
