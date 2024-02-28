@@ -24,7 +24,7 @@ class BluetoothManager {
     final blacklist = capteurState.blacklist;
 
     // verifier si les cartes sont en mode recherche
-    if (capteurState.getSlot(1)["state"] != CapteurSlotState.recherche && capteurState.getSlot(2)["state"] != CapteurSlotState.recherche) {
+    if (!([CapteurSlotState.recherche, CapteurSlotState.perdu].contains(capteurState.getSlot(1)["state"]) || [CapteurSlotState.recherche, CapteurSlotState.perdu].contains(capteurState.getSlot(2)["state"]))) {
       print("No slot in recherche mode");
       return;
     }
@@ -55,8 +55,20 @@ class BluetoothManager {
 
         print("Found device: ${r.advertisementData.advName}");
 
-        // si le slot 1 est en mode recherche
-        if (capteurState.getSlot(1)["state"] == CapteurSlotState.recherche){
+        // si le slot 1 est en mode perdu et que le nom du capteur est le meme que celui du slot 1
+        if (capteurState.getSlot(1)["state"] == CapteurSlotState.perdu && capteurState.getSlot(1)["nom"] == r.advertisementData.advName){
+          _device_slot1["device"] = r.device;
+          connectDevice(context, 1);
+        }
+
+        // sinon si le slot 2 est en mode perdu et que le nom du capteur est le meme que celui du slot 2
+        else if (capteurState.getSlot(2)["state"] == CapteurSlotState.perdu && capteurState.getSlot(2)["nom"] == r.advertisementData.advName){
+          _device_slot2["device"] = r.device;
+          connectDevice(context, 2);
+        }
+
+        // sinon si le slot 1 est en mode recherche
+        else if (capteurState.getSlot(1)["state"] == CapteurSlotState.recherche){
           if (!(([CapteurSlotState.trouve, CapteurSlotState.chargement, CapteurSlotState.connecte, CapteurSlotState.perdu].contains(capteurState.getSlot(2)["state"])) && capteurState.getSlot(2)["nom"] == r.advertisementData.advName)) {
             capteurState.setSlotState(1, state: CapteurSlotState.trouve, nom: r.advertisementData.advName);
             _device_slot1["device"] = r.device;
@@ -72,7 +84,7 @@ class BluetoothManager {
         }
 
         // verifier si on peut arreter le scan
-        if (capteurState.getSlot(1)["state"] != CapteurSlotState.recherche && capteurState.getSlot(2)["state"] != CapteurSlotState.recherche){
+        if (!([CapteurSlotState.recherche, CapteurSlotState.perdu].contains(capteurState.getSlot(1)["state"]) || [CapteurSlotState.recherche, CapteurSlotState.perdu].contains(capteurState.getSlot(2)["state"]))) {
           await FlutterBluePlus.stopScan();
           isScaning = false;
           return;
@@ -223,7 +235,7 @@ class BluetoothManager {
     // reprendre le scan
     FlutterBluePlus.startScan();
 
-    // on disconnecte
+    // on disconnect
     var deconnexion = device.connectionState.listen((BluetoothConnectionState state) async {
         if (state == BluetoothConnectionState.disconnected) {
             // sauvegarder les données dans la base de données
