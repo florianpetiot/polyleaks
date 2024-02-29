@@ -6,6 +6,8 @@ import 'package:polyleaks/pages/page_historique.dart';
 import 'package:polyleaks/pages/page_plus.dart';
 import 'package:provider/provider.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // initialiser la base de donnees
@@ -42,6 +44,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        navigatorKey: navigatorKey,
         debugShowCheckedModeBanner: false,
         home: Scaffold(
           body: ecrans[indexEcran],

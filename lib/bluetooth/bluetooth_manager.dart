@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:polyleaks/database/polyleaks_database.dart';
+import 'package:polyleaks/main.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:polyleaks/components/popup_erreur.dart';
 
 class BluetoothManager {
   static final BluetoothManager _singleton = BluetoothManager._internal();
@@ -122,8 +124,13 @@ class BluetoothManager {
     catch (e) {
       print("l'appareil n'est plus là.");
       print(e);
+      await showDialog(
+        context: navigatorKey.currentState!.context, 
+        builder: (context) => PopupErreur(idErreur: 1)
+      );
       capteurState.setSlotState(slot, state: CapteurSlotState.recherche);
       FlutterBluePlus.startScan();
+      return;
     }
 
     List<BluetoothService> services = await device.discoverServices();
