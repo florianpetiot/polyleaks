@@ -251,7 +251,7 @@ class BluetoothManager {
             await dataBase.modifierValeurCapteur(deviceData["nom"], deviceData["valeur"]);
             if (!deconnexionVoulue[slot-1]){
               capteurState.setSlotState(slot, state: CapteurSlotState.perdu);
-              scanForDevices(context);
+              scanForDevices(navigatorKey.currentState!.context);
             }
         }
     });

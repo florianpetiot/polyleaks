@@ -5,9 +5,8 @@ import 'package:provider/provider.dart';
 
 class CarteCapteurTrouve extends StatelessWidget {
   final int slot;
-  final VoidCallback connect;
 
-  const CarteCapteurTrouve({Key? key, required this.slot, required this.connect}) : super(key: key);
+  const CarteCapteurTrouve({Key? key, required this.slot}) : super(key: key);
 
 
    void setCapteurState(context) {
@@ -78,7 +77,7 @@ class CarteCapteurTrouve extends StatelessWidget {
             Column(
               children: [
                 ElevatedButton(
-                    onPressed: connect,
+                    onPressed: () => BluetoothManager().connectDevice(context, slot),
                     // onPressed: () => setCapteurState(context),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF8A8A8A),

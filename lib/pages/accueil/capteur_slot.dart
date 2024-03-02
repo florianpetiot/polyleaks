@@ -35,12 +35,7 @@ class _CapteurSlotState extends State<CapteurSlot> {
         return CarteCapteurChargement(slot: widget.slot);
 
       case CapteurSlotState.trouve:
-         return Builder(
-          builder: (parentContext) => CarteCapteurTrouve(
-            slot: widget.slot,
-            connect: () => BluetoothManager().connectDevice(parentContext, widget.slot)
-          ),
-         );
+         return CarteCapteurTrouve(slot: widget.slot);
 
       case CapteurSlotState.connecte:
          return CarteCapteurConnecte(slot: widget.slot);
