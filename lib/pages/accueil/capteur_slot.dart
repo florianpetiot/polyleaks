@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:polyleaks/bluetooth/bluetooth_manager.dart';
 import 'package:polyleaks/components/carte_capteur_chargement.dart';
 import 'package:polyleaks/components/carte_capteur_connecte.dart';
 import 'package:polyleaks/components/carte_capteur_perdu.dart';
