@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:polyleaks/database/polyleaks_database.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
 import 'package:polyleaks/pages/accueil/page_accueil.dart';
@@ -14,13 +15,15 @@ void main() async {
   await PolyleaksDatabase.initialize();
   await PolyleaksDatabase().parametresParDefaut();
 
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (context) => PolyleaksDatabase()),
-        ChangeNotifierProvider(create: (context) => CapteurStateNotifier()),
-      ],
-      child: const MyApp()
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+    .then((value) => runApp(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (context) => PolyleaksDatabase()),
+          ChangeNotifierProvider(create: (context) => CapteurStateNotifier()),
+        ],
+        child: const MyApp()
+      )
     )
   );
 }
