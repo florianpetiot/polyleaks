@@ -5,6 +5,7 @@ import 'package:polyleaks/main.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:polyleaks/components/popup_erreur.dart';
+import 'package:toastification/toastification.dart';
 
 class BluetoothManager {
   static final BluetoothManager _singleton = BluetoothManager._internal();
@@ -283,6 +284,22 @@ class BluetoothManager {
   void ignorer(BuildContext context, int slot) async {
     final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
 
+    toastification.show(
+      context: context,
+      type: ToastificationType.info,
+      style: ToastificationStyle.fillColored,
+      icon: const Icon(Icons.info, color: Colors.white),
+      title: Text('${slot == 1 ? _device_slot1["device"].name : _device_slot2["device"].name} à été ajouté à la liste noire temporaire.'),
+      alignment: Alignment.bottomCenter,
+      autoCloseDuration: const Duration(seconds: 7),
+      boxShadow: lowModeShadow,
+      closeButtonShowType: CloseButtonShowType.none,
+      closeOnClick: false,
+      dragToClose: true,
+      showProgressBar: false,
+    );
+
+   
     // Ajoutez le capteur actuel à la liste noire
     capteurState.addToBlacklist(slot == 1 ? _device_slot1["device"].name : _device_slot2["device"].name);
     capteurState.setSlotState(slot, state: CapteurSlotState.recherche);

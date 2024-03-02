@@ -8,12 +8,6 @@ class CarteCapteurTrouve extends StatelessWidget {
 
   const CarteCapteurTrouve({Key? key, required this.slot}) : super(key: key);
 
-
-   void setCapteurState(context) {
-    final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
-    capteurState.setSlotState(slot, state: CapteurSlotState.connecte, valeur: 15.3, derniereConnexion: DateTime.now());
-  }
-
   String getNomCapteur(context) {
     final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
     return capteurState.getSlot(slot)["nom"];
@@ -78,7 +72,6 @@ class CarteCapteurTrouve extends StatelessWidget {
               children: [
                 ElevatedButton(
                     onPressed: () => BluetoothManager().connectDevice(context, slot),
-                    // onPressed: () => setCapteurState(context),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF8A8A8A),
                       shape: RoundedRectangleBorder(
