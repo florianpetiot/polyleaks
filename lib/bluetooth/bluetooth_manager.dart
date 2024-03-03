@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:polyleaks/database/polyleaks_database.dart';
 import 'package:polyleaks/main.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
@@ -19,6 +21,75 @@ class BluetoothManager {
   final Map <String,dynamic> _device_slot2 = {"device": 0};
   List<bool> deconnexionVoulue = [false, false];
   bool isScaning = false;
+
+  Future<bool> isLocationActivated(context) async {
+  
+    final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
+
+    // seul les android on besoin de la permission de localisation
+    if (defaultTargetPlatform != TargetPlatform.android) {
+      capteurState.setGpsPermission(true);
+      return true;
+    }
+
+    // Check if location permission is granted
+    LocationPermission permissionStatus = await Geolocator.checkPermission();
+
+    print(permissionStatus);
+
+    for (int i = 0; i < 2; i++) {
+      if (permissionStatus == LocationPermission.denied) {
+        print("ici");
+        if (await Geolocator.requestPermission() != LocationPermission.deniedForever) {
+          permissionStatus = await Geolocator.checkPermission(); 
+        }
+        else {
+          permissionStatus = LocationPermission.deniedForever;
+        }
+
+        if (permissionStatus == LocationPermission.denied && i == 0) {
+          await showDialog(
+            context: context, 
+            builder: (context) => const PopupErreur(idErreur: 3)
+          );
+        } 
+        else {
+          break;
+        }
+      }
+    }
+
+    if (permissionStatus == LocationPermission.deniedForever) {
+      await showDialog(
+        context: context, 
+        builder: (context) => const PopupErreur(idErreur: 4)
+      );
+      capteurState.setGpsPermission(false);
+      return false;
+    }
+
+    if (permissionStatus == LocationPermission.denied) {
+      capteurState.setGpsPermission(false);
+      return false;
+    }
+
+    // Check if GPS is enabled
+    if (!(await Geolocator.isLocationServiceEnabled())) {
+      try {
+        await Geolocator.getCurrentPosition();
+        capteurState.setGpsPermission(true);
+        return true;
+      } 
+      catch (e) {
+        capteurState.setGpsPermission(false);
+        return false;
+      }
+    }
+    else {
+      capteurState.setGpsPermission(true);
+      return true;
+    }
+  }
 
 
   void scanForDevices(BuildContext context) async {
@@ -44,6 +115,15 @@ class BluetoothManager {
       return;
     }
 
+    if (capteurState.gpsPermission == false) {
+      print("Location not activated");
+      return;
+    }
+
+    if (!(await isLocationActivated(context))) {
+      print("Location not activated");
+      return;
+    }
 
     FlutterBluePlus.setLogLevel(LogLevel.verbose);
     await FlutterBluePlus.startScan();
@@ -127,7 +207,7 @@ class BluetoothManager {
       print(e);
       await showDialog(
         context: navigatorKey.currentState!.context, 
-        builder: (context) => PopupErreur(idErreur: 1)
+        builder: (context) => const PopupErreur(idErreur: 1)
       );
       capteurState.setSlotState(slot, state: CapteurSlotState.recherche);
       FlutterBluePlus.startScan();
@@ -306,4 +386,6 @@ class BluetoothManager {
     scanForDevices(context);
 
   }
+
+  requestLocationPermission(BuildContext context) {}
 }

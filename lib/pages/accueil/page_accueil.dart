@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:polyleaks/bluetooth/bluetooth_manager.dart';
@@ -5,6 +6,7 @@ import 'package:polyleaks/pages/accueil/capteur_slot.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:rive/rive.dart';
+import 'package:toastification/toastification.dart';
 
 
 class PageAccueil extends StatefulWidget {
@@ -56,54 +58,118 @@ class _PageAccueilState extends State<PageAccueil> {
   @override
   Widget build(BuildContext context) {
     final blacklist = context.watch<CapteurStateNotifier>().blacklist;
+    final gpsPermission = context.watch<CapteurStateNotifier>().gpsPermission;
     final capteurState = context.watch<CapteurStateNotifier>();
 
     return SafeArea(
       child: Scaffold(
-        body: Column(
-        children: [
-          // Moitié haute de l'écran --------------------------------------------
-          const Expanded(
-            flex: 2,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        body: Stack(
+          children: [ Column(
             children: [
-              CapteurSlot(slot: 1,),
-              CapteurSlot(slot: 2,)
-            ],
-          )),
-      
-          // Moitié basse de l'écran --------------------------------------------
-          Expanded(
-            flex: 3,
-            child: Column(
-              children: [
-                Expanded(
-                  child: riveArtboard == null
-                    ? const Center(child: CircularProgressIndicator())
-                    : Rive(artboard: riveArtboard!),
-                ),
-
-                estTrouve == null
-                  ? const CircularProgressIndicator()
-                  : Switch(
-                      value: estTrouve!.value == 1.0 ? true : false, 
-                      onChanged: (value) => changerEtat(value),
+              // Moitié haute de l'écran --------------------------------------------
+              const Expanded(
+                flex: 2,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    CapteurSlot(slot: 1,),
+                    CapteurSlot(slot: 2,)
+                  ],
+                )
+              ),
+          
+              // Moitié basse de l'écran --------------------------------------------
+              Expanded(
+                flex: 3,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: riveArtboard == null
+                        ? const Center(child: CircularProgressIndicator())
+                        : Rive(artboard: riveArtboard!),
                     ),
-                
-                (blacklist.isNotEmpty && (capteurState.getSlot(1)["state"] == CapteurSlotState.recherche || capteurState.getSlot(2)["state"] == CapteurSlotState.recherche))
-                  ? ElevatedButton(
-                      onPressed: () {
-                        BluetoothManager().resetBlacklist(context);
-                      },
-                      child: const Text('Réinitialiser la blacklist'),
-                    )
-                  : const SizedBox()
-              ],
-            )
-          )
-        ],
-      )),
+          
+                    estTrouve == null
+                      ? const CircularProgressIndicator()
+                      : Switch(
+                          value: estTrouve!.value == 1.0 ? true : false, 
+                          onChanged: (value) => changerEtat(value),
+                        ),
+                    
+                    (blacklist.isNotEmpty && (capteurState.getSlot(1)["state"] == CapteurSlotState.recherche || capteurState.getSlot(2)["state"] == CapteurSlotState.recherche))
+                      ? ElevatedButton(
+                          onPressed: () {
+                            BluetoothManager().resetBlacklist(context);
+                          },
+                          child: const Text('Réinitialiser la blacklist'),
+                        )
+                      : const SizedBox()
+                  ],
+                )
+              )
+            ],
+          ),
+
+
+          // Autorisation de la localisation ---------------------------------------
+          if (!gpsPermission && ![CapteurSlotState.connecte, CapteurSlotState.perdu].contains(capteurState.getSlot(1)["state"]) && ![CapteurSlotState.connecte, CapteurSlotState.perdu].contains(capteurState.getSlot(2)["state"]))
+            ClipRect(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+                  // un container centré avec de l'ombre,
+                  // a l'interieur, un texte
+                  child: Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    padding: const EdgeInsets.all(20),
+                    color: Colors.black.withOpacity(0.5),
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Pour le bon fonctionnement de l\'application, veuillez accorder l\'accès à la localisation GPS.',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 20),
+                          ElevatedButton(
+                            onPressed: () async {
+                              bool resultat = await BluetoothManager().isLocationActivated(context);
+                              if (resultat) {
+                                BluetoothManager().scanForDevices(context);
+                              }
+                              else {
+                                toastification.show(
+                                  context: context,
+                                  type: ToastificationType.error,
+                                  style: ToastificationStyle.fillColored,
+                                  title: Text('La demande d\'accès a été refusée.'),
+                                  alignment: Alignment.bottomCenter,
+                                  autoCloseDuration: const Duration(seconds: 7),
+                                  boxShadow: lowModeShadow,
+                                  closeButtonShowType: CloseButtonShowType.none,
+                                  closeOnClick: false,
+                                  dragToClose: true,
+                                  pauseOnHover: false,
+                                  showProgressBar: false,
+                                );
+                              }
+                            },
+                            child: const Text('Autoriser'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+            ),
+          ]
+        )
+      ),
     );
   }
 }

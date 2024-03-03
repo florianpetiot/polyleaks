@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 
 class PopupErreur extends StatelessWidget {
   final int idErreur;
@@ -7,24 +8,88 @@ class PopupErreur extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    IconData iconData;
+    Color? iconColor;
+    String title;
+    String content;
+    List<Widget> actions = [
+       TextButton(
+        child: const Text('Ok'),
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+      )
+    ];
+
+
+    switch (idErreur) {
+
+      case 0:
+      // erreur inconnue
+        iconData = Icons.error;
+        iconColor = Colors.red;
+        title = 'Erreur inconnue';
+        content = 'Une erreur inconnue s\'est produite.';
+        break;
+
+      case 1:
+      // capteur introuvable
+        iconData = Icons.warning;
+        iconColor = Colors.orange;
+        title = 'Capteur introuvable';
+        content = 'Le capteur que vous essayez de joindre n\'est plus à proximité.\nVeuillez vous en raprocher puis réessayer.';
+        break;
+
+      case 2:
+      // capteur non initialisé
+        iconData = Icons.info;
+        iconColor = Colors.blue;
+        title = 'Capteur non initialisé';
+        content = 'Le capteur que vous essayez de joindre n\'a pas été initialisé.\nVeuillez vous rendre dans la partie "Plus" pour l\'initialiser puis réessayer.';
+        break;
+
+      case 3:
+      // permission non accepetée
+        iconData = Icons.settings;
+        title = 'Permission requise';
+        content = 'Pour le bon fonctionnement de cette application, veuiller accorder la permission d\'accès à la localisation GPS.';
+        break;
+
+      case 4:
+      // permission refusée définitivement
+        iconData = Icons.settings;
+        title = 'Permission requise';
+        content = 'Vous avez refusé la permission d\'accès à la localisation GPS de manière définitive.\nPour le bon fonctionnement de cette application, veuiller accorder la permission d\'accès à la localisation GPS dans les paramètres de votre appareil.';
+        actions = [
+          TextButton(
+            child: const Text('Aller aux paramètres'),
+            onPressed: () async {
+              await Geolocator.openAppSettings();
+              Navigator.of(context).pop();
+            },
+          ),
+          TextButton(
+            child: const Text('Abandonner'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          )
+        ];
+        break;
+
+      default:
+      // erreur inconnue
+        iconData = Icons.error;
+        iconColor = Colors.red;
+        title = 'Erreur inconnue';
+        content = 'Une erreur inconnue s\'est produite.';
+    }
 
     return AlertDialog(
-      icon: idErreur == 1 ? const Icon(Icons.warning) : const Icon(Icons.info),
-      iconColor: idErreur == 1 ? Colors.orange : Colors.blue,
-      title:
-          idErreur == 1 ? const Text('Capteur introuvable') : const Text('Capteur non initialisé'),
-      content: idErreur == 1
-          ? const Text('Le capteur que vous essayez de joindre n\'est plus à proximité.\nVeuillez vous en raprocher puis réessayer.')
-          : const Text('Le capteur que vous essayez de joindre n\'a pas été initialisé.\nVeuillez vous rendre dans la partie "Plus" pour l\'initialiser puis réessayer.'),
-      actions: [
-        TextButton(
-          child: Text('Ok'),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ],
+      icon: Icon(iconData, color: iconColor),
+      title: Text(title),
+      content: Text(content),
+      actions: actions,
     );
-
   }
 }
