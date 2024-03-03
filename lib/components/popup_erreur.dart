@@ -76,6 +76,13 @@ class PopupErreur extends StatelessWidget {
           )
         ];
         break;
+      
+      case 5:
+        // activation manuelle du bluetooth
+        iconData = Icons.bluetooth_rounded;
+        title = 'Bluetooth désactivé';
+        content = 'Pour le bon fonctionnement de cette application, veuiller activer le Bluetooth de votre appareil.';
+        break;
 
       default:
       // erreur inconnue

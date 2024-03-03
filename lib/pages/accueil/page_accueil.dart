@@ -59,6 +59,7 @@ class _PageAccueilState extends State<PageAccueil> {
   Widget build(BuildContext context) {
     final blacklist = context.watch<CapteurStateNotifier>().blacklist;
     final gpsPermission = context.watch<CapteurStateNotifier>().gpsPermission;
+    final bluetoothPermission = context.watch<CapteurStateNotifier>().bluetoothPermission;
     final capteurState = context.watch<CapteurStateNotifier>();
 
     return SafeArea(
@@ -112,7 +113,7 @@ class _PageAccueilState extends State<PageAccueil> {
 
 
           // Autorisation de la localisation ---------------------------------------
-          if (!gpsPermission && ![CapteurSlotState.connecte, CapteurSlotState.perdu].contains(capteurState.getSlot(1)["state"]) && ![CapteurSlotState.connecte, CapteurSlotState.perdu].contains(capteurState.getSlot(2)["state"]))
+          if ((!gpsPermission || !bluetoothPermission) && ![CapteurSlotState.connecte, CapteurSlotState.perdu].contains(capteurState.getSlot(1)["state"]) && ![CapteurSlotState.connecte, CapteurSlotState.perdu].contains(capteurState.getSlot(2)["state"]))
             ClipRect(
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
@@ -128,7 +129,7 @@ class _PageAccueilState extends State<PageAccueil> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Text(
-                            'Pour le bon fonctionnement de l\'application, veuillez accorder l\'accès à la localisation GPS.',
+                            'Pour le bon fonctionnement de l\'application, veuillez accorder l\'accès à la localisation et au Bluetooth.',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 20,
@@ -138,11 +139,12 @@ class _PageAccueilState extends State<PageAccueil> {
                           const SizedBox(height: 20),
                           ElevatedButton(
                             onPressed: () async {
-                              bool resultat = await BluetoothManager().isLocationActivated(context);
-                              if (resultat) {
+                              bool? resultat1 = await BluetoothManager().isLocationActivated(context);
+                              bool? resultat2 = await BluetoothManager().isBluetoothActivated(context);
+                              if (resultat1 == true && resultat2 == true) {
                                 BluetoothManager().scanForDevices(context);
                               }
-                              else {
+                              else if (resultat1 == false || resultat2 == false) {
                                 toastification.show(
                                   context: context,
                                   type: ToastificationType.error,

@@ -22,7 +22,56 @@ class BluetoothManager {
   List<bool> deconnexionVoulue = [false, false];
   bool isScaning = false;
 
-  Future<bool> isLocationActivated(context) async {
+  
+  Future<bool?> isBluetoothActivated(context) async {
+    final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
+    
+    // verifier si le bluetooth est désactivé
+    if (FlutterBluePlus.adapterStateNow != BluetoothAdapterState.on) {
+
+      // ios - on ne peut pas activer le bluetooth depuis l'application
+      if (defaultTargetPlatform != TargetPlatform.android) {
+        await showDialog(
+          context: context, 
+          builder: (context) => const PopupErreur(idErreur: 5)
+        );
+        capteurState.setBluetoothPermission(false);
+        return null;
+      }
+
+      // android - on tente d'activer le bluetooth
+      else {
+        for (int i = 0; i < 2; i++) {
+          try {
+            await FlutterBluePlus.turnOn();
+            capteurState.setBluetoothPermission(true);
+            return true;
+          }
+          catch (e) {
+            if (i == 0) {
+              await showDialog(
+                context: context, 
+                builder: (context) => const PopupErreur(idErreur: 5)
+              );
+            }
+            else {
+              capteurState.setBluetoothPermission(false);
+              return false;
+            }
+          }
+        }
+      } 
+    }
+    else {
+      capteurState.setBluetoothPermission(true);
+      return true;
+    }
+    capteurState.setBluetoothPermission(false);
+    return false;
+  }
+
+
+  Future<bool?> isLocationActivated(context) async {
   
     final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
 
@@ -32,14 +81,13 @@ class BluetoothManager {
       return true;
     }
 
-    // Check if location permission is granted
-    LocationPermission permissionStatus = await Geolocator.checkPermission();
+    // pour la localisation on a besoin de s'assuerer de la permission avant de regarder si le GPS est activé
 
-    print(permissionStatus);
+    // GESTION PERMISSION --------------------------------------------------------------
+    LocationPermission permissionStatus = await Geolocator.checkPermission();
 
     for (int i = 0; i < 2; i++) {
       if (permissionStatus == LocationPermission.denied) {
-        print("ici");
         if (await Geolocator.requestPermission() != LocationPermission.deniedForever) {
           permissionStatus = await Geolocator.checkPermission(); 
         }
@@ -65,7 +113,7 @@ class BluetoothManager {
         builder: (context) => const PopupErreur(idErreur: 4)
       );
       capteurState.setGpsPermission(false);
-      return false;
+      return null;
     }
 
     if (permissionStatus == LocationPermission.denied) {
@@ -73,7 +121,7 @@ class BluetoothManager {
       return false;
     }
 
-    // Check if GPS is enabled
+    // GESTION DE L'ACTIVATION DU GPS --------------------------------------------------
     if (!(await Geolocator.isLocationServiceEnabled())) {
       try {
         await Geolocator.getCurrentPosition();
@@ -114,14 +162,26 @@ class BluetoothManager {
       print("Bluetooth not supported by this device");
       return;
     }
-
+    
+    // gestion des demandes de permission pour le GPS --------------------------------
     if (capteurState.gpsPermission == false) {
       print("Location not activated");
       return;
     }
 
-    if (!(await isLocationActivated(context))) {
+    if (await isLocationActivated(context) == false) {
       print("Location not activated");
+      return;
+    }
+
+    // gestion des demande de permission pour le bluetooth ----------------------------
+    if (capteurState.bluetoothPermission == false) {
+      print("Bluetooth not activated");
+      return;
+    }
+
+    if (await isBluetoothActivated(context) == false) {
+      print("Bluetooth not activated");
       return;
     }
 

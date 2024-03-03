@@ -9,9 +9,17 @@ class CapteurStateNotifier extends ChangeNotifier {
   final Map<String,dynamic> _slot2 = { "state": CapteurSlotState.recherche, "valeur": 0.0, "nom":0,"derniereConnexion":0, "dateInitialisation":0, "latitude":0, "longitude":0};
   final List<String> _blacklist = [];
   bool _gpsPermission = true;
+  bool _bluetoothPermission = true;
 
 
-  get gpsPermission => _gpsPermission;
+  bool get bluetoothPermission => _bluetoothPermission;
+
+  void setBluetoothPermission(bool permission) {
+    _bluetoothPermission = permission;
+    notifyListeners();
+  }
+
+  bool get gpsPermission => _gpsPermission;
 
   void setGpsPermission(bool permission) {
     _gpsPermission = permission;
