@@ -71,12 +71,13 @@ class BluetoothManager {
   }
 
 
-  Future<bool?> isLocationActivated(context) async {
+  Future<bool?> isLocationActivated(context, {bool? maps}) async {
   
     final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
 
-    // seul les android on besoin de la permission de localisation
-    if (defaultTargetPlatform != TargetPlatform.android) {
+    // seul les android on besoin de la permission de localisation pour le scan bluetooth
+    // les ios ont besoin de la permission pour les cartes
+    if (defaultTargetPlatform != TargetPlatform.android && maps != true) {
       capteurState.setGpsPermission(true);
       return true;
     }
