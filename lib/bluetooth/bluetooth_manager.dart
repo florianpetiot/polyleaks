@@ -410,7 +410,7 @@ class BluetoothManager {
     deconnexionVoulue[slot-1] = true;
     await device.disconnect();
     capteurState.setSlotState(slot, state: CapteurSlotState.recherche);
-    scanForDevices(context);
+    scanForDevices(navigatorKey.currentState!.context);
   }
 
 

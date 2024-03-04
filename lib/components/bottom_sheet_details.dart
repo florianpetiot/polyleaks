@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class BottomSheetDetails extends StatelessWidget {
   final int slot;
@@ -116,10 +117,17 @@ class BottomSheetDetails extends StatelessWidget {
                       Marker(
                         markerId: MarkerId(nomCapteur),
                         position: center,
+                        onTap: () async => await launchUrl(Uri.parse("https://www.google.com/maps/search/?api=1&query=$latitude,$longitude")),
                       ),
                     },
+                    mapToolbarEnabled: false,
                     scrollGesturesEnabled: false,
-                    zoomControlsEnabled: false,
+                    zoomControlsEnabled: true,
+                    zoomGesturesEnabled: false,
+                    onTap: (LatLng latLng) async {
+                      // ouvrir le point dans l'apllication google maps
+                      await launchUrl(Uri.parse("https://www.google.com/maps/search/?api=1&query=$latitude,$longitude"));
+                    },
                   ),
                 ),
               ),

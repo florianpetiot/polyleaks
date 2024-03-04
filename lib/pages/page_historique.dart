@@ -11,11 +11,17 @@ class PageHistorique extends StatefulWidget {
 class _PageHistoriqueState extends State<PageHistorique> {
 
   final LatLng _center = const LatLng(47.217246, -1.553691);
+  late GoogleMapController mapController;
+
+  void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: GoogleMap(
+        onMapCreated: _onMapCreated,
         initialCameraPosition: CameraPosition(
           target: _center,
           zoom: 11.5,

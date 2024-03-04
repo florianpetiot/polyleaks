@@ -129,7 +129,7 @@ class _PageAccueilState extends State<PageAccueil> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Text(
-                            'Pour le bon fonctionnement de l\'application, veuillez accorder l\'accès à la localisation et au Bluetooth.',
+                            'Pour pouvoir démarrer un scan, veuillez accorder l\'accès à la localisation et au Bluetooth.',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 20,
