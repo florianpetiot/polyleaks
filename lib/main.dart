@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:polyleaks/database/polyleaks_database.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
 import 'package:polyleaks/pages/accueil/page_accueil.dart';
-import 'package:polyleaks/pages/page_historique.dart';
+import 'package:polyleaks/pages/historique/page_historique.dart';
 import 'package:polyleaks/pages/page_plus.dart';
 import 'package:provider/provider.dart';
 
