@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:flutter/src/painting/gradient.dart' as grad;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:polyleaks/bluetooth/bluetooth_manager.dart';
@@ -123,7 +124,18 @@ class _PageAccueilState extends State<PageAccueil> {
                     width: double.infinity,
                     height: double.infinity,
                     padding: const EdgeInsets.all(20),
-                    color: Colors.black.withOpacity(0.5),
+                    decoration: BoxDecoration(
+                      gradient: grad.LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                        Colors.transparent,
+                        Colors.black.withOpacity(0.5),
+                        Colors.black.withOpacity(0.5),
+                        Colors.transparent
+                        ],
+                      ),
+                    ),
                     child: Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,

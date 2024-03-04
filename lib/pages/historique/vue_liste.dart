@@ -54,7 +54,7 @@ class _VueListeState extends State<VueListe> {
                           ),
                           child: const Icon(
                             Icons.filter_alt,
-                            color: Colors.blue,
+                            color: Colors.grey,
                           ),
                         ),
                       ),
