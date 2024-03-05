@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:polyleaks/models/capteur_model.dart';
@@ -107,16 +108,19 @@ class PolyleaksDatabase extends ChangeNotifier {
   }
 
 
-  // GET - obtenir une liste de des nom et position des capteurs
+  // GET - obtenir une liste de markers Gmaps des nom et position des capteurs
     /// a utiliser pour afficher sur la carte
-  Future<List<Map<String, dynamic>>> getLocalisationCapteurs() async {
+  Future<Set<Marker>> getLocalisationCapteurs() async {
     final capteurs = await isar.capteurModels.where().findAll();
-    final listeCapteurs = <Map<String, dynamic>>[];
+    final listeCapteurs = <Marker>{};
     for (final capteur in capteurs) {
-      listeCapteurs.add({
-        'nom': capteur.nom,
-        'localisation': capteur.localisation,
-      });
+      listeCapteurs.add(
+        Marker(
+          markerId: MarkerId(capteur.nom),
+          position: LatLng(capteur.localisation[0], capteur.localisation[1]),
+          infoWindow: InfoWindow(title: capteur.nom),
+        ),
+      );
     }
     return listeCapteurs;
   }

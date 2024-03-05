@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:polyleaks/bluetooth/bluetooth_manager.dart';
+import 'package:polyleaks/database/polyleaks_database.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
@@ -24,18 +25,24 @@ class _VueMapsState extends State<VueMaps> {
   bool gpsPermission = false;
   bool cameraAuto = false;
   late StreamSubscription<Position> positionStream;
-
   late GoogleMapController mapController;
+  Set<Marker> _markers = {};
 
   @override
   void initState() {
     super.initState();
     gpsPermission = context.read<CapteurStateNotifier>().gpsPermission;
+    Future.microtask(() async {
+      _markers = await PolyleaksDatabase().getLocalisationCapteurs();
+    });
   }
 
   @override
   void dispose() {
-    positionStream.cancel();
+    // si position stream est actif, le fermer
+    if (gpsTracking) {
+      positionStream.cancel();
+    }
     super.dispose();
   }
 
@@ -126,6 +133,8 @@ class _VueMapsState extends State<VueMaps> {
             compassEnabled: false,
             myLocationEnabled: gpsActive,
             myLocationButtonEnabled: false,
+
+            markers: Set<Marker>.of(_markers),
 
             onCameraIdle: () {
               print("camera move idle");
