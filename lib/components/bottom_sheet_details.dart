@@ -6,12 +6,27 @@ import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:provider/provider.dart';
 
-class BottomSheetDetails extends StatelessWidget {
+class BottomSheetDetails extends StatefulWidget {
   final bool vueMaps;
   final bool vueSlot;
   final String? nom;
   final int? slot;
   const BottomSheetDetails({super.key, required this.vueMaps, required this.vueSlot, this.nom, this.slot});
+
+  @override
+  State<BottomSheetDetails> createState() => _BottomSheetDetailsState();
+}
+
+class _BottomSheetDetailsState extends State<BottomSheetDetails> {
+  Future<Map<String, dynamic>>? detailsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.nom != null) {
+      detailsFuture = PolyleaksDatabase().getDetailsCapteur(widget.nom!);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,12 +40,12 @@ class BottomSheetDetails extends StatelessWidget {
     String derniereConnexionStr = "";
     String dateInitilalisationStr = "";
 
-    int? localSlot = slot;
+    int? localSlot = widget.slot;
 
-    if (nom == context.read<CapteurStateNotifier>().getSlot(1)["nom"]) {
+    if (widget.nom == context.read<CapteurStateNotifier>().getSlot(1)["nom"] && context.read<CapteurStateNotifier>().getSlot(1)["state"] == CapteurSlotState.connecte) {
       localSlot = 1;
     }
-    if (nom == context.read<CapteurStateNotifier>().getSlot(2)["nom"]) {
+    if (widget.nom == context.read<CapteurStateNotifier>().getSlot(2)["nom"] && context.read<CapteurStateNotifier>().getSlot(2)["state"] == CapteurSlotState.connecte) {
       localSlot = 2;
     }
 
@@ -46,16 +61,16 @@ class BottomSheetDetails extends StatelessWidget {
       derniereConnexionStr = DateFormat('dd/MM/yy HH:mm:ss').format(derniereConnexion);
       dateInitilalisationStr = DateFormat('dd/MM/yy HH:mm:ss').format(dateInitilalisation);
 
-      return BottomSheet(nomCapteur: nomCapteur, valeurCapteur: valeurCapteur, derniereConnexionStr: derniereConnexionStr, dateInitilalisationStr: dateInitilalisationStr, vueMaps: vueMaps, vueSlot: vueSlot, center: center, latitude: latitude, longitude: longitude);
+      return BottomSheet(nomCapteur: nomCapteur, valeurCapteur: valeurCapteur, derniereConnexionStr: derniereConnexionStr, dateInitilalisationStr: dateInitilalisationStr, vueMaps: widget.vueMaps, vueSlot: widget.vueSlot, center: center, latitude: latitude, longitude: longitude);
 
     }
 
-    else if (nom != null) {
+    else if (widget.nom != null) {
       return FutureBuilder<Map<String, dynamic>>(
-        future: PolyleaksDatabase().getDetailsCapteur(nom!),
+        future: detailsFuture,
         builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const SizedBox.shrink();
           }
           else if (snapshot.hasError) {
             return Center(child: Text("Erreur: ${snapshot.error}"));
@@ -72,7 +87,7 @@ class BottomSheetDetails extends StatelessWidget {
             center = LatLng(latitude, longitude);
             derniereConnexionStr = DateFormat('dd/MM/yy HH:mm:ss').format(derniereConnexion);
             dateInitilalisationStr = DateFormat('dd/MM/yy HH:mm:ss').format(dateInitilalisation);
-            return BottomSheet(nomCapteur: nomCapteur, valeurCapteur: valeurCapteur, derniereConnexionStr: derniereConnexionStr, dateInitilalisationStr: dateInitilalisationStr, vueMaps: vueMaps, vueSlot: vueSlot, center: center, latitude: latitude, longitude: longitude);
+            return BottomSheet(nomCapteur: nomCapteur, valeurCapteur: valeurCapteur, derniereConnexionStr: derniereConnexionStr, dateInitilalisationStr: dateInitilalisationStr, vueMaps: widget.vueMaps, vueSlot: widget.vueSlot, center: center, latitude: latitude, longitude: longitude);
           }
           }
     );
@@ -226,16 +241,18 @@ class BottomSheet extends StatelessWidget {
                   onTap: () async {
                     await launchUrl(Uri.parse("https://www.google.com/maps/search/?api=1&query=$latitude,$longitude"));
                   },
-                  child: const Row(
-                    children: [
-                      Text("Ouvrir dans Google Maps",
-                        style: TextStyle(
-                          fontSize: 17,
-                          color: Colors.blue,
-                        )),
-                      SizedBox(width: 5),
-                      Icon(Icons.open_in_new, color: Colors.blue, size: 20),
-                    ]
+                  child: const IntrinsicWidth(
+                    child: Row(
+                      children: [
+                        Text("Ouvrir dans Google Maps",
+                          style: TextStyle(
+                            fontSize: 17,
+                            color: Colors.blue,
+                          )),
+                        SizedBox(width: 5),
+                        Icon(Icons.open_in_new, color: Colors.blue, size: 20),
+                      ]
+                    ),
                   ),
                 ),
               ),
