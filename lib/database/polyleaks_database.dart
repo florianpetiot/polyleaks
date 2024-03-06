@@ -110,17 +110,14 @@ class PolyleaksDatabase extends ChangeNotifier {
 
   // GET - obtenir une liste de markers Gmaps des nom et position des capteurs
     /// a utiliser pour afficher sur la carte
-  Future<Set<Marker>> getLocalisationCapteurs() async {
+  Future<List<Map<String, dynamic>>> getLocalisationCapteurs() async {
     final capteurs = await isar.capteurModels.where().findAll();
-    final listeCapteurs = <Marker>{};
+    final listeCapteurs = <Map<String, dynamic>>[];
     for (final capteur in capteurs) {
-      listeCapteurs.add(
-        Marker(
-          markerId: MarkerId(capteur.nom),
-          position: LatLng(capteur.localisation[0], capteur.localisation[1]),
-          infoWindow: InfoWindow(title: capteur.nom),
-        ),
-      );
+      listeCapteurs.add({
+        'nom': capteur.nom,
+        'localisation': capteur.localisation,
+      });
     }
     return listeCapteurs;
   }

@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:polyleaks/bluetooth/bluetooth_manager.dart';
+import 'package:polyleaks/components/bottom_sheet_details.dart';
 import 'package:polyleaks/database/polyleaks_database.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
 import 'package:provider/provider.dart';
@@ -20,21 +21,20 @@ class _VueMapsState extends State<VueMaps> {
   LatLng _cameraPosition = const LatLng(47.217246, -1.553691);
   double _cameraZoom = 11.5;
   double _cameraBearing = 0;
+  double _cameraTilt = 0;
   bool gpsTracking = false;
   bool gpsActive = false;
   bool gpsPermission = false;
   bool cameraAuto = false;
   late StreamSubscription<Position> positionStream;
-  late GoogleMapController mapController;
+  final Completer<GoogleMapController> _controller = Completer<GoogleMapController>();
   Set<Marker> _markers = {};
 
   @override
   void initState() {
     super.initState();
     gpsPermission = context.read<CapteurStateNotifier>().gpsPermission;
-    Future.microtask(() async {
-      _markers = await PolyleaksDatabase().getLocalisationCapteurs();
-    });
+    loadMarkers();
   }
 
   @override
@@ -46,8 +46,24 @@ class _VueMapsState extends State<VueMaps> {
     super.dispose();
   }
 
+  void loadMarkers() async {
+    List<Map<String, dynamic>> capteurs = await PolyleaksDatabase().getLocalisationCapteurs();
+
+    setState(() {
+      _markers = capteurs.map((capteur) => Marker(
+        markerId: MarkerId(capteur["nom"].toString()),
+        position: LatLng(capteur["localisation"][0], capteur["localisation"][1]),
+        // Ajoutez d'autres propriétés du marqueur si nécessaire
+        onTap: () {
+          showBottomSheetDetails(context, vueMaps: false, vueSlot: true, nom: capteur["nom"]);
+        },
+      )).toSet();
+    });
+
+  }
+
   void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
+    _controller.complete(controller);
   }
 
 
@@ -55,7 +71,8 @@ class _VueMapsState extends State<VueMaps> {
   Widget build(BuildContext context) {
 
     // reset bearing and tilt function
-    void resetCamera() {
+    void resetCamera() async {
+      final GoogleMapController mapController = await _controller.future;
       mapController.animateCamera(CameraUpdate.newCameraPosition(
         CameraPosition(
           target: _cameraPosition,
@@ -71,6 +88,7 @@ class _VueMapsState extends State<VueMaps> {
 
     void followPosition() async {
       final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
+      final GoogleMapController mapController = await _controller.future;
 
       if (await BluetoothManager().isLocationActivated(context, maps: true) != true) {
         setState(() {
@@ -131,10 +149,11 @@ class _VueMapsState extends State<VueMaps> {
             ),
             zoomControlsEnabled: false,
             compassEnabled: false,
+            mapToolbarEnabled: false,
             myLocationEnabled: gpsActive,
             myLocationButtonEnabled: false,
 
-            markers: Set<Marker>.of(_markers),
+            markers: _markers,
 
             onCameraIdle: () {
               print("camera move idle");
@@ -157,6 +176,7 @@ class _VueMapsState extends State<VueMaps> {
                 _cameraPosition = position.target;
                 _cameraZoom = position.zoom;
                 _cameraBearing = position.bearing;
+                _cameraTilt = position.tilt;
               });
             },
           ),
@@ -190,11 +210,16 @@ class _VueMapsState extends State<VueMaps> {
                                 width: 2,
                               ),
                             ),
-                            child: Transform.rotate(
-                              angle: _cameraBearing*-3.145926/180,
-                              child: Icon(
-                                Icons.north,
-                                color: Colors.grey[600],
+                            child: Transform(
+                              alignment: Alignment.center,
+                              // tilt the compass icon to match the camera tilt
+                              transform: Matrix4.rotationX(_cameraTilt*-3.145926/180),
+                              child: Transform.rotate(
+                                angle: _cameraBearing*-3.145926/180,
+                                child: Icon(
+                                  Icons.north,
+                                  color: Colors.grey[600],
+                                ),
                               ),
                             ),
                           ),

@@ -178,7 +178,7 @@ class _CarteCapteurPerduState extends State<CarteCapteurPerdu> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton(
-                      onPressed: () => showBottomSheetDetails(context, widget.slot),
+                      onPressed: () => showBottomSheetDetails(context, vueMaps: true, vueSlot: false, slot: widget.slot),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF8A8A8A),
                         shape: RoundedRectangleBorder(
