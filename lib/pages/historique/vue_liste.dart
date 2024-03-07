@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:polyleaks/components/bottom_sheet_details.dart';
 import 'package:polyleaks/database/polyleaks_database.dart';
+import 'package:polyleaks/pages/historique/bouton_filtre.dart';
+import 'package:popover/popover.dart';
 
 enum Tri { numerologique, mesure, derniereConnexion, dateInitialisation, distance }
 
@@ -14,6 +16,7 @@ class VueListe extends StatefulWidget {
 }
 
 class _VueListeState extends State<VueListe> {
+  final GlobalKey _clipRRectKey = GlobalKey();
   List<Map<String, dynamic>>? capteurs;
   final ScrollController _scrollController = ScrollController();
   bool decroissant = false;
@@ -34,6 +37,7 @@ class _VueListeState extends State<VueListe> {
   }
 
   void nouveauTri() {
+    print('nouveauTri');
     setState(() {
       switch (tri) {
       case Tri.numerologique:
@@ -145,7 +149,7 @@ class _VueListeState extends State<VueListe> {
                               height: 75,
                               child: Scrollbar(
                                 thumbVisibility: true,
-                                thickness: 1.5,
+                                thickness: 1,
                                 controller: _scrollController,  
                                 child: PageView(
                                   children : buildCapteurDetails(capteur).map((text){
@@ -226,38 +230,40 @@ class _VueListeState extends State<VueListe> {
                     ),
 
                     ClipRRect(
+                    key: _clipRRectKey,
                     borderRadius: BorderRadius.circular(30),
                     child: BackdropFilter(
                       filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                      child:Container(
-                        height: 54,
-                        width: 54,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.5),
-                          borderRadius: BorderRadius.circular(30),
-                          border: Border.all(
-                            color: Colors.grey.withOpacity(0.2),
-                            width: 2,
-                          ),
-                        ),
-                        child: PopupMenuButton(
-                          initialValue: tri,
-                          onSelected: (value) {
-                            setState(() {
-                              tri = value as Tri;
-                            });
-                            nouveauTri();
+                      child:GestureDetector(
+                        onTap: () { showPopover(context: _clipRRectKey.currentContext!, 
+                          bodyBuilder: (context) {
+                            return SizedBox(
+                              height: 280,
+                              width: 245,
+                              child: listeTri(),
+                            );
                           },
-                          icon: Icon(
+                          direction: PopoverDirection.top,
+                        );},
+                        child: Container(
+                          height: 54,
+                          width: 54,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.5),
+                            borderRadius: BorderRadius.circular(30),
+                            border: Border.all(
+                              color: Colors.grey.withOpacity(0.2),
+                              width: 2,
+                            ),
+                          ),
+                          child: Icon(
                             Icons.filter_alt_rounded,
                             color: Colors.grey[600],
                           ),
-                          itemBuilder: (BuildContext context) => listeTriPossible,
-                          // offset: const Offset(0, -270),
-                          ),
-                        )
+                        ),
+                      )
                       ),  
-                    ),          
+                    ),        
                   ],
                 ),
               )
@@ -268,62 +274,95 @@ class _VueListeState extends State<VueListe> {
     );
   }
 
+  Widget listeTri() {
+    return Material(
+      child: Column(
+        children: [
+          // numérologique
+          InkWell(
+            onTap: () {
+              setState(() {
+                tri = Tri.numerologique;
+              });
+              nouveauTri();
+              Navigator.pop(context);
+            },
+            child: ListTile(
+              title: Text('Numérologique'),
+              leading: Icon(Icons.numbers),
+              iconColor: tri == Tri.numerologique ? Colors.blue : Colors.grey,
+            ),
+          ),
+          
+          // mesure
+          InkWell(
+            onTap: () {
+              setState(() {
+                tri = Tri.mesure;
+              });
+              nouveauTri();
+              Navigator.pop(context);
+            },
+            child: ListTile(
+              title: Text('Mesure'),
+              leading: Icon(Icons.speed),
+              iconColor: tri == Tri.mesure ? Colors.blue : Colors.grey,
+            ),
+          ),
 
-  List<PopupMenuEntry<dynamic>> get listeTriPossible {
-    return <PopupMenuEntry>[
-      const PopupMenuItem(
-        value: Tri.numerologique,
-        child: Row(
-          children: [
-            Icon(Icons.numbers),
-            SizedBox(width: 10),
-            Text('Numérologique')
-            ]
+          // dernière connexion
+          InkWell(
+            onTap: () {
+              setState(() {
+                tri = Tri.derniereConnexion;
+              });
+              nouveauTri();
+              Navigator.pop(context);
+            },
+            child: ListTile(
+              title: Text('Dernière connexion'),
+              leading: Icon(Icons.access_time),
+              iconColor: tri == Tri.derniereConnexion ? Colors.blue : Colors.grey,
+            ),
           ),
-        ),
-      const PopupMenuItem(
-        value: Tri.mesure,
-        child: Row(
-          children: [
-            Icon(Icons.speed),
-            SizedBox(width: 10),
-            Text('Mesure')
-            ]
+
+          // date d'initialisation
+          InkWell(
+            onTap: () {
+              setState(() {
+                tri = Tri.dateInitialisation;
+              });
+              nouveauTri();
+              Navigator.pop(context);
+            },
+            child: ListTile(
+              title: Text('Date d\'initialisation'),
+              leading: Icon(Icons.calendar_today),
+              iconColor: tri == Tri.dateInitialisation ? Colors.blue : Colors.grey,
+            ),
           ),
-        ),
-      const PopupMenuItem(
-        value: Tri.derniereConnexion,
-        child: Row(
-          children: [
-            Icon(Icons.bluetooth_connected_rounded),
-            SizedBox(width: 10),
-            Text('Dernière connexion')
-            ]
+
+          // distance
+          InkWell(
+            onTap: () {
+              setState(() {
+                tri = Tri.distance;
+              });
+              nouveauTri();
+              Navigator.pop(context);
+            },
+            child: ListTile(
+              title: Text('Distance'),
+              leading: Icon(Icons.place),
+              iconColor: tri == Tri.distance ? Colors.blue : Colors.grey,
+            ),
           ),
-        ),
-      const PopupMenuItem(
-        value: Tri.dateInitialisation,
-        child: Row(
-          children: [
-            Icon(Icons.calendar_today_rounded),
-            SizedBox(width: 10),
-            Text('Date d\'initialisation')
-            ]
-          ),
-        ),
-      const PopupMenuItem(
-        value: Tri.distance,
-        child: Row(
-          children: [
-            Icon(Icons.location_on_rounded),
-            SizedBox(width: 10),
-            Text('Distance')
-            ]
-          ),
-        ),
-    ];
+        ]
+      ),
+    );
   }
-  
+
+
 
   List<String> buildCapteurDetails(Map<String, dynamic> capteur) {
     final List<String> details = [];
