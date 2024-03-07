@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:polyleaks/components/bottom_sheet_details.dart';
 import 'package:polyleaks/database/polyleaks_database.dart';
-import 'package:polyleaks/pages/historique/bouton_filtre.dart';
 import 'package:popover/popover.dart';
 
 enum Tri { numerologique, mesure, derniereConnexion, dateInitialisation, distance }
