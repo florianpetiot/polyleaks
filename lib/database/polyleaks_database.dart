@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:polyleaks/models/capteur_model.dart';
@@ -123,7 +122,7 @@ class PolyleaksDatabase extends ChangeNotifier {
   }
 
 
-  // GET - obtenir tous les details dde tous les capteurs sous forme de Map
+  // GET - obtenir tous les details de tous les capteurs sous forme de Map
     /// a utiliser pour afficher les details de tous les capteurs
   Future<List<Map<String, dynamic>>> getDetailsCapteurs() async {
     final capteurs = await isar.capteurModels.where().findAll();

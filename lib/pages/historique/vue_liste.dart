@@ -1,6 +1,10 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:polyleaks/components/bottom_sheet_details.dart';
+import 'package:polyleaks/database/polyleaks_database.dart';
+
+enum Tri { numerologique, mesure, derniereConnexion, dateInitialisation, distance }
 
 class VueListe extends StatefulWidget {
   const VueListe({super.key});
@@ -10,20 +14,166 @@ class VueListe extends StatefulWidget {
 }
 
 class _VueListeState extends State<VueListe> {
+  List<Map<String, dynamic>>? capteurs;
+  final ScrollController _scrollController = ScrollController();
+  bool decroissant = false;
+  var tri = Tri.numerologique;
+
+  @override
+  void initState() {
+    super.initState();
+    loadCapteurs();
+  }
+
+  void loadCapteurs() {
+    Future.microtask(() async {
+      capteurs = await PolyleaksDatabase().getDetailsCapteurs();
+      nouveauTri();
+      setState(() {});
+    });
+  }
+
+  void nouveauTri() {
+    setState(() {
+      switch (tri) {
+      case Tri.numerologique:
+        capteurs!.sort((a, b) {
+          var aNum = int.parse(a['nom'].split('-').last);
+          var bNum = int.parse(b['nom'].split('-').last);
+          return aNum.compareTo(bNum);
+        });
+        break;
+      case Tri.mesure:
+        capteurs!.sort((a, b) => a['valeur'].compareTo(b['valeur']));
+        break;
+      case Tri.derniereConnexion:
+        capteurs!.sort((a, b) => a['dateDerniereConnexion'].compareTo(b['dateDerniereConnexion']));
+        break;
+      case Tri.dateInitialisation:
+        capteurs!.sort((a, b) => a['dateInitialisation'].compareTo(b['dateInitialisation']));
+        break;
+      case Tri.distance:
+        capteurs!.sort((a, b) => a['localisation'][0].compareTo(b['localisation'][0]));
+        break;
+    }
+    if (decroissant) {
+      capteurs  = capteurs!.reversed.toList();
+    }
+
+    });
+  }
+
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: <Widget>[
 
-          const Center(
-            child: Text(
-              'Liste des capteurs',
-              style: TextStyle(
-                fontSize: 18
-              ),
-            ),
-          ),
+          if (capteurs == null)
+            const Center(
+              child: CircularProgressIndicator(),
+            )
+
+          else if (capteurs!.isEmpty)
+            const Center(
+              child: Text('Aucun capteur dans la base de données'),
+            )
+
+          else
+            ListView.builder(
+              itemCount: capteurs!.length + 1,
+              itemBuilder: (context, index) {
+
+                // si on a atteint la fin de la liste, on retourne un espace vide
+                // pour ne pas se supperposer avec le menu
+                if (index == capteurs!.length) {
+                  return const SizedBox(height: 80);
+                }
+
+                final capteur = capteurs![index];
+
+                return GestureDetector(
+                  onTap: () => showBottomSheetDetails(context, vueMaps: true, vueSlot: true, nom: capteur['nom']),
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: Colors.grey.withOpacity(0.3),
+                        width: 2,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.2),
+                          spreadRadius: 2,
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Stack(
+                          children: [
+
+                            // titre
+                            Padding(
+                              padding: const EdgeInsets.only(top: 16),
+                              child: Text(
+                                capteur['nom'],
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+
+                            // sous-titre
+                            SizedBox(
+                              width: 300,
+                              height: 75,
+                              child: Scrollbar(
+                                thumbVisibility: true,
+                                thickness: 1.5,
+                                controller: _scrollController,  
+                                child: PageView(
+                                  children : buildCapteurDetails(capteur).map((text){
+                                    return Padding(
+                                      padding: const EdgeInsets.only(top: 40),
+                                      child: Text(
+                                        text,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    );
+                                  }).toList()
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          color: Colors.grey,
+                        ),
+                      ]
+                    ),
+                  ),
+                );
+              }),
 
 
           // navigation tools
@@ -35,30 +185,79 @@ class _VueListeState extends State<VueListe> {
                 height: 54,
                 width: 245,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(30),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                        child: Container(
-                          height: 54,
-                          width: 54,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.5),
-                            borderRadius: BorderRadius.circular(30),
-                            border: Border.all(
-                              color: Colors.grey.withOpacity(0.2),
-                              width: 2,
+
+                    // croissant / decroissant
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          decroissant = !decroissant;
+                          // print(decroissant);
+                        });
+                        nouveauTri();
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(30),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                          child: Container(
+                            height: 54,
+                            width: 54,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.5),
+                              borderRadius: BorderRadius.circular(30),
+                              border: Border.all(
+                                color: Colors.grey.withOpacity(0.2),
+                                width: 2,
+                              ),
                             ),
-                          ),
-                          child: const Icon(
-                            Icons.filter_alt,
-                            color: Colors.grey,
+                            child: Transform(
+                              alignment: Alignment.center,
+                              transform: Matrix4.rotationZ(decroissant ? 3.145926 : 0),
+                              child: Icon(
+                                Icons.north,
+                                color: Colors.grey[600],
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
+
+                    ClipRRect(
+                    borderRadius: BorderRadius.circular(30),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                      child:Container(
+                        height: 54,
+                        width: 54,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.5),
+                          borderRadius: BorderRadius.circular(30),
+                          border: Border.all(
+                            color: Colors.grey.withOpacity(0.2),
+                            width: 2,
+                          ),
+                        ),
+                        child: PopupMenuButton(
+                          initialValue: tri,
+                          onSelected: (value) {
+                            setState(() {
+                              tri = value as Tri;
+                            });
+                            nouveauTri();
+                          },
+                          icon: Icon(
+                            Icons.filter_alt_rounded,
+                            color: Colors.grey[600],
+                          ),
+                          itemBuilder: (BuildContext context) => listeTriPossible,
+                          // offset: const Offset(0, -270),
+                          ),
+                        )
+                      ),  
+                    ),          
                   ],
                 ),
               )
@@ -67,5 +266,71 @@ class _VueListeState extends State<VueListe> {
         ]
       ),
     );
+  }
+
+
+  List<PopupMenuEntry<dynamic>> get listeTriPossible {
+    return <PopupMenuEntry>[
+      const PopupMenuItem(
+        value: Tri.numerologique,
+        child: Row(
+          children: [
+            Icon(Icons.numbers),
+            SizedBox(width: 10),
+            Text('Numérologique')
+            ]
+          ),
+        ),
+      const PopupMenuItem(
+        value: Tri.mesure,
+        child: Row(
+          children: [
+            Icon(Icons.speed),
+            SizedBox(width: 10),
+            Text('Mesure')
+            ]
+          ),
+        ),
+      const PopupMenuItem(
+        value: Tri.derniereConnexion,
+        child: Row(
+          children: [
+            Icon(Icons.bluetooth_connected_rounded),
+            SizedBox(width: 10),
+            Text('Dernière connexion')
+            ]
+          ),
+        ),
+      const PopupMenuItem(
+        value: Tri.dateInitialisation,
+        child: Row(
+          children: [
+            Icon(Icons.calendar_today_rounded),
+            SizedBox(width: 10),
+            Text('Date d\'initialisation')
+            ]
+          ),
+        ),
+      const PopupMenuItem(
+        value: Tri.distance,
+        child: Row(
+          children: [
+            Icon(Icons.location_on_rounded),
+            SizedBox(width: 10),
+            Text('Distance')
+            ]
+          ),
+        ),
+    ];
+  }
+  
+
+  List<String> buildCapteurDetails(Map<String, dynamic> capteur) {
+    final List<String> details = [];
+    details.add('Valeur : ${capteur['valeur']}');
+    details.add('Derniere connexion : ${DateFormat('dd/MM/yy HH:mm:ss').format(capteur['dateDerniereConnexion'])}');
+    details.add('Date d\'initialisation : ${DateFormat('dd/MM/yy HH:mm:ss').format(capteur['dateInitialisation'])}');
+    details.add('Localisation : ${capteur['localisation'][0]}, ${capteur['localisation'][1]}');
+    return details;
   }
 }

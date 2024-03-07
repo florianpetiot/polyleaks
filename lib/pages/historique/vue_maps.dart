@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:polyleaks/bluetooth/bluetooth_manager.dart';
 import 'package:polyleaks/components/bottom_sheet_details.dart';
@@ -216,9 +217,11 @@ class _VueMapsState extends State<VueMaps> {
                               transform: Matrix4.rotationX(_cameraTilt*-3.145926/180),
                               child: Transform.rotate(
                                 angle: _cameraBearing*-3.145926/180,
-                                child: Icon(
-                                  Icons.north,
-                                  color: Colors.grey[600],
+                                child: Container(
+                                  padding: EdgeInsets.all(12),
+                                  child: SvgPicture.asset(
+                                    "assets/compass.svg",
+                                  ),
                                 ),
                               ),
                             ),
