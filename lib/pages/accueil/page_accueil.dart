@@ -98,6 +98,9 @@ class _PageAccueilState extends State<PageAccueil> {
                           onChanged: (value) => changerEtat(value),
                         ),
                     
+                    detectionFuiteTexte(capteurState),
+                      
+                    
                     (blacklist.isNotEmpty && (capteurState.getSlot(1)["state"] == CapteurSlotState.recherche || capteurState.getSlot(2)["state"] == CapteurSlotState.recherche))
                       ? ElevatedButton(
                           onPressed: () {
@@ -185,5 +188,22 @@ class _PageAccueilState extends State<PageAccueil> {
         )
       ),
     );
+  }
+
+
+  Widget detectionFuiteTexte(CapteurStateNotifier capteurState) {
+
+    double incoherence = 2*0.03*capteurState.getSlot(1)["valeur"];
+    double difference = (capteurState.getSlot(1)["valeur"] - capteurState.getSlot(2)["valeur"]).abs();
+
+    if (!([CapteurSlotState.connecte, CapteurSlotState.perdu].contains(capteurState.getSlot(1)["state"])) || !([CapteurSlotState.connecte, CapteurSlotState.perdu].contains(capteurState.getSlot(2)["state"]))) {
+      return const Text('Connectez vous à deux capteurs pour commencer.');
+    }
+    else if (difference > incoherence) {
+      return const Text('Fuite détectée.');
+    }
+    else {
+      return const Text('Aucune fuite détectée.');
+    }
   }
 }

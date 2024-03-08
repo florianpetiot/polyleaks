@@ -37,7 +37,7 @@ class PopupErreur extends StatelessWidget {
         iconData = Icons.warning;
         iconColor = Colors.orange;
         title = 'Capteur introuvable';
-        content = 'Le capteur que vous essayez de joindre n\'est plus à proximité.\nVeuillez vous en raprocher puis réessayer.';
+        content = 'Le capteur que vous essayez de joindre n\'est plus à proximité.\nVeuillez vous en raprocher puis réessayez.';
         break;
 
       case 2:
@@ -45,7 +45,7 @@ class PopupErreur extends StatelessWidget {
         iconData = Icons.info;
         iconColor = Colors.blue;
         title = 'Capteur non initialisé';
-        content = 'Le capteur que vous essayez de joindre n\'a pas été initialisé.\nVeuillez vous rendre dans la partie "Plus" pour l\'initialiser puis réessayer.';
+        content = 'Le capteur que vous essayez de joindre n\'a pas été initialisé.\nVeuillez vous rendre dans la partie "Plus" pour l\'initialiser puis réessayez.';
         break;
 
       case 3:
@@ -69,7 +69,7 @@ class PopupErreur extends StatelessWidget {
             },
           ),
           TextButton(
-            child: const Text('Abandonner'),
+            child: const Text('Ignorer'),
             onPressed: () {
               Navigator.of(context).pop();
             },

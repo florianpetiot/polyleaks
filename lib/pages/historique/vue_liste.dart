@@ -427,7 +427,7 @@ class _VueListeState extends State<VueListe> {
 
     details.add(
       Text(
-        'Mesure : $valeur',
+        'Mesure : ${valeur}L/s',
         style: const TextStyle(
           fontSize: 14,
           color: Colors.grey,

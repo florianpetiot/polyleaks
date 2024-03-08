@@ -98,7 +98,7 @@ class CarteCapteurConnecte extends StatelessWidget {
                   ),
                 ),
                 const Text(
-                  'm/s',
+                  'L/s',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -137,7 +137,7 @@ class CarteCapteurConnecte extends StatelessWidget {
                           borderRadius: BorderRadius.circular(15),
                         ),
                       ),
-                      child: const Icon(Icons.cancel, color: Colors.white)
+                      child: const Icon(Icons.highlight_off, color: Colors.white)
                     ),
                 ],
               ),

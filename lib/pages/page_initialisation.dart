@@ -49,7 +49,7 @@ class _PageInitialisationCapteurState extends State<PageInitialisationCapteur> {
           title: const Text('initialisation du capteur'),
           content: Container(
             alignment: Alignment.centerLeft,
-            child : const Text('selectionner votre capteur'),
+            child : const Text('selectionnez votre capteur'),
         )),
       ],
     ));

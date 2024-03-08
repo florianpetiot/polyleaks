@@ -162,7 +162,7 @@ class BottomSheet extends StatelessWidget {
                   // Valeur
                   Align(
                     alignment: Alignment.centerLeft,
-                    child: Text("Mesure : ${valeurCapteur}m/s",
+                    child: Text("Mesure : ${valeurCapteur}L/s",
                         style: const TextStyle(
                           fontSize: 17,
                         )),
