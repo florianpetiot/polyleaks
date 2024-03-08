@@ -1,9 +1,14 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:polyleaks/components/bottom_sheet_details.dart';
 import 'package:polyleaks/database/polyleaks_database.dart';
+import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
 import 'package:popover/popover.dart';
+import 'package:provider/provider.dart';
+import 'package:toastification/toastification.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 enum Tri { numerologique, mesure, derniereConnexion, dateInitialisation, distance }
 
@@ -21,6 +26,7 @@ class _VueListeState extends State<VueListe> {
   final List<PageController> _pageControllers = [];
   bool decroissant = false;
   var tri = Tri.numerologique;
+  late Position positionGps;
 
   @override
   void initState() {
@@ -63,7 +69,11 @@ class _VueListeState extends State<VueListe> {
         pageIndex = 2;
         break;
       case Tri.distance:
-        capteurs!.sort((a, b) => a['localisation'][0].compareTo(b['localisation'][0]));
+        capteurs!.sort((a, b) {
+          var aDistance = Geolocator.distanceBetween(a['localisation'][0], a['localisation'][1], positionGps.latitude, positionGps.longitude);
+          var bDistance = Geolocator.distanceBetween(b['localisation'][0], b['localisation'][1], positionGps.latitude, positionGps.longitude);
+          return aDistance.compareTo(bDistance);
+        });
         pageIndex = 3;
         break;
     }
@@ -170,16 +180,10 @@ class _VueListeState extends State<VueListe> {
                                 controller: _scrollController,  
                                 child: PageView(
                                   controller: _pageControllers[index],
-                                  children : buildCapteurDetails(capteur).map((text){
+                                  children : buildCapteurDetails(capteur).map((widget){
                                     return Padding(
                                       padding: const EdgeInsets.only(top: 40),
-                                      child: Text(
-                                        text,
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
+                                      child: widget
                                     );
                                   }).toList()
                                 ),
@@ -306,8 +310,8 @@ class _VueListeState extends State<VueListe> {
               Navigator.pop(context);
             },
             child: ListTile(
-              title: Text('Numérologique'),
-              leading: Icon(Icons.numbers),
+              title: const Text('Numérologique'),
+              leading: const Icon(Icons.numbers),
               iconColor: tri == Tri.numerologique ? Colors.blue : Colors.grey,
             ),
           ),
@@ -322,8 +326,8 @@ class _VueListeState extends State<VueListe> {
               Navigator.pop(context);
             },
             child: ListTile(
-              title: Text('Mesure'),
-              leading: Icon(Icons.speed),
+              title: const Text('Mesure'),
+              leading: const Icon(Icons.speed),
               iconColor: tri == Tri.mesure ? Colors.blue : Colors.grey,
             ),
           ),
@@ -338,8 +342,8 @@ class _VueListeState extends State<VueListe> {
               Navigator.pop(context);
             },
             child: ListTile(
-              title: Text('Dernière connexion'),
-              leading: Icon(Icons.access_time),
+              title: const Text('Dernière connexion'),
+              leading: const Icon(Icons.access_time),
               iconColor: tri == Tri.derniereConnexion ? Colors.blue : Colors.grey,
             ),
           ),
@@ -354,24 +358,44 @@ class _VueListeState extends State<VueListe> {
               Navigator.pop(context);
             },
             child: ListTile(
-              title: Text('Date d\'initialisation'),
-              leading: Icon(Icons.calendar_today),
+              title: const Text('Date d\'initialisation'),
+              leading: const Icon(Icons.calendar_today),
               iconColor: tri == Tri.dateInitialisation ? Colors.blue : Colors.grey,
             ),
           ),
 
           // distance
           InkWell(
-            onTap: () {
-              setState(() {
-                tri = Tri.distance;
-              });
-              nouveauTri();
+            onTap: () async {
+              try {
+                var newPermission = await Geolocator.getCurrentPosition();
+                setState(() {
+                  positionGps = newPermission;
+                  tri = Tri.distance;
+                });
+                nouveauTri();
+              }
+              catch (e) {
+                toastification.show(
+                  context: context,
+                  type: ToastificationType.error,
+                  style: ToastificationStyle.fillColored,
+                  title: Text('La demande d\'accès a été refusée.'),
+                  alignment: Alignment.bottomCenter,
+                  autoCloseDuration: const Duration(seconds: 5),
+                  boxShadow: lowModeShadow,
+                  closeButtonShowType: CloseButtonShowType.none,
+                  closeOnClick: false,
+                  dragToClose: true,
+                  pauseOnHover: false,
+                  showProgressBar: false,
+                );
+              }
               Navigator.pop(context);
             },
             child: ListTile(
-              title: Text('Distance'),
-              leading: Icon(Icons.place),
+              title: const Text('Distance'),
+              leading: const Icon(Icons.place),
               iconColor: tri == Tri.distance ? Colors.blue : Colors.grey,
             ),
           ),
@@ -382,12 +406,107 @@ class _VueListeState extends State<VueListe> {
 
 
 
-  List<String> buildCapteurDetails(Map<String, dynamic> capteur) {
-    final List<String> details = [];
-    details.add('Mesure : ${capteur['valeur']}');
-    details.add('Derniere connexion : ${DateFormat('dd/MM/yy HH:mm:ss').format(capteur['dateDerniereConnexion'])}');
-    details.add('Date d\'initialisation : ${DateFormat('dd/MM/yy HH:mm:ss').format(capteur['dateInitialisation'])}');
-    details.add('Localisation : ${capteur['localisation'][0]}, ${capteur['localisation'][1]}');
+  List<Widget> buildCapteurDetails(Map<String, dynamic> capteur) {
+    final List<Widget> details = [];
+    var valeur = capteur['valeur'];;
+    DateTime dateDerniereConnexion = capteur['dateDerniereConnexion'];
+    double? distance;
+    String? distanceString;
+
+    if (capteur['nom'] == context.read<CapteurStateNotifier>().getSlot(1)["nom"] && context.read<CapteurStateNotifier>().getSlot(1)["state"] == CapteurSlotState.connecte) {
+      print("slot 1");
+      valeur = context.watch<CapteurStateNotifier>().getSlot(1)["valeur"];
+      dateDerniereConnexion = context.watch<CapteurStateNotifier>().getSlot(1)["derniereConnexion"];
+    }
+
+    else if (capteur['nom'] == context.read<CapteurStateNotifier>().getSlot(2)["nom"] && context.read<CapteurStateNotifier>().getSlot(2)["state"] == CapteurSlotState.connecte) {
+      valeur = context.watch<CapteurStateNotifier>().getSlot(2)["valeur"];
+      dateDerniereConnexion = context.watch<CapteurStateNotifier>().getSlot(2)["derniereConnexion"];
+    }
+
+
+    details.add(
+      Text(
+        'Mesure : $valeur',
+        style: const TextStyle(
+          fontSize: 14,
+          color: Colors.grey,
+        ),
+      ),
+    );
+
+    details.add(
+      Text(
+        'Derniere connexion : ${DateFormat('dd/MM/yy HH:mm:ss').format(dateDerniereConnexion)}',
+        style: const TextStyle(
+          fontSize: 14,
+          color: Colors.grey,
+        ),
+      ),
+    );
+    
+
+    details.add(
+      Text(
+        'Date d\'initialisation : ${DateFormat('dd/MM/yy HH:mm:ss').format(capteur['dateInitialisation'])}',
+        style: const TextStyle(
+          fontSize: 14,
+          color: Colors.grey,
+        ),
+      ),
+    );
+
+    // texte "ouvrir dans google maps"
+
+    if (tri == Tri.distance) {
+      distance = Geolocator.distanceBetween(capteur['localisation'][0], capteur['localisation'][1], positionGps.latitude, positionGps.longitude);
+      distanceString = distance > 1000 ? "à ${(distance / 1000).toStringAsFixed(2)} kilomètres" : "à ${distance.toStringAsFixed(2)} mètres";
+    }
+
+    details.add(
+      Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [   
+          const Text("Localisation : ",
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey,
+            )
+          ),
+
+          if (tri == Tri.distance) 
+          Text(
+            distanceString!,
+            style: const TextStyle(
+              fontSize: 14,
+              color: Colors.grey,
+            ),
+          )
+          
+
+          else
+          GestureDetector(
+            onTap: () async {
+              await launchUrl(Uri.parse("https://www.google.com/maps/search/?api=1&query=${capteur['localisation'][0]},${capteur['localisation'][1]}"));
+            },
+            child: const IntrinsicWidth(
+              child: Row(
+                children: [
+                  Text("Ouvrir dans Google Maps",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.blue,
+                    )),
+                  SizedBox(width: 5),
+                  Icon(Icons.open_in_new, color: Colors.blue, size: 14),
+                ]
+              ),
+            ),
+          ),
+        ],
+      ),
+    ); 
+
     return details;
   }
 }
