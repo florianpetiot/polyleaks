@@ -18,6 +18,7 @@ class _VueListeState extends State<VueListe> {
   final GlobalKey _clipRRectKey = GlobalKey();
   List<Map<String, dynamic>>? capteurs;
   final ScrollController _scrollController = ScrollController();
+  final List<PageController> _pageControllers = [];
   bool decroissant = false;
   var tri = Tri.numerologique;
 
@@ -30,13 +31,15 @@ class _VueListeState extends State<VueListe> {
   void loadCapteurs() {
     Future.microtask(() async {
       capteurs = await PolyleaksDatabase().getDetailsCapteurs();
+      _pageControllers.addAll(List.generate(capteurs!.length, (index) => PageController()));
       nouveauTri();
       setState(() {});
     });
   }
 
   void nouveauTri() {
-    print('nouveauTri');
+    int pageIndex;
+
     setState(() {
       switch (tri) {
       case Tri.numerologique:
@@ -45,20 +48,32 @@ class _VueListeState extends State<VueListe> {
           var bNum = int.parse(b['nom'].split('-').last);
           return aNum.compareTo(bNum);
         });
+        pageIndex = 0;
         break;
       case Tri.mesure:
         capteurs!.sort((a, b) => a['valeur'].compareTo(b['valeur']));
+        pageIndex = 0;
         break;
       case Tri.derniereConnexion:
         capteurs!.sort((a, b) => a['dateDerniereConnexion'].compareTo(b['dateDerniereConnexion']));
+        pageIndex = 1;
         break;
       case Tri.dateInitialisation:
         capteurs!.sort((a, b) => a['dateInitialisation'].compareTo(b['dateInitialisation']));
+        pageIndex = 2;
         break;
       case Tri.distance:
         capteurs!.sort((a, b) => a['localisation'][0].compareTo(b['localisation'][0]));
+        pageIndex = 3;
         break;
     }
+    
+    for (var i = 0; i < capteurs!.length; i++) {
+      if(_pageControllers[i].hasClients) {
+        _pageControllers[i].animateToPage(pageIndex, duration: const Duration(milliseconds: 500), curve: Curves.ease);
+      }
+    }
+
     if (decroissant) {
       capteurs  = capteurs!.reversed.toList();
     }
@@ -70,6 +85,9 @@ class _VueListeState extends State<VueListe> {
   @override
   void dispose() {
     _scrollController.dispose();
+    for (var pageController in _pageControllers) {
+      pageController.dispose();
+    }
     super.dispose();
   }
 
@@ -151,6 +169,7 @@ class _VueListeState extends State<VueListe> {
                                 thickness: 1,
                                 controller: _scrollController,  
                                 child: PageView(
+                                  controller: _pageControllers[index],
                                   children : buildCapteurDetails(capteur).map((text){
                                     return Padding(
                                       padding: const EdgeInsets.only(top: 40),
@@ -365,7 +384,7 @@ class _VueListeState extends State<VueListe> {
 
   List<String> buildCapteurDetails(Map<String, dynamic> capteur) {
     final List<String> details = [];
-    details.add('Valeur : ${capteur['valeur']}');
+    details.add('Mesure : ${capteur['valeur']}');
     details.add('Derniere connexion : ${DateFormat('dd/MM/yy HH:mm:ss').format(capteur['dateDerniereConnexion'])}');
     details.add('Date d\'initialisation : ${DateFormat('dd/MM/yy HH:mm:ss').format(capteur['dateInitialisation'])}');
     details.add('Localisation : ${capteur['localisation'][0]}, ${capteur['localisation'][1]}');
