@@ -46,6 +46,16 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+      systemNavigationBarColor: Colors.white.withOpacity(0.002),
+      // systemNavigationBarIconBrightness: Brightness.dark,
+    ));
+
     return MaterialApp(
         navigatorKey: navigatorKey,
         debugShowCheckedModeBanner: false,

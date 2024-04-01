@@ -176,7 +176,7 @@ class _VueListeState extends State<VueListe> {
                               height: 75,
                               child: Scrollbar(
                                 thumbVisibility: true,
-                                thickness: 1,
+                                thickness: 2,
                                 controller: _scrollController,  
                                 child: PageView(
                                   controller: _pageControllers[index],
@@ -427,7 +427,7 @@ class _VueListeState extends State<VueListe> {
 
     details.add(
       Text(
-        'Mesure : ${valeur}L/s',
+        'Mesure : $valeur L/s',
         style: const TextStyle(
           fontSize: 14,
           color: Colors.grey,

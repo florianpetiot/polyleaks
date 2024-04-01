@@ -21,8 +21,14 @@ class BluetoothManager {
   final Map <String,dynamic> _device_slot2 = {"device": 0};
   List<bool> deconnexionVoulue = [false, false];
   bool isScaning = false;
+  var scanResult;
 
+
+  // ---------------------------------------------------------------------------
+  // -------------------- GESTION DES PERMISSIONS ------------------------------
+  // ---------------------------------------------------------------------------
   
+
   Future<bool?> isBluetoothActivated(context) async {
     final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
     
@@ -141,6 +147,26 @@ class BluetoothManager {
   }
 
 
+  // ---------------------------------------------------------------------------
+  // -------------------- FONCTIONS GLOBALES -----------------------------------
+  // ---------------------------------------------------------------------------
+
+
+  void stopScan() async {
+    if (scanResult != null) {
+      FlutterBluePlus.cancelWhenScanComplete(scanResult);
+    }
+    await FlutterBluePlus.stopScan();
+    isScaning = false;
+    return;
+  }
+
+  
+  // ---------------------------------------------------------------------------
+  // -------------------- PARTIE ECRAN ACCUEIL ---------------------------------
+  // ---------------------------------------------------------------------------
+
+
   void scanForDevices(BuildContext context) async {
 
     final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
@@ -190,7 +216,7 @@ class BluetoothManager {
     await FlutterBluePlus.startScan();
     isScaning = true;
 
-    FlutterBluePlus.onScanResults.listen((results) async {
+    scanResult = FlutterBluePlus.onScanResults.listen((results) async {
       for (ScanResult r in results) {
         // seulement les appareils avec un nom commence par "Polyleaks-"
         if (!r.advertisementData.advName.startsWith("Polyleaks-") || blacklist.contains(r.advertisementData.advName)){
@@ -235,20 +261,14 @@ class BluetoothManager {
         }
       }
     });
+    
+    FlutterBluePlus.cancelWhenScanComplete(scanResult);
   }
-
-
-  void stopScan() async {
-    await FlutterBluePlus.stopScan();
-    isScaning = false;
-    return;
-  }
-
 
 
   void connectDevice(BuildContext context, slot) async {
     // affecter a device la bonne info 
-    var device = slot == 1 ? _device_slot1["device"] : _device_slot2["device"];
+    BluetoothDevice device = slot == 1 ? _device_slot1["device"] : _device_slot2["device"];
     deconnexionVoulue[slot-1] = false;
     final capteurState = context.read<CapteurStateNotifier>();
     final dataBase = context.read<PolyleaksDatabase>();
@@ -257,11 +277,12 @@ class BluetoothManager {
 
     // stop scan
     FlutterBluePlus.stopScan();
+    isScaning = false;
 
     // connection de device
     try {
       print(device);
-      await device.connect();
+      await device.connect(timeout: const Duration(seconds: 15));
     }
     catch (e) {
       print("l'appareil n'est plus là.");
@@ -271,7 +292,7 @@ class BluetoothManager {
         builder: (context) => const PopupErreur(idErreur: 1)
       );
       capteurState.setSlotState(slot, state: CapteurSlotState.recherche);
-      FlutterBluePlus.startScan();
+      scanForDevices(navigatorKey.currentState!.context);
       return;
     }
 
@@ -382,7 +403,7 @@ class BluetoothManager {
                     longitude: double.parse(longitudeStr));
 
     // reprendre le scan
-    FlutterBluePlus.startScan();
+    scanForDevices(navigatorKey.currentState!.context);
 
     // on disconnect
     var deconnexion = device.connectionState.listen((BluetoothConnectionState state) async {
@@ -403,7 +424,6 @@ class BluetoothManager {
   }
 
 
-
   void disconnectDevice(BuildContext context, slot) async {
     var device = slot == 1 ? _device_slot1["device"] : _device_slot2["device"];
     final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
@@ -418,9 +438,11 @@ class BluetoothManager {
   void resetBlacklist(BuildContext context) async {
     final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
     await FlutterBluePlus.stopScan();
+    isScaning = false;
     capteurState.resetBlacklist();
-    await FlutterBluePlus.startScan();
+    scanForDevices(context);
   }
+
 
   void ignorer(BuildContext context, int slot) async {
     final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
@@ -444,9 +466,142 @@ class BluetoothManager {
     // Ajoutez le capteur actuel à la liste noire
     capteurState.addToBlacklist(slot == 1 ? _device_slot1["device"].name : _device_slot2["device"].name);
     capteurState.setSlotState(slot, state: CapteurSlotState.recherche);
-    scanForDevices(context);
+    scanForDevices(navigatorKey.currentState!.context);
 
   }
 
-  requestLocationPermission(BuildContext context) {}
+
+  // ---------------------------------------------------------------------------
+  // -------------------- PARTIE INITIALISATION --------------------------------
+  // ---------------------------------------------------------------------------
+
+
+  Future<Stream<List<ScanResult>>> getScanList(BuildContext context, index) async {
+
+    // verifier si le bluetooth est supporté
+    if (await FlutterBluePlus.isSupported == false || index != 2) {
+      return Stream.error("error");
+    }
+
+    if (await isLocationActivated(context) == false) {
+      return Stream.error("error");
+    }
+
+    if (await isBluetoothActivated(context) == false) {
+      return Stream.error("error");
+    }
+
+    FlutterBluePlus.setLogLevel(LogLevel.verbose);
+    await FlutterBluePlus.startScan();
+    isScaning = true;
+
+    return FlutterBluePlus.onScanResults;
+  }
+
+
+  Future<List<bool>> transmissionPosition(BluetoothDevice device, Position position) async {
+
+    List<bool> resultat = [true, true];
+
+     // connection de device
+    try {
+      await device.connect(timeout: const Duration(seconds: 15));
+    }
+    catch (e) {
+      resultat[0] = false;
+      return resultat;
+    }
+
+    List<BluetoothService> services = await device.discoverServices();
+
+    // verifier que le service de geolocalisation est pas deja rempli
+
+    for (BluetoothService service in services) {
+
+      // LOCALISATION
+      if (service.uuid.toString() == "1819") {
+        var characteristics = service.characteristics;
+        for(BluetoothCharacteristic c in characteristics) {
+
+          // LATITUDE
+          if (c.properties.read) {
+            if (c.uuid.toString() == "2aae") {
+              List<int> value = await c.read();
+              if (value.isNotEmpty) {
+                resultat[1] = false;
+                await device.disconnect(queue: false);
+                return resultat;
+              }
+            }
+          }
+
+          // LONGITUDE
+          if (c.properties.read) {
+            if (c.uuid.toString() == "2aaf") {
+              List<int> value = await c.read();
+              if (value.isNotEmpty) {
+                resultat[1] = false;
+                await device.disconnect(queue: false);
+                return resultat;
+              }
+            }
+          }
+        }
+        break;
+      }
+    }
+
+    // envoyer la position et donner la date d'initialisation
+    var latitude = position.latitude.toString().codeUnits;
+    var longitude = position.longitude.toString().codeUnits;
+
+    print("CAPTEUR NON INITIALISE - ENVOI DE LA POSITION");
+
+    for (BluetoothService service in services) {
+
+      // LOCALISATION
+      if (service.uuid.toString() == "1819") {
+        var characteristics = service.characteristics;
+        for(BluetoothCharacteristic c in characteristics) {
+
+          // LATITUDE
+          if (c.properties.write) {
+            if (c.uuid.toString() == "2aae") {
+              print("ECRITURE LATITUDE");
+              await c.write(latitude);
+            }
+          }
+
+          // LONGITUDE
+          if (c.properties.write) {
+            if (c.uuid.toString() == "2aaf") {
+              print("ECRITURE LONGITUDE");
+              await c.write(longitude);
+            }
+          }
+        }
+      }
+
+      // INFORMATION
+      // 0000180a-0000-1000-8000-00805f9b34fb
+      if (service.uuid.toString() == "180a") {
+        var characteristics = service.characteristics;
+        for(BluetoothCharacteristic c in characteristics) {
+
+          // DATE INIT
+          if (c.properties.write) {
+            if (c.uuid.toString() == "2a08") {
+              var date = DateTime.now().toString().codeUnits;
+              await c.write(date);
+            }
+          }
+        }
+      }
+    }
+
+    await device.disconnect();
+    return resultat;
+
+  }
+
 }
