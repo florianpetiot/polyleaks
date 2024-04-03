@@ -42,8 +42,8 @@ class PopupErreur extends StatelessWidget {
 
       case 2:
       // capteur non initialisé
-        iconData = Icons.info;
-        iconColor = Colors.blue;
+        iconData = Icons.warning;
+        iconColor = Colors.orange;
         title = 'Capteur non initialisé';
         content = 'Le capteur que vous essayez de joindre n\'a pas été initialisé.\nVeuillez vous rendre dans la partie "Plus" pour l\'initialiser puis réessayez.';
         break;

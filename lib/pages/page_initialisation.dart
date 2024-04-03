@@ -48,7 +48,11 @@ class _PageInitialisationCapteurState extends State<PageInitialisationCapteur> {
 
   void _showDescriptionPage(ScanResult device) {
     
+    // reinitialiser la page
     selectedDevice.value = device;
+    etapeLocalisation.value = EtatEtape.attente;
+    etapeTransmission.value = EtatEtape.attente;
+    processus = EtatEtape.attente;
 
     _pageController.nextPage(
       duration: const Duration(milliseconds: 300),

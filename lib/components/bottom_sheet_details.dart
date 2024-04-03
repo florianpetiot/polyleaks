@@ -122,8 +122,17 @@ class BottomSheet extends StatelessWidget {
   final double latitude;
   final double longitude;
 
+
+
+  void modifierSlot(BuildContext context, int slot) {
+    print("Modifier le slot $slot");
+  }
+
   @override
   Widget build(BuildContext context) {
+    
+    final List<Map<String, dynamic>> etatSlots = [context.watch<CapteurStateNotifier>().getSlot(1), context.watch<CapteurStateNotifier>().getSlot(2)];
+
     return Wrap(
       children: [
         Container(
@@ -189,7 +198,7 @@ class BottomSheet extends StatelessWidget {
               ),
     
               if (vueMaps)
-              const SizedBox(height: 25),
+              const SizedBox(height: 15),
     
               if (vueMaps)
               // CARTE GOOGLE MAPS
@@ -257,54 +266,100 @@ class BottomSheet extends StatelessWidget {
                 ),
               ),
 
+
+              // -------------------------
+              // VISIALISATION DES EMPLACEMENT 
+              // -------------------------
+
               if (vueSlot)
-              const SizedBox(height: 25),
-    
-              // ligne de deux containers
+              const SizedBox(height: 20),
+
+              // ajout d'une phrase "vue des emplacements" suivit d'une ligne grise jusqu'à la fin de la ligne
               if (vueSlot)
-              Row(
+              const Row(
                 children: [
-                  // Container 1
+                  Text("Vue des emplacements",
+                    style: TextStyle(
+                      fontSize: 15,
+                    )),
+                  SizedBox(width: 5),
                   Expanded(
-                    child: Container(
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[350],
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Center(
-                        // texte centré "mettre dans l'emplacement 1"
-                        child: const Text("Mettre dans l'emplacement 1",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 17,
-                              color: Colors.black,
-                            )),
-                      ),
-                    ),
-                  ),
-    
-                  const SizedBox(width: 15),
-    
-                  // Container 2
-                  Expanded(
-                    child: Container(
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[350],
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Center(
-                        child: const Text("Mettre dans l'emplacement 2",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 17,
-                              color: Colors.black,
-                            )),
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 3),
+                      child: Divider(
+                        color: Colors.grey,
+                        thickness: 1,
                       ),
                     ),
                   ),
                 ],
+              ),
+
+              if (vueSlot)
+              const SizedBox(height: 10),
+    
+              // ligne de deux containers
+              if (vueSlot)
+              Row(
+                children: List<Widget>.generate(2, (index) =>
+
+                  // si le slot est occupé
+                  etatSlots[index]["state"] == CapteurSlotState.connecte || etatSlots[index]["state"] == CapteurSlotState.perdu 
+                  ? Expanded(
+                    child: GestureDetector(
+                      onTap: () => modifierSlot(context, index + 1),
+                      child: Container(
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[350],
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.highlight_off, size: 17,),
+
+                              Text(etatSlots[index]["nom"],
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 17,
+                                color: Colors.black,
+                                height: 1.1,
+                              )
+                            ),
+                            ]
+                        
+                        ),
+                      ),
+                    ),
+                  )
+        
+                  // si le slot est vide
+                  : Expanded(
+                    child: GestureDetector(
+                      onTap: () => modifierSlot(context, index + 1),
+                      child: Container(
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[350],
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Center(
+                          child: Text("Mettre dans l'emplacement ${index + 1}",
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 17,
+                              color: Colors.black,
+                              height: 1.1,
+                            )
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+
+                )..insert(1, const SizedBox(width: 15)),
               ),
             ],
           ),

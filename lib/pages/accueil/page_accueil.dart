@@ -24,6 +24,13 @@ class _PageAccueilState extends State<PageAccueil> {
   @override
   void initState() {
     super.initState();
+
+    for (int slot = 1; slot <= 2; slot++) {
+      if (context.read<CapteurStateNotifier>().getSlot(slot)["state"] == CapteurSlotState.trouve) {
+        context.read<CapteurStateNotifier>().setSlotState(slot, state: CapteurSlotState.recherche);
+      }
+    }
+
     BluetoothManager().scanForDevices(context);
     rootBundle.load('assets/pipe_animation.riv').then(
       (data) async {
@@ -84,6 +91,7 @@ class _PageAccueilState extends State<PageAccueil> {
               Expanded(
                 flex: 3,
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Expanded(
                       child: riveArtboard == null
@@ -197,13 +205,25 @@ class _PageAccueilState extends State<PageAccueil> {
     double difference = (capteurState.getSlot(1)["valeur"] - capteurState.getSlot(2)["valeur"]).abs();
 
     if (!([CapteurSlotState.connecte, CapteurSlotState.perdu].contains(capteurState.getSlot(1)["state"])) || !([CapteurSlotState.connecte, CapteurSlotState.perdu].contains(capteurState.getSlot(2)["state"]))) {
-      return const Text('Connectez vous à deux capteurs pour commencer.');
+      return const Column(
+        children: [
+          Icon(Icons.more_horiz_outlined, size: 25),
+          Text('Connectez vous à deux capteurs pour commencer.')
+        ]);
     }
     else if (difference > incoherence) {
-      return const Text('Fuite détectée.');
+      return const Column(
+        children: [
+          Icon(Icons.warning_amber_rounded, size: 25,),
+          Text('Fuite détectée !')
+        ]);
     }
     else {
-      return const Text('Aucune fuite détectée.');
+      return const Column(
+        children: [
+          Icon(Icons.check_circle_outline, size: 25),
+          Text('Aucune fuite détectée.')
+        ]);
     }
   }
 }

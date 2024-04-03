@@ -377,6 +377,19 @@ class BluetoothManager {
     print("date_init: $date_initStr");
     print(caracteristique_valeur);
     
+    // verifier si le capteur est bien initialisé
+    // c'est a dire si la latitude et la longitude et date d'initialisation non-vide
+    if (latitudeStr.isEmpty || longitudeStr.isEmpty || date_initStr.isEmpty) {
+      // disconnect
+      await device.disconnect();
+      await showDialog(
+        context: navigatorKey.currentState!.context, 
+        builder: (context) => const PopupErreur(idErreur: 2)
+      );
+      capteurState.setSlotState(slot, state: CapteurSlotState.recherche);
+      scanForDevices(navigatorKey.currentState!.context);
+      return;
+    }
 
     // ajouter le capteur a la base de données
     await dataBase.ajouterCapteur(nomStr, DateTime.parse(date_initStr), [double.parse(latitudeStr), double.parse(longitudeStr)]);
