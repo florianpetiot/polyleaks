@@ -117,8 +117,7 @@ class _VueMapsState extends State<VueMaps> {
             }
           });
 
-        setState(() { 
-          print("suivi de position activé");
+        setState(() {
           gpsTracking = true;
           gpsActive = true;
           gpsPermission = true;
@@ -128,7 +127,6 @@ class _VueMapsState extends State<VueMaps> {
       } else {
         positionStream.cancel();
         setState(() {
-          print("suivi de position désactivé");
           gpsActive = false;
           gpsTracking = false;
         });
@@ -157,7 +155,6 @@ class _VueMapsState extends State<VueMaps> {
             markers: _markers,
 
             onCameraIdle: () {
-              print("camera move idle");
               setState(() {
                 if (cameraAuto) {
                   cameraAuto = false;
@@ -166,11 +163,9 @@ class _VueMapsState extends State<VueMaps> {
             },
 
             onCameraMove: (CameraPosition position) {
-              print("cameraAuto: $cameraAuto");
               setState(() {
                 // si le suivi de position est activé, et que ce n'est pas un mouvement automatique
                 if (gpsTracking && !cameraAuto){
-                  print('position tracking stopped');
                   gpsTracking = false;
                   positionStream.cancel();
                 }

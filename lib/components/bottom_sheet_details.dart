@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:polyleaks/bluetooth/bluetooth_manager.dart';
 import 'package:polyleaks/database/polyleaks_database.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -125,7 +126,47 @@ class BottomSheet extends StatelessWidget {
 
 
   void modifierSlot(BuildContext context, int slot) {
-    print("Modifier le slot $slot");
+    final capteurState = context.read<CapteurStateNotifier>(); 
+
+    // si le slot est connecté
+      // deconnecter le capteur
+    if (capteurState.getSlot(slot)["state"] == CapteurSlotState.connecte) {
+      BluetoothManager().disconnectDevice(context, slot);
+    }
+    
+
+    // si le slot est perdu
+      // mettre en mode recherche
+
+    else if (capteurState.getSlot(slot)["state"] == CapteurSlotState.perdu) {
+      capteurState.setSlotState(slot, state: CapteurSlotState.recherche, nom: "");
+    }
+
+    // si le slot est vide
+      // mettre en mode perdu
+    else if (capteurState.getSlot(slot)["state"] == CapteurSlotState.recherche) {
+      final dateFormat = DateFormat('dd/MM/yy HH:mm:ss');
+      final dateFormatCible = DateFormat('yyyy-MM-ddTHH:mm:ssZ');
+      final dateInitilalisationStrCible = dateFormatCible.format(dateFormat.parse(dateInitilalisationStr));
+      final derniereConnexionStrCible = dateFormatCible.format(dateFormat.parse(derniereConnexionStr));
+
+      capteurState.setSlotState(slot, 
+      state: CapteurSlotState.perdu, 
+      nom: nomCapteur, 
+      valeur: valeurCapteur, 
+      derniereConnexion: DateTime.parse(derniereConnexionStrCible),
+      dateInitialisation: DateTime.parse(dateInitilalisationStrCible),
+      latitude: latitude,
+      longitude: longitude
+      );
+
+
+      // si le capteur était déjà dans l'autre slot
+      // rappeller la fonction pour le retirer
+      if (capteurState.getSlot(slot == 1 ? 2 : 1)["nom"] == nomCapteur) {
+        modifierSlot(context, slot == 1 ? 2 : 1);
+      }
+    }
   }
 
   @override
@@ -342,7 +383,7 @@ class BottomSheet extends StatelessWidget {
                       child: Container(
                         height: 50,
                         decoration: BoxDecoration(
-                          color: Colors.grey[350],
+                          border: Border.all(color: const Color(0xFFD6D6D6), width: 2),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Center(

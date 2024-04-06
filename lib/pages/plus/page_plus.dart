@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:polyleaks/pages/page_initialisation.dart';
+import 'package:polyleaks/pages/plus/page_initialisation.dart';
 
 class PagePlus extends StatefulWidget {
   const PagePlus({Key? key}) : super(key: key);

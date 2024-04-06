@@ -80,7 +80,7 @@ class _VueListeState extends State<VueListe> {
     
     for (var i = 0; i < capteurs!.length; i++) {
       if(_pageControllers[i].hasClients) {
-        _pageControllers[i].animateToPage(pageIndex, duration: const Duration(milliseconds: 500), curve: Curves.ease);
+      _pageControllers[i].animateToPage(pageIndex, duration: const Duration(milliseconds: 500), curve: Curves.ease);
       }
     }
 
