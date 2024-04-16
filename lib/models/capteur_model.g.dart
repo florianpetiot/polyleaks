@@ -17,28 +17,33 @@ const CapteurModelSchema = CollectionSchema(
   name: r'CapteurModel',
   id: -3813499653591873693,
   properties: {
-    r'dateDerniereConnexion': PropertySchema(
+    r'batterie': PropertySchema(
       id: 0,
+      name: r'batterie',
+      type: IsarType.long,
+    ),
+    r'dateDerniereConnexion': PropertySchema(
+      id: 1,
       name: r'dateDerniereConnexion',
       type: IsarType.dateTime,
     ),
     r'dateInitialisation': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'dateInitialisation',
       type: IsarType.dateTime,
     ),
     r'localisation': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'localisation',
       type: IsarType.doubleList,
     ),
     r'nom': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'nom',
       type: IsarType.string,
     ),
     r'valeur': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'valeur',
       type: IsarType.double,
     )
@@ -74,11 +79,12 @@ void _capteurModelSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeDateTime(offsets[0], object.dateDerniereConnexion);
-  writer.writeDateTime(offsets[1], object.dateInitialisation);
-  writer.writeDoubleList(offsets[2], object.localisation);
-  writer.writeString(offsets[3], object.nom);
-  writer.writeDouble(offsets[4], object.valeur);
+  writer.writeLong(offsets[0], object.batterie);
+  writer.writeDateTime(offsets[1], object.dateDerniereConnexion);
+  writer.writeDateTime(offsets[2], object.dateInitialisation);
+  writer.writeDoubleList(offsets[3], object.localisation);
+  writer.writeString(offsets[4], object.nom);
+  writer.writeDouble(offsets[5], object.valeur);
 }
 
 CapteurModel _capteurModelDeserialize(
@@ -88,12 +94,13 @@ CapteurModel _capteurModelDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = CapteurModel();
-  object.dateDerniereConnexion = reader.readDateTime(offsets[0]);
-  object.dateInitialisation = reader.readDateTime(offsets[1]);
+  object.batterie = reader.readLong(offsets[0]);
+  object.dateDerniereConnexion = reader.readDateTime(offsets[1]);
+  object.dateInitialisation = reader.readDateTime(offsets[2]);
   object.id = id;
-  object.localisation = reader.readDoubleList(offsets[2]) ?? [];
-  object.nom = reader.readString(offsets[3]);
-  object.valeur = reader.readDouble(offsets[4]);
+  object.localisation = reader.readDoubleList(offsets[3]) ?? [];
+  object.nom = reader.readString(offsets[4]);
+  object.valeur = reader.readDoubleOrNull(offsets[5]);
   return object;
 }
 
@@ -105,15 +112,17 @@ P _capteurModelDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 1:
       return (reader.readDateTime(offset)) as P;
     case 2:
-      return (reader.readDoubleList(offset) ?? []) as P;
+      return (reader.readDateTime(offset)) as P;
     case 3:
-      return (reader.readString(offset)) as P;
+      return (reader.readDoubleList(offset) ?? []) as P;
     case 4:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readString(offset)) as P;
+    case 5:
+      return (reader.readDoubleOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -213,6 +222,62 @@ extension CapteurModelQueryWhere
 
 extension CapteurModelQueryFilter
     on QueryBuilder<CapteurModel, CapteurModel, QFilterCondition> {
+  QueryBuilder<CapteurModel, CapteurModel, QAfterFilterCondition>
+      batterieEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'batterie',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<CapteurModel, CapteurModel, QAfterFilterCondition>
+      batterieGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'batterie',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<CapteurModel, CapteurModel, QAfterFilterCondition>
+      batterieLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'batterie',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<CapteurModel, CapteurModel, QAfterFilterCondition>
+      batterieBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'batterie',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<CapteurModel, CapteurModel, QAfterFilterCondition>
       dateDerniereConnexionEqualTo(DateTime value) {
     return QueryBuilder.apply(this, (query) {
@@ -665,8 +730,26 @@ extension CapteurModelQueryFilter
     });
   }
 
+  QueryBuilder<CapteurModel, CapteurModel, QAfterFilterCondition>
+      valeurIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'valeur',
+      ));
+    });
+  }
+
+  QueryBuilder<CapteurModel, CapteurModel, QAfterFilterCondition>
+      valeurIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'valeur',
+      ));
+    });
+  }
+
   QueryBuilder<CapteurModel, CapteurModel, QAfterFilterCondition> valeurEqualTo(
-    double value, {
+    double? value, {
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -680,7 +763,7 @@ extension CapteurModelQueryFilter
 
   QueryBuilder<CapteurModel, CapteurModel, QAfterFilterCondition>
       valeurGreaterThan(
-    double value, {
+    double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
@@ -696,7 +779,7 @@ extension CapteurModelQueryFilter
 
   QueryBuilder<CapteurModel, CapteurModel, QAfterFilterCondition>
       valeurLessThan(
-    double value, {
+    double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
@@ -711,8 +794,8 @@ extension CapteurModelQueryFilter
   }
 
   QueryBuilder<CapteurModel, CapteurModel, QAfterFilterCondition> valeurBetween(
-    double lower,
-    double upper, {
+    double? lower,
+    double? upper, {
     bool includeLower = true,
     bool includeUpper = true,
     double epsilon = Query.epsilon,
@@ -738,6 +821,18 @@ extension CapteurModelQueryLinks
 
 extension CapteurModelQuerySortBy
     on QueryBuilder<CapteurModel, CapteurModel, QSortBy> {
+  QueryBuilder<CapteurModel, CapteurModel, QAfterSortBy> sortByBatterie() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'batterie', Sort.asc);
+    });
+  }
+
+  QueryBuilder<CapteurModel, CapteurModel, QAfterSortBy> sortByBatterieDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'batterie', Sort.desc);
+    });
+  }
+
   QueryBuilder<CapteurModel, CapteurModel, QAfterSortBy>
       sortByDateDerniereConnexion() {
     return QueryBuilder.apply(this, (query) {
@@ -793,6 +888,18 @@ extension CapteurModelQuerySortBy
 
 extension CapteurModelQuerySortThenBy
     on QueryBuilder<CapteurModel, CapteurModel, QSortThenBy> {
+  QueryBuilder<CapteurModel, CapteurModel, QAfterSortBy> thenByBatterie() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'batterie', Sort.asc);
+    });
+  }
+
+  QueryBuilder<CapteurModel, CapteurModel, QAfterSortBy> thenByBatterieDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'batterie', Sort.desc);
+    });
+  }
+
   QueryBuilder<CapteurModel, CapteurModel, QAfterSortBy>
       thenByDateDerniereConnexion() {
     return QueryBuilder.apply(this, (query) {
@@ -860,6 +967,12 @@ extension CapteurModelQuerySortThenBy
 
 extension CapteurModelQueryWhereDistinct
     on QueryBuilder<CapteurModel, CapteurModel, QDistinct> {
+  QueryBuilder<CapteurModel, CapteurModel, QDistinct> distinctByBatterie() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'batterie');
+    });
+  }
+
   QueryBuilder<CapteurModel, CapteurModel, QDistinct>
       distinctByDateDerniereConnexion() {
     return QueryBuilder.apply(this, (query) {
@@ -902,6 +1015,12 @@ extension CapteurModelQueryProperty
     });
   }
 
+  QueryBuilder<CapteurModel, int, QQueryOperations> batterieProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'batterie');
+    });
+  }
+
   QueryBuilder<CapteurModel, DateTime, QQueryOperations>
       dateDerniereConnexionProperty() {
     return QueryBuilder.apply(this, (query) {
@@ -929,7 +1048,7 @@ extension CapteurModelQueryProperty
     });
   }
 
-  QueryBuilder<CapteurModel, double, QQueryOperations> valeurProperty() {
+  QueryBuilder<CapteurModel, double?, QQueryOperations> valeurProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'valeur');
     });

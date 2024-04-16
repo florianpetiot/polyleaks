@@ -14,6 +14,9 @@ class CapteurModel{
   // valeur du capteur
   late double? valeur;
 
+  // niveau de batterie
+  late int batterie;
+
   // date derniere connexion du capteur
   late DateTime dateDerniereConnexion;
 

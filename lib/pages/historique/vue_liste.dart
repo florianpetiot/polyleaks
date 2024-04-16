@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:toastification/toastification.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-enum Tri { numerologique, mesure, derniereConnexion, dateInitialisation, distance }
+enum Tri { numerologique, mesure, batterie, derniereConnexion, dateInitialisation, distance }
 
 class VueListe extends StatefulWidget {
   const VueListe({super.key});
@@ -60,13 +60,17 @@ class _VueListeState extends State<VueListe> {
         capteurs!.sort((a, b) => a['valeur'].compareTo(b['valeur']));
         pageIndex = 0;
         break;
+      case Tri.batterie:
+        capteurs!.sort((a, b) => a['batterie'].compareTo(b['batterie']));
+        pageIndex = 1;
+        break;
       case Tri.derniereConnexion:
         capteurs!.sort((a, b) => a['dateDerniereConnexion'].compareTo(b['dateDerniereConnexion']));
-        pageIndex = 1;
+        pageIndex = 2;
         break;
       case Tri.dateInitialisation:
         capteurs!.sort((a, b) => a['dateInitialisation'].compareTo(b['dateInitialisation']));
-        pageIndex = 2;
+        pageIndex = 3;
         break;
       case Tri.distance:
         capteurs!.sort((a, b) {
@@ -74,15 +78,11 @@ class _VueListeState extends State<VueListe> {
           var bDistance = Geolocator.distanceBetween(b['localisation'][0], b['localisation'][1], positionGps.latitude, positionGps.longitude);
           return aDistance.compareTo(bDistance);
         });
-        pageIndex = 3;
+        pageIndex = 4;
         break;
     }
     
-    for (var i = 0; i < capteurs!.length; i++) {
-      if(_pageControllers[i].hasClients) {
-      _pageControllers[i].animateToPage(pageIndex, duration: const Duration(milliseconds: 500), curve: Curves.ease);
-      }
-    }
+    rollcontrollers(pageIndex);
 
     if (decroissant) {
       capteurs  = capteurs!.reversed.toList();
@@ -90,6 +90,17 @@ class _VueListeState extends State<VueListe> {
 
     });
   }
+
+  void rollcontrollers(pageIndex) async {
+    for (var i = 0; i < capteurs!.length; i++) {
+      if(_pageControllers[i].hasClients) {
+      _pageControllers[i].animateToPage(pageIndex, duration: const Duration(milliseconds: 500), curve: Curves.ease);
+      }
+      // attendre 0.2s
+      await Future.delayed(const Duration(milliseconds: 150));
+    }
+  }
+    
 
 
   @override
@@ -260,7 +271,7 @@ class _VueListeState extends State<VueListe> {
                         onTap: () { showPopover(context: _clipRRectKey.currentContext!, 
                           bodyBuilder: (context) {
                             return SizedBox(
-                              height: 280,
+                              height: 336,
                               width: 245,
                               child: listeTri(),
                             );
@@ -329,6 +340,22 @@ class _VueListeState extends State<VueListe> {
               title: const Text('Mesure'),
               leading: const Icon(Icons.speed),
               iconColor: tri == Tri.mesure ? Colors.blue : Colors.grey,
+            ),
+          ),
+
+          // batterie
+          InkWell(
+            onTap: () {
+              setState(() {
+                tri = Tri.batterie;
+              });
+              nouveauTri();
+              Navigator.pop(context);
+            },
+            child: ListTile(
+              title: const Text('Batterie'),
+              leading: const Icon(Icons.battery_full),
+              iconColor: tri == Tri.batterie ? Colors.blue : Colors.grey,
             ),
           ),
 
@@ -408,7 +435,8 @@ class _VueListeState extends State<VueListe> {
 
   List<Widget> buildCapteurDetails(Map<String, dynamic> capteur) {
     final List<Widget> details = [];
-    var valeur = capteur['valeur'];;
+    var valeur = capteur['valeur'];
+    int batterie = capteur['batterie'];
     DateTime dateDerniereConnexion = capteur['dateDerniereConnexion'];
     double? distance;
     String? distanceString;
@@ -433,6 +461,16 @@ class _VueListeState extends State<VueListe> {
           color: Colors.grey,
         ),
       ),
+    );
+
+    details.add(
+      Text(
+        'Batterie : $batterie%',
+        style: const TextStyle(
+          fontSize: 14,
+          color: Colors.grey,
+        ),
+      )
     );
 
     details.add(

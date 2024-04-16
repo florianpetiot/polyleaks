@@ -78,11 +78,12 @@ class PolyleaksDatabase extends ChangeNotifier {
   }
 
   // ajouter un capteur a la base de donnees
-  Future<void> ajouterCapteur(String nom, DateTime dateInitialisation, List<double> localisation) async {
+  Future<void> ajouterCapteur(String nom, int batterie, DateTime dateInitialisation, List<double> localisation) async {
     final capteurExistant = await capteurExiste(nom);
     if (!capteurExistant) {
       final capteur = CapteurModel()
         ..nom = nom
+        ..batterie = batterie
         ..dateInitialisation = dateInitialisation
         ..dateDerniereConnexion = DateTime.now()
         ..valeur = null
@@ -100,6 +101,7 @@ class PolyleaksDatabase extends ChangeNotifier {
       'id': capteur!.id,
       'nom': capteur.nom,
       'valeur': capteur.valeur,
+      'batterie': capteur.batterie,
       'dateDerniereConnexion': capteur.dateDerniereConnexion,
       'dateInitialisation': capteur.dateInitialisation,
       'localisation': capteur.localisation,
@@ -132,6 +134,7 @@ class PolyleaksDatabase extends ChangeNotifier {
         'id': capteur.id,
         'nom': capteur.nom,
         'valeur': capteur.valeur,
+        'batterie': capteur.batterie,
         'dateDerniereConnexion': capteur.dateDerniereConnexion,
         'dateInitialisation': capteur.dateInitialisation,
         'localisation': capteur.localisation,

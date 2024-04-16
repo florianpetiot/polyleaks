@@ -4,8 +4,20 @@ import 'package:intl/intl.dart';
 import 'package:polyleaks/bluetooth/bluetooth_manager.dart';
 import 'package:polyleaks/database/polyleaks_database.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
+import 'package:popover/popover.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:provider/provider.dart';
+
+
+void showBottomSheetDetails(BuildContext context, {required bool vueMaps, required bool vueSlot, String? nom, int? slot}) {
+  showModalBottomSheet(
+    context: context,
+    builder: (BuildContext context) {
+      return BottomSheetDetails(vueMaps: vueMaps, vueSlot: vueSlot, nom: nom, slot: slot);
+    },
+  );
+}
+
 
 class BottomSheetDetails extends StatefulWidget {
   final bool vueMaps;
@@ -33,6 +45,7 @@ class _BottomSheetDetailsState extends State<BottomSheetDetails> {
   Widget build(BuildContext context) {
     String nomCapteur = "";
     double valeurCapteur = 0.0;
+    int batterieCapteur = 0;
     DateTime derniereConnexion = DateTime.now();
     DateTime dateInitilalisation = DateTime.now();
     double latitude = 0.0;
@@ -54,6 +67,7 @@ class _BottomSheetDetailsState extends State<BottomSheetDetails> {
     if (localSlot != null) {
       nomCapteur = context.read<CapteurStateNotifier>().getSlot(localSlot)["nom"];
       valeurCapteur = context.watch<CapteurStateNotifier>().getSlot(localSlot)["valeur"];
+      batterieCapteur = context.read<CapteurStateNotifier>().getSlot(localSlot)["batterie"];
       derniereConnexion = context.watch<CapteurStateNotifier>().getSlot(localSlot)["derniereConnexion"];
       dateInitilalisation = context.watch<CapteurStateNotifier>().getSlot(localSlot)["dateInitialisation"];
       latitude = context.read<CapteurStateNotifier>().getSlot(localSlot)["latitude"];
@@ -62,7 +76,7 @@ class _BottomSheetDetailsState extends State<BottomSheetDetails> {
       derniereConnexionStr = DateFormat('dd/MM/yy HH:mm:ss').format(derniereConnexion);
       dateInitilalisationStr = DateFormat('dd/MM/yy HH:mm:ss').format(dateInitilalisation);
 
-      return BottomSheet(nomCapteur: nomCapteur, valeurCapteur: valeurCapteur, derniereConnexionStr: derniereConnexionStr, dateInitilalisationStr: dateInitilalisationStr, vueMaps: widget.vueMaps, vueSlot: widget.vueSlot, center: center, latitude: latitude, longitude: longitude);
+      return BottomSheet(nomCapteur: nomCapteur, valeurCapteur: valeurCapteur,  batterieCapteur: batterieCapteur, derniereConnexionStr: derniereConnexionStr, dateInitilalisationStr: dateInitilalisationStr, vueMaps: widget.vueMaps, vueSlot: widget.vueSlot, center: center, latitude: latitude, longitude: longitude);
 
     }
 
@@ -80,6 +94,7 @@ class _BottomSheetDetailsState extends State<BottomSheetDetails> {
             Map<String, dynamic> data = snapshot.data!;
             nomCapteur = data["nom"];
             valeurCapteur = data["valeur"];
+            batterieCapteur = data["batterie"];
             derniereConnexion = data["dateDerniereConnexion"];
             dateInitilalisation = data["dateInitialisation"];
             final List<double> localisation = data["localisation"];
@@ -88,7 +103,9 @@ class _BottomSheetDetailsState extends State<BottomSheetDetails> {
             center = LatLng(latitude, longitude);
             derniereConnexionStr = DateFormat('dd/MM/yy HH:mm:ss').format(derniereConnexion);
             dateInitilalisationStr = DateFormat('dd/MM/yy HH:mm:ss').format(dateInitilalisation);
-            return BottomSheet(nomCapteur: nomCapteur, valeurCapteur: valeurCapteur, derniereConnexionStr: derniereConnexionStr, dateInitilalisationStr: dateInitilalisationStr, vueMaps: widget.vueMaps, vueSlot: widget.vueSlot, center: center, latitude: latitude, longitude: longitude);
+
+            // TODO: calculer la batterie par rapport à la date de la dernière connexion
+            return BottomSheet(nomCapteur: nomCapteur, valeurCapteur: valeurCapteur, batterieCapteur: batterieCapteur, derniereConnexionStr: derniereConnexionStr, dateInitilalisationStr: dateInitilalisationStr, vueMaps: widget.vueMaps, vueSlot: widget.vueSlot, center: center, latitude: latitude, longitude: longitude);
           }
           }
     );
@@ -104,6 +121,7 @@ class BottomSheet extends StatelessWidget {
     super.key,
     required this.nomCapteur,
     required this.valeurCapteur,
+    required this.batterieCapteur,
     required this.derniereConnexionStr,
     required this.dateInitilalisationStr,
     required this.vueMaps,
@@ -115,6 +133,7 @@ class BottomSheet extends StatelessWidget {
 
   final String nomCapteur;
   final double valeurCapteur;
+  final int batterieCapteur;
   final String derniereConnexionStr;
   final String dateInitilalisationStr;
   final bool vueMaps;
@@ -198,14 +217,19 @@ class BottomSheet extends StatelessWidget {
               Column(
                 children: [
                   // Titre
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(nomCapteur,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        "$nomCapteur  • ",
                         style: const TextStyle(
                           fontSize: 25,
                           fontWeight: FontWeight.bold,
                         )),
+                        BatteryLevel(batterieCapteur: batterieCapteur),
+                    ],
                   ),
+                  
     
                   const SizedBox(height: 5),
     
@@ -411,11 +435,93 @@ class BottomSheet extends StatelessWidget {
 }
 
 
-void showBottomSheetDetails(BuildContext context, {required bool vueMaps, required bool vueSlot, String? nom, int? slot}) {
-  showModalBottomSheet(
-    context: context,
-    builder: (BuildContext context) {
-      return BottomSheetDetails(vueMaps: vueMaps, vueSlot: vueSlot, nom: nom, slot: slot);
+class BatteryLevel extends StatelessWidget {
+  const BatteryLevel ({super.key, required this.batterieCapteur});
+
+  final int batterieCapteur;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        showPopover(context: context, 
+        bodyBuilder: ((context) {
+          return const SizedBox(
+            width: 250,
+            height: 75,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 5),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  
+                  Text("Il reste environ 5 ans d'autonomie.",
+                    style: TextStyle(
+                      fontSize: 15,
+                    )
+                  ),
+              
+                  SizedBox(height: 10),
+              
+                  Text("Estimé grâce au temps passé depuis la dernière connexion.",
+                    style: TextStyle(
+                      fontSize: 13,
+                      height: 1.1,
+                    )
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+      ),
+      direction: PopoverDirection.top,
+     );
     },
-  );
+        
+      child: Row(
+        children: [
+          Icon(
+            batterieCapteur == 0
+            ? Icons.battery_0_bar
+            : batterieCapteur <= 14
+            ? Icons.battery_1_bar
+            : batterieCapteur <= 28
+            ? Icons.battery_2_bar
+            : batterieCapteur <= 42
+            ? Icons.battery_3_bar
+            : batterieCapteur <= 56
+            ? Icons.battery_4_bar
+            : batterieCapteur <= 70
+            ? Icons.battery_5_bar
+            : batterieCapteur <= 84
+            ? Icons.battery_6_bar
+            : Icons.battery_full,
+        
+            color: batterieCapteur == 0
+            ? Colors.red
+            : batterieCapteur <= 14
+            ? Colors.orange
+            : Colors.green,
+            size: 25,
+          ),
+          Text(
+            "$batterieCapteur%",
+            style: const TextStyle(
+              fontSize: 25,                             
+            )
+          ),
+          Container(
+            height: 25,
+            alignment: Alignment.topCenter,
+            child: const Icon(
+              Icons.info_outline,
+              color: Colors.black,
+              size: 15,
+            ),
+          )
+        ]
+      ),
+    );
+  }
 }

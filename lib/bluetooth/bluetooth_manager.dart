@@ -27,6 +27,7 @@ class BluetoothManager {
   // ---------------------------------------------------------------------------
   // -------------------- GESTION DES PERMISSIONS ------------------------------
   // ---------------------------------------------------------------------------
+  // MARK: - PERMISSIONS
   
 
   Future<bool?> isBluetoothActivated(context) async {
@@ -150,7 +151,7 @@ class BluetoothManager {
   // ---------------------------------------------------------------------------
   // -------------------- FONCTIONS GLOBALES -----------------------------------
   // ---------------------------------------------------------------------------
-
+  // MARK: - GLOBALES
 
   void stopScan() async {
     if (scanResult != null) {
@@ -165,7 +166,7 @@ class BluetoothManager {
   // ---------------------------------------------------------------------------
   // -------------------- PARTIE ECRAN ACCUEIL ---------------------------------
   // ---------------------------------------------------------------------------
-
+  // MARK: - ECRAN ACCUEIL
 
   void scanForDevices(BuildContext context) async {
 
@@ -302,6 +303,7 @@ class BluetoothManager {
     var longitude;
     var latitude;
     var nom;
+    var batterie;
     var date_init;
     var caracteristique_valeur;
 
@@ -350,6 +352,14 @@ class BluetoothManager {
               date_init = value;
             }
           }
+
+          // BATTERIE
+          if (c.properties.read) {
+            if (c.uuid.toString() == "2a19") {
+              List<int> value = await c.read();
+              batterie = value;
+            }
+          }
         }
       }
 
@@ -369,11 +379,13 @@ class BluetoothManager {
     var latitudeStr = String.fromCharCodes(latitude);
     var longitudeStr = String.fromCharCodes(longitude);
     var nomStr = String.fromCharCodes(nom);
+    var batterieStr = String.fromCharCodes(batterie);
     var date_initStr = String.fromCharCodes(date_init);
 
     print("latitude: $latitudeStr");
     print("longitude: $longitudeStr");
     print("nom: $nomStr");
+    print("batterie: $batterieStr");
     print("date_init: $date_initStr");
     print(caracteristique_valeur);
     
@@ -392,7 +404,7 @@ class BluetoothManager {
     }
 
     // ajouter le capteur a la base de données
-    await dataBase.ajouterCapteur(nomStr, DateTime.parse(date_initStr), [double.parse(latitudeStr), double.parse(longitudeStr)]);
+    await dataBase.ajouterCapteur(nomStr, int.parse(batterieStr) , DateTime.parse(date_initStr), [double.parse(latitudeStr), double.parse(longitudeStr)]);
 
 
     await caracteristique_valeur.setNotifyValue(true);
@@ -400,7 +412,7 @@ class BluetoothManager {
     var abonnementValeur = caracteristique_valeur.onValueReceived.listen((value) {
       value = String.fromCharCodes(value);
       // string to int
-      value = int.parse(value);
+      value = double.parse(value);
       print("valeur: $value");
       capteurState.setSlotState(slot, valeur: value.toDouble(), derniereConnexion: DateTime.now());
     });
@@ -411,6 +423,7 @@ class BluetoothManager {
     capteurState.setSlotState(slot, 
                     state: CapteurSlotState.connecte, 
                     derniereConnexion: DateTime.now(), 
+                    batterie: int.parse(batterieStr),
                     dateInitialisation: DateTime.parse(date_initStr),
                     latitude: double.parse(latitudeStr),
                     longitude: double.parse(longitudeStr));
@@ -487,7 +500,7 @@ class BluetoothManager {
   // ---------------------------------------------------------------------------
   // -------------------- PARTIE INITIALISATION --------------------------------
   // ---------------------------------------------------------------------------
-
+  // MARK: - INITIALISATION
 
   Future<Stream<List<ScanResult>>> getScanList(BuildContext context, index) async {
 
