@@ -437,7 +437,7 @@ class BluetoothManager {
             // sauvegarder les données dans la base de données
             print("Le capteur est deconnecté");
             var deviceData = capteurState.getSlot(slot);
-            await dataBase.modifierValeurCapteur(deviceData["nom"], deviceData["valeur"]);
+            await dataBase.modifierValeurCapteur(deviceData["nom"], deviceData["valeur"], deviceData["batterie"]);
             if (!deconnexionVoulue[slot-1]){
               capteurState.setSlotState(slot, state: CapteurSlotState.perdu);
               scanForDevices(navigatorKey.currentState!.context);

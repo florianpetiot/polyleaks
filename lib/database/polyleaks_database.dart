@@ -147,9 +147,9 @@ class PolyleaksDatabase extends ChangeNotifier {
   // UPDATE - modifier la valeur d'un capteur (ainsi que la date de derniere connexion)
   // TODO: peut etre utiliser provider pour notifier les cartes de capteur
     /// a utiliser par le bluetooth
-  Future<void> modifierValeurCapteur(String nom, double valeur) async {
+  Future<void> modifierValeurCapteur(String nom, double valeur, int batterie) async {
     final capteur = await isar.capteurModels.filter().nomEqualTo(nom).findFirst();
-    final newCapteur = capteur!..valeur = valeur..dateDerniereConnexion = DateTime.now();
+    final newCapteur = capteur!..valeur = valeur..dateDerniereConnexion = DateTime.now()..batterie = batterie;
     await isar.writeTxn(() => isar.capteurModels.put(newCapteur));
   }
 
