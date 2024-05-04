@@ -18,18 +18,12 @@ class PageAccueil extends StatefulWidget {
 }
 
 class _PageAccueilState extends State<PageAccueil> {
-  SMIInput? estTrouve;
+  SMIInput? etatAnimation;
   Artboard? riveArtboard;
 
   @override
   void initState() {
     super.initState();
-
-    for (int slot = 1; slot <= 2; slot++) {
-      if (context.read<CapteurStateNotifier>().getSlot(slot)["state"] == CapteurSlotState.trouve) {
-        context.read<CapteurStateNotifier>().setSlotState(slot, state: CapteurSlotState.recherche);
-      }
-    }
 
     BluetoothManager().scanForDevices(context);
     rootBundle.load('assets/pipe_animation.riv').then(
@@ -40,7 +34,7 @@ class _PageAccueilState extends State<PageAccueil> {
           var controller = StateMachineController.fromArtboard(artboard, 'State Machine 1');
           if (controller != null) {
             artboard.addController(controller);
-            estTrouve = controller.findSMI('etat');
+            etatAnimation = controller.findSMI('etat');
           }
           setState(() => riveArtboard = artboard);
         }
@@ -53,13 +47,23 @@ class _PageAccueilState extends State<PageAccueil> {
 
   @override
   void dispose() {
+    print("dispose");
+    for (int slot = 1; slot <= 2; slot++) {
+      if (context.read<CapteurStateNotifier>().getSlot(slot)["state"] == CapteurSlotState.trouve) {
+        print("dispose");
+        context.read<CapteurStateNotifier>().setSlotState(slot, state: CapteurSlotState.recherche);
+      }
+    }
+
     super.dispose();
     BluetoothManager().stopScan();
+
+     
   }
 
   void changerEtat(bool newValue) {
     setState(() {
-      estTrouve!.value = newValue ? 1.0 : 0.0;
+      etatAnimation!.value = newValue ? 110.0 : 0.0;
     });
   }
 
@@ -69,6 +73,73 @@ class _PageAccueilState extends State<PageAccueil> {
     final gpsPermission = context.watch<CapteurStateNotifier>().gpsPermission;
     final bluetoothPermission = context.watch<CapteurStateNotifier>().bluetoothPermission;
     final capteurState = context.watch<CapteurStateNotifier>();
+
+    var etat1 = context.read<CapteurStateNotifier>().getSlot(1)["state"];
+    var etat2 = context.read<CapteurStateNotifier>().getSlot(2)["state"];
+
+    if ((etat1 == CapteurSlotState.recherche || etat1 == CapteurSlotState.trouve) && (etat2 == CapteurSlotState.recherche || etat2 == CapteurSlotState.trouve)) {
+      if (etatAnimation != null) {
+        setState(() {
+          etatAnimation!.value = 0.0;
+        });
+      }
+    }
+    else if ((etat1 == CapteurSlotState.recherche || etat1 == CapteurSlotState.trouve) && etat2 == CapteurSlotState.connecte) {
+      if (etatAnimation != null) {
+        setState(() {
+          etatAnimation!.value = 01.0;
+        });
+      }
+    }
+    else if ((etat1 == CapteurSlotState.recherche || etat1 == CapteurSlotState.trouve) && etat2 == CapteurSlotState.perdu) {
+      if (etatAnimation != null) {
+        setState(() {
+          etatAnimation!.value = 02.0;
+        });
+      }
+    }
+    else if (etat1 == CapteurSlotState.connecte && (etat2 == CapteurSlotState.recherche || etat2 == CapteurSlotState.trouve)) {
+      if (etatAnimation != null) {
+        setState(() {
+          etatAnimation!.value = 10.0;
+        });
+      }
+    }
+    else if (etat1 == CapteurSlotState.connecte && etat2 == CapteurSlotState.connecte) {
+      if (etatAnimation != null) {
+        setState(() {
+          etatAnimation!.value = 110.0;
+        });
+      }
+    }
+    else if (etat1 == CapteurSlotState.connecte && etat2 == CapteurSlotState.perdu) {
+      if (etatAnimation != null) {
+        setState(() {
+          etatAnimation!.value = 120.0;
+        });
+      }
+    }
+    else if (etat1 == CapteurSlotState.perdu && (etat2 == CapteurSlotState.recherche || etat2 == CapteurSlotState.trouve)) {
+      if (etatAnimation != null) {
+        setState(() {
+          etatAnimation!.value = 20.0;
+        });
+      }
+    }
+    else if (etat1 == CapteurSlotState.perdu && etat2 == CapteurSlotState.connecte) {
+      if (etatAnimation != null) {
+        setState(() {
+          etatAnimation!.value = 210.0;
+        });
+      }
+    }
+    else if (etat1 == CapteurSlotState.perdu && etat2 == CapteurSlotState.perdu) {
+      if (etatAnimation != null) {
+        setState(() {
+          etatAnimation!.value = 220.0;
+        });
+      }
+    }
 
     return SafeArea(
       child: Scaffold(
@@ -91,32 +162,35 @@ class _PageAccueilState extends State<PageAccueil> {
               Expanded(
                 flex: 3,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Expanded(
+                      flex: 3,
                       child: riveArtboard == null
                         ? const Center(child: CircularProgressIndicator())
                         : Rive(artboard: riveArtboard!),
                     ),
-          
-                    estTrouve == null
-                      ? const CircularProgressIndicator()
-                      : Switch(
-                          value: estTrouve!.value == 1.0 ? true : false, 
-                          onChanged: (value) => changerEtat(value),
+
+                    Expanded(
+                      flex: 2,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            detectionFuiteTexte(capteurState),
+                            
+                            (blacklist.isNotEmpty && (capteurState.getSlot(1)["state"] == CapteurSlotState.recherche || capteurState.getSlot(2)["state"] == CapteurSlotState.recherche))
+                              ? ElevatedButton(
+                                onPressed: () {
+                                  BluetoothManager().resetBlacklist(context);
+                                },
+                                child: const Text('Réinitialiser la blacklist'),
+                              )
+                            : const SizedBox()
+                          ],
                         ),
-                    
-                    detectionFuiteTexte(capteurState),
-                      
-                    
-                    (blacklist.isNotEmpty && (capteurState.getSlot(1)["state"] == CapteurSlotState.recherche || capteurState.getSlot(2)["state"] == CapteurSlotState.recherche))
-                      ? ElevatedButton(
-                          onPressed: () {
-                            BluetoothManager().resetBlacklist(context);
-                          },
-                          child: const Text('Réinitialiser la blacklist'),
-                        )
-                      : const SizedBox()
+
+                    )
+                   
                   ],
                 )
               )
@@ -205,25 +279,105 @@ class _PageAccueilState extends State<PageAccueil> {
     double difference = (capteurState.getSlot(1)["valeur"] - capteurState.getSlot(2)["valeur"]).abs();
 
     if (!([CapteurSlotState.connecte, CapteurSlotState.perdu].contains(capteurState.getSlot(1)["state"])) || !([CapteurSlotState.connecte, CapteurSlotState.perdu].contains(capteurState.getSlot(2)["state"]))) {
-      return const Column(
-        children: [
-          Icon(Icons.more_horiz_outlined, size: 25),
-          Text('Connectez vous à deux capteurs pour commencer.')
-        ]);
+      return Stack(
+        alignment: Alignment.center,
+        children: <Widget>[
+          Container(
+            width: 250, // Ajustez la largeur comme vous le souhaitez
+            height: 70, // Ajustez la hauteur comme vous le souhaitez
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.elliptical(100, 50)),
+              // color: Colors.blue, // Choisissez la couleur que vous voulez
+              boxShadow: [
+                BoxShadow(
+                  color: Color.fromRGBO(144, 202, 249, 0.738),
+                  spreadRadius: 2,
+                  blurRadius: 50,
+                  offset: Offset(0, 0), // changes position of shadow
+                ),
+              ],
+            ),
+          ),
+          const Text(
+            'Connectez vous à deux capteurs\npour commencer.',
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontStyle: FontStyle.italic,
+              fontSize: 20
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      );
     }
     else if (difference > incoherence) {
-      return const Column(
-        children: [
-          Icon(Icons.warning_amber_rounded, size: 25,),
-          Text('Fuite détectée !')
-        ]);
+      if (etatAnimation != null) {
+        setState(() {
+          etatAnimation!.value += 1.0;
+        });
+      }
+      return Stack(
+        alignment: Alignment.center,
+        children: <Widget>[
+          Container(
+            width: 250, // Ajustez la largeur comme vous le souhaitez
+            height: 70, // Ajustez la hauteur comme vous le souhaitez
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.elliptical(100, 50)),
+              // color: Colors.blue, // Choisissez la couleur que vous voulez
+              boxShadow: [
+                BoxShadow(
+                  color: Color.fromRGBO(239, 154, 154, 0.803),
+                  spreadRadius: 2,
+                  blurRadius: 50,
+                  offset: Offset(0, 0), // changes position of shadow
+                ),
+              ],
+            ),
+          ),
+          // Icon(Icons.warning_amber_rounded, size: 25,),
+          const Text(
+            'Une fuite à été détectée !',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontStyle: FontStyle.italic,
+              fontSize: 20
+            ),
+          )
+        ],
+      );
     }
     else {
-      return const Column(
-        children: [
-          Icon(Icons.check_circle_outline, size: 25),
-          Text('Aucune fuite détectée.')
-        ]);
+      return Stack(
+        alignment: Alignment.center,
+        children: <Widget>[
+          Container(
+            width: 250, // Ajustez la largeur comme vous le souhaitez
+            height: 70, // Ajustez la hauteur comme vous le souhaitez
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.elliptical(100, 50)),
+              // color: Colors.blue, // Choisissez la couleur que vous voulez
+              boxShadow: [
+                BoxShadow(
+                  color: Color.fromRGBO(165, 214, 167, 1),
+                  spreadRadius: 2,
+                  blurRadius: 50,
+                  offset: Offset(0, 0), // changes position of shadow
+                ),
+              ],
+            ),
+          ),
+          const Text(
+            'Aucune fuite détectée.',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontStyle: FontStyle.italic,
+              fontSize: 20
+            ),
+          ),
+        ],
+      );
     }
   }
 }

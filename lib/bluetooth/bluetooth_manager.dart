@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:polyleaks/database/polyleaks_database.dart';
 import 'package:polyleaks/main.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
@@ -611,13 +612,17 @@ class BluetoothManager {
       // INFORMATION
       // 0000180a-0000-1000-8000-00805f9b34fb
       if (service.uuid.toString() == "180a") {
+        print("SERVICE INFORMATION");
         var characteristics = service.characteristics;
         for(BluetoothCharacteristic c in characteristics) {
 
           // DATE INIT
           if (c.properties.write) {
             if (c.uuid.toString() == "2a08") {
-              var date = DateTime.now().toString().codeUnits;
+              String formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
+              var date = formattedDate.codeUnits;
+              print("ECRITURE DATE INIT");
+              print(formattedDate);
               await c.write(date);
             }
           }

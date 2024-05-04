@@ -142,6 +142,7 @@ class _VueMapsState extends State<VueMaps> {
 
           GoogleMap(
             onMapCreated: _onMapCreated,
+            cloudMapId: "bba0b8f0ded1ff5d",
             initialCameraPosition: CameraPosition(
               target: _cameraPosition,
               zoom: _cameraZoom,
