@@ -23,6 +23,14 @@ class _PageAccueilState extends State<PageAccueil> {
 
   @override
   void initState() {
+    
+    // Reset les slot s'ils sont en mode trouve
+    for (int slot = 1; slot <= 2; slot++) {
+      if (context.read<CapteurStateNotifier>().getSlot(slot)["state"] == CapteurSlotState.trouve) {
+        context.read<CapteurStateNotifier>().setSlotState(slot, state: CapteurSlotState.recherche);
+      }
+    }
+
     super.initState();
 
     BluetoothManager().scanForDevices(context);
@@ -47,18 +55,8 @@ class _PageAccueilState extends State<PageAccueil> {
 
   @override
   void dispose() {
-    print("dispose");
-    for (int slot = 1; slot <= 2; slot++) {
-      if (context.read<CapteurStateNotifier>().getSlot(slot)["state"] == CapteurSlotState.trouve) {
-        print("dispose");
-        context.read<CapteurStateNotifier>().setSlotState(slot, state: CapteurSlotState.recherche);
-      }
-    }
-
     super.dispose();
     BluetoothManager().stopScan();
-
-     
   }
 
   void changerEtat(bool newValue) {

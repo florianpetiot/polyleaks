@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polyleaks/pages/plus/page_a_propos.dart';
 import 'package:polyleaks/pages/plus/page_initialisation.dart';
 
 class PagePlus extends StatefulWidget {
@@ -62,14 +63,11 @@ class _PagePlusState extends State<PagePlus> {
           title: const Text('A propos'),
           leading: const Icon(Icons.info),
           onTap: () {
-            showAboutDialog(
-              context: context,
-              applicationName: 'PolyLeaks',
-              applicationVersion: '1.0.0',
-              applicationIcon: const Icon(Icons.info),
-              children: const [
-                Text('Application de gestion de capteurs'),
-              ],
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const PageAPropos(),
+              ),
             );
           },
         ),

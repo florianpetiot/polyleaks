@@ -163,7 +163,7 @@ class BottomSheet extends StatelessWidget {
 
     // si le slot est vide
       // mettre en mode perdu
-    else if (capteurState.getSlot(slot)["state"] == CapteurSlotState.recherche) {
+    else if (capteurState.getSlot(slot)["state"] == CapteurSlotState.recherche || capteurState.getSlot(slot)["state"] == CapteurSlotState.trouve){
       final dateFormat = DateFormat('dd/MM/yy HH:mm:ss');
       final dateFormatCible = DateFormat('yyyy-MM-ddTHH:mm:ssZ');
       final dateInitilalisationStrCible = dateFormatCible.format(dateFormat.parse(dateInitilalisationStr));

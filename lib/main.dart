@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:polyleaks/database/polyleaks_database.dart';
+import 'package:polyleaks/l10n/l10n.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
 import 'package:polyleaks/pages/accueil/page_accueil.dart';
 import 'package:polyleaks/pages/historique/page_historique.dart';
@@ -59,6 +62,13 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
         navigatorKey: navigatorKey,
         debugShowCheckedModeBanner: false,
+        supportedLocales: L10n.all,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+        ],
         home: Scaffold(
           body: ecrans[indexEcran],
         

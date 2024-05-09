@@ -1,0 +1,34 @@
+{
+    "aPropos0": "À propos de PolyLeaks",
+    "@aPropos0": {
+        "description": "a propos titre"
+    },
+    "aPropos1": "Les fuites d'eau dans les canalisations représentent un problème considérable dans la distribution d'eau en France. En effet, 20% de l'eau propre produite est perdue à cause des fuites. Cette perte représente 14 millions de piscines olympiques remplies chaque année. Afin de trouver une solution à cette problématique nous avons créé un système de détection de fuite innovant : PolyLeaks.",
+    "@aPropos1": {
+        "description": "a propos paragraphe 1"
+    },
+    "aPropos2": "PolyLeaks est un projet ambitieux conçu par une équipe de 12 étudiants de deuxième année de classe préparatoire aux écoles d'ingénieur Polytech (PeiP) à Nantes. L'objectif est de limiter les pertes d'eau dues aux fuites dans les canalisations, alignant ainsi notre initiative avec les Objectifs de Développement Durable (ODD) de l'ONU. On s'est focalisé sur la gestion durable de l'eau (ODD n°6), les villes et communautés durables (ODD n°11) et la consommation et production responsable (ODD n°12).",
+    "@aPropos2": {
+        "description": "a propos paragraphe 2"
+    },
+    "aPropos3": "Premièrement, on a réfléchi à comment concevoir un système innovant de détection de fuite.",
+    "@aPropos3": {
+        "description": "a propos paragraphe 3"
+    },
+    "aPropos4": "Deuxièmement, pour réaliser notre projet nous avons séparé l'équipe en plusieurs pôles afin d'optimiser notre temps de travail et nos compétences.",
+    "@aPropos4": {
+        "description": "a propos paragraphe 4"
+    },
+    "aPropos5": "Troisièmement, nous avons réalisé une étude bibliographique sur les différentes méthodes existantes de détection de fuite. On a aussi établi une liste des avantages et des inconvénients de chaque méthode.",
+    "@aPropos5": {
+        "description": "a propos paragraphe 5"
+    },
+    "aPropos6": "En conclusion, après plusieurs mois de recherche, nous avons trouvé une solution innovante qui consiste en une bague de raccord équipée d'un capteur à effet Hall. Cette méthode a permis la détection quasi-instantanée des fuites en mesurant le débit volumique dans la canalisation.",
+    "@aPropos6": {
+        "description": "a propos paragraphe 6"
+    },
+    "aPropos7": "Notre équipe a même réussi le challenge d'imprimer en 3D la conception numérique de la bague et même concevoir une application mobile !",
+    "@aPropos7": {
+        "description": "a propos paragraphe 7"
+    }
+}

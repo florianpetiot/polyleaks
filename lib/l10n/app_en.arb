@@ -1,0 +1,10 @@
+{
+    "aPropos0": "Aboout PolyLeaks",
+    "aPropos1": "Water leaks in pipes are a major problem in water distribution in France. In fact, 20% of the clean water produced is lost through leaks. This loss represents 14 million Olympic-sized swimming pools filled every year. To find a solution to this problem, we have created an innovative leak detection system: PolyLeaks.",
+    "aPropos2": "PolyLeaks is a system that uses a network of sensors to detect leaks in pipes. These sensors are placed at regular intervals along the pipes and are connected to a central computer. The computer analyzes the data collected by the sensors and alerts the operator in case of a leak. This allows the operator to quickly locate and repair the leak, reducing water loss and saving money.",   
+    "aPropos3": "Firstly, we thought about how to design an innovative leak detection system.",
+    "aPropos4": "Secondly, to carry out our project we split the team into several divisions to optimise our working time and skills.",
+    "aPropos5": "Thirdly, we carried out a literature review on the various existing leak detection methods. We also drew up a list of the advantages and disadvantages of each method.",
+    "aPropos6": "In conclusion, after several months of research, we came up with an innovative solution consisting of a coupling ring fitted with a Hall-effect sensor. This method enabled leaks to be detected almost instantaneously by measuring the volume flow in the pipe.",
+    "aPropos7": "Our team even managed the challenge of 3D printing the digital design of the ring and even designing a mobile application!"
+}
