@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:polyleaks/bluetooth/bluetooth_manager.dart';
 import 'package:polyleaks/components/bottom_sheet_details.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
@@ -23,6 +24,11 @@ class _CarteCapteurPerduState extends State<CarteCapteurPerdu> {
   void initState() {
     super.initState();
     _timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {});
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
     deductionTempsLive(capteurState.getSlot(widget.slot)["derniereConnexion"]);
   }
@@ -46,7 +52,7 @@ class _CarteCapteurPerduState extends State<CarteCapteurPerdu> {
   late String tempsDeduit;
   late Timer _timer;
 
-  void deductionTempsLive(derniereConnexion) {
+  void deductionTempsLive(DateTime derniereConnexion) {
     String temps;
 
     final difference = DateTime.now().difference(derniereConnexion);
@@ -54,19 +60,22 @@ class _CarteCapteurPerduState extends State<CarteCapteurPerdu> {
 
     if (difference.inDays > 0) {
       // afficher la date et sortir de la fonction
-      temps = 'Vu le ${derniereConnexion.day}/${derniereConnexion.month}/${derniereConnexion.year}';
+      String day = derniereConnexion.day.toString().padLeft(2, '0');
+      String month = derniereConnexion.month.toString().padLeft(2, '0');
+      String year = derniereConnexion.year.toString().substring(2);
+      temps = AppLocalizations.of(context)!.slotPerduDate(day, month, year);
       setState(() {
         tempsDeduit = temps;
       });
       return;
     } else if (difference.inHours > 0) {
-      temps = 'Vu il y a ${difference.inHours}h';
+      temps = AppLocalizations.of(context)!.slotPerduHeures(difference.inHours);
       interval = const Duration(hours: 1);
     } else if (difference.inMinutes > 0) {
-      temps = 'Vu il y a ${difference.inMinutes}m';
+      temps = AppLocalizations.of(context)!.slotPerduMinutes(difference.inMinutes);
       interval = const Duration(minutes: 1);
     } else {
-      temps = 'Vu il y a ${difference.inSeconds}s';
+      temps = AppLocalizations.of(context)!.slotPerduSecondes(difference.inSeconds);
       interval = const Duration(seconds: 1);
     }
 
@@ -141,7 +150,7 @@ class _CarteCapteurPerduState extends State<CarteCapteurPerdu> {
                   Text(
                     tempsDeduit,
                     style: const TextStyle(
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -162,7 +171,7 @@ class _CarteCapteurPerduState extends State<CarteCapteurPerdu> {
                   ),
                 ),
                 const Text(
-                  'L/s',
+                  'L/h',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -185,9 +194,9 @@ class _CarteCapteurPerduState extends State<CarteCapteurPerdu> {
                           borderRadius: BorderRadius.circular(15),
                         ),
                       ),
-                      child: const Text(
-                        'Détails',
-                        style: TextStyle(
+                      child: Text(
+                        AppLocalizations.of(context)!.slotConnecte2,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 18,
                         ),
@@ -196,6 +205,8 @@ class _CarteCapteurPerduState extends State<CarteCapteurPerdu> {
                   ElevatedButton(
                       onPressed: () => setCapteurState(context),
                       style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(55,40),
+                        padding: const EdgeInsets.symmetric(horizontal: 5),
                         backgroundColor: const Color(0xFF8A8A8A),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),

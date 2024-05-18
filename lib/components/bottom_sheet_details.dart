@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:polyleaks/bluetooth/bluetooth_manager.dart';
 import 'package:polyleaks/database/polyleaks_database.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
@@ -236,7 +237,7 @@ class BottomSheet extends StatelessWidget {
                   // Valeur
                   Align(
                     alignment: Alignment.centerLeft,
-                    child: Text("Mesure : ${valeurCapteur}L/s",
+                    child: Text("${AppLocalizations.of(context)!.bs1} : ${valeurCapteur}L/h",
                         style: const TextStyle(
                           fontSize: 17,
                         )),
@@ -245,7 +246,7 @@ class BottomSheet extends StatelessWidget {
                   // Dernière connexion
                   Align(
                     alignment: Alignment.centerLeft,
-                    child: Text("Dernière connexion : $derniereConnexionStr",
+                    child: Text("${AppLocalizations.of(context)!.bs2} : $derniereConnexionStr",
                         style: const TextStyle(
                           fontSize: 17,
                         )),
@@ -254,7 +255,7 @@ class BottomSheet extends StatelessWidget {
                   // Date d'initialisation
                   Align(
                     alignment: Alignment.centerLeft,
-                    child: Text("Date d'initialisation : $dateInitilalisationStr",
+                    child: Text("${AppLocalizations.of(context)!.bs3} : $dateInitilalisationStr",
                         style: const TextStyle(
                           fontSize: 17,
                         )),
@@ -315,16 +316,16 @@ class BottomSheet extends StatelessWidget {
                   onTap: () async {
                     await launchUrl(Uri.parse("https://www.google.com/maps/search/?api=1&query=$latitude,$longitude"));
                   },
-                  child: const IntrinsicWidth(
+                  child: IntrinsicWidth(
                     child: Row(
                       children: [
-                        Text("Ouvrir dans Google Maps",
-                          style: TextStyle(
+                        Text(AppLocalizations.of(context)!.bs4,
+                          style: const TextStyle(
                             fontSize: 17,
                             color: Colors.blue,
                           )),
-                        SizedBox(width: 5),
-                        Icon(Icons.open_in_new, color: Colors.blue, size: 20),
+                        const SizedBox(width: 5),
+                        const Icon(Icons.open_in_new, color: Colors.blue, size: 20),
                       ]
                     ),
                   ),
@@ -341,14 +342,14 @@ class BottomSheet extends StatelessWidget {
 
               // ajout d'une phrase "vue des emplacements" suivit d'une ligne grise jusqu'à la fin de la ligne
               if (vueSlot)
-              const Row(
+              Row(
                 children: [
-                  Text("Vue des emplacements",
-                    style: TextStyle(
+                  Text(AppLocalizations.of(context)!.bs5,
+                    style: const TextStyle(
                       fontSize: 15,
                     )),
-                  SizedBox(width: 5),
-                  Expanded(
+                  const SizedBox(width: 5),
+                  const Expanded(
                     child: Padding(
                       padding: EdgeInsets.only(top: 3),
                       child: Divider(
@@ -411,7 +412,7 @@ class BottomSheet extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Center(
-                          child: Text("Mettre dans l'emplacement ${index + 1}",
+                          child: Text("${AppLocalizations.of(context)!.bs6} ${index + 1}",
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               fontSize: 17,
@@ -446,25 +447,28 @@ class BatteryLevel extends StatelessWidget {
       onTap: () {
         showPopover(context: context, 
         bodyBuilder: ((context) {
-          return const SizedBox(
+          return SizedBox(
             width: 250,
-            height: 75,
+            height: 80,
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 5),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   
-                  Text("Il reste environ 5 ans d'autonomie.",
-                    style: TextStyle(
+                  Text(AppLocalizations.of(context)!.bs7,
+                    textAlign: TextAlign.left,
+                    style: const TextStyle(
                       fontSize: 15,
                     )
                   ),
               
-                  SizedBox(height: 10),
+                  const SizedBox(height: 5),
               
-                  Text("Estimé grâce au temps passé depuis la dernière connexion.",
-                    style: TextStyle(
+                  Text(AppLocalizations.of(context)!.bs8,
+                    textAlign: TextAlign.left,
+                    style: const TextStyle(
                       fontSize: 13,
                       height: 1.1,
                     )

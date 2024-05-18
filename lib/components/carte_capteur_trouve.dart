@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:polyleaks/bluetooth/bluetooth_manager.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
 import 'package:provider/provider.dart';
@@ -56,9 +57,9 @@ class CarteCapteurTrouve extends StatelessWidget {
                         borderRadius: BorderRadius.circular(15),
                       ),
                     ),
-                    const Text(
-                      'Trouvé',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context)!.slotTrouve1,
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -78,30 +79,32 @@ class CarteCapteurTrouve extends StatelessWidget {
                         borderRadius: BorderRadius.circular(15),
                       ),
                     ),
-                    child: const Text(
-                      'Se connecter',
-                      style: TextStyle(
+                    child: Text(
+                      AppLocalizations.of(context)!.slotTrouve2,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 18,
                       ),
                     )
                 ),
-                ElevatedButton(
-                onPressed: () => BluetoothManager().ignorer(context,slot),
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF8A8A8A),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
+
+                const SizedBox(height: 10),
+
+                Material (
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () => BluetoothManager().ignorer(context,slot),
+                    child: Text(
+                      AppLocalizations.of(context)!.slotTrouve3,
+                      style: const TextStyle(
+                        color: Color(0xFF8A8A8A),
+                        fontWeight: FontWeight.bold,
+                        decoration: TextDecoration.underline,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
-                  child: const Text(
-                    'Ignorer cette fois',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                    ),
-                  )
-            )
+                )
               ],
             ),
             ],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:polyleaks/bluetooth/bluetooth_manager.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 
 
@@ -102,7 +103,7 @@ class _PageInitialisationCapteurState extends State<PageInitialisationCapteur> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Initialisation des capteurs'),
+        title: Text(AppLocalizations.of(context)!.initCapteursTitre),
       ),
       body: Stepper(
       currentStep: _index,
@@ -127,12 +128,12 @@ class _PageInitialisationCapteurState extends State<PageInitialisationCapteur> {
             if (_index != 2)
             ElevatedButton(
               onPressed: controlsDetails.onStepContinue,
-              child: const Text('Continuer'),
+              child: Text(AppLocalizations.of(context)!.initCapteursStep1),
             ),
             if (_index != 0)
             TextButton(
               onPressed: controlsDetails.onStepCancel,
-              child: const Text('précédent'),
+              child: Text(AppLocalizations.of(context)!.initCapteursStep2),
             ),
           ]
         );
@@ -140,21 +141,21 @@ class _PageInitialisationCapteurState extends State<PageInitialisationCapteur> {
 
       steps: <Step>[
         Step(
-          title: const Text('Placement de la bague'),
+          title: Text(AppLocalizations.of(context)!.initCapteurs1),
           content: Container(
             alignment: Alignment.centerLeft,
             child: const Text('lorem ipsum'),
         )),
 
         Step(
-          title: const Text('Connexion de la batterie'),
+          title: Text(AppLocalizations.of(context)!.initCapteurs2),
           content: Container(
             alignment: Alignment.centerLeft,
             child : const Text('lorem ipsum'),
         )),
 
         Step(
-          title: const Text('initialisation du capteur'),
+          title: Text(AppLocalizations.of(context)!.initCapteurs3),
           content: SizedBox(
             height: 260,
             width: 300,
@@ -163,12 +164,12 @@ class _PageInitialisationCapteurState extends State<PageInitialisationCapteur> {
               builder: (BuildContext context, AsyncSnapshot<Stream<List<ScanResult>>> snapshot) {
                 
                 if (snapshot.connectionState == ConnectionState.waiting){
-                  return const Column(
+                  return Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('Demande des autorisations en cours...'),
-                      SizedBox(height: 10),
-                      CircularProgressIndicator(),
+                      Text(AppLocalizations.of(context)!.initCapteursSetUp),
+                      const SizedBox(height: 10),
+                      const CircularProgressIndicator(),
                     ],
                   );
                 }
@@ -210,7 +211,7 @@ class _PageInitialisationCapteurState extends State<PageInitialisationCapteur> {
                         );
                       }
                       else if (!snapshot.hasData) {
-                        return const Text('Recherche de capteurs en cours...');
+                        return Text(AppLocalizations.of(context)!.initCapteurs3Titre);
                       }
 
                       else {
@@ -218,23 +219,41 @@ class _PageInitialisationCapteurState extends State<PageInitialisationCapteur> {
                           controller: _pageController,
                           physics: const NeverScrollableScrollPhysics(),
                           children: [
-                            ListView.builder(
-                              itemCount:  snapshot.data!.length,
-                              itemBuilder: (context, index) {
-                                var advName = snapshot.data![index].advertisementData.advName;                      
+                            Column(
+                              children: [
+                                Column(
+                                  children: [
+                                    Text(AppLocalizations.of(context)!.initCapteurs3Titre, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+                                    const SizedBox(height: 10),
+                                    LinearProgressIndicator(
+                                      backgroundColor: Colors.transparent,
+                                      color: Colors.blue[200],
+                                      minHeight: 2,
+                                    ),  
+                                  ],
+                                ),
 
-                                if (!advName.startsWith("Polyleaks-")) {
-                                  return const SizedBox.shrink();
-                                }
-
-                                return ListTile(
-                                  title: Text(advName),
-                                  trailing: const Icon(Icons.arrow_forward_ios_rounded),
-                                  onTap: () {
-                                    _showDescriptionPage(snapshot.data![index]);
-                                  }
-                                );
-                            }),
+                                Expanded(
+                                  child: ListView.builder(
+                                    itemCount:  snapshot.data!.length,
+                                    itemBuilder: (context, index) {
+                                      var advName = snapshot.data![index].advertisementData.advName;                      
+                                  
+                                      if (!advName.startsWith("Polyleaks-")) {
+                                        return const SizedBox.shrink();
+                                      }
+                                  
+                                      return ListTile(
+                                        title: Text(advName),
+                                        trailing: const Icon(Icons.arrow_forward_ios_rounded),
+                                        onTap: () {
+                                          _showDescriptionPage(snapshot.data![index]);
+                                        }
+                                      );
+                                  }),
+                                ),
+                              ],
+                            ),
 
                             ValueListenableBuilder(
                               valueListenable: selectedDevice,
@@ -262,16 +281,19 @@ class _PageInitialisationCapteurState extends State<PageInitialisationCapteur> {
                                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                       crossAxisAlignment: CrossAxisAlignment.center,
                                       children: <Widget>[
-                                        const Text(
-                                          'Ne bougez pas votre téléphone\npendant l\'initialisation.',
-                                          textAlign: TextAlign.center,
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 45),
+                                          child: Text(
+                                            AppLocalizations.of(context)!.initCapteurs4,
+                                            textAlign: TextAlign.center,
+                                          ),
                                         ),
                                         
                                         ElevatedButton(
                                           onPressed: () {
                                             initialisationCapteur(result.device);
                                           },
-                                          child: const Text('Démarrer'),
+                                          child: Text(AppLocalizations.of(context)!.initCapteurs4Bouton),
                                         ),
 
                                         Column(
@@ -298,10 +320,10 @@ class _PageInitialisationCapteurState extends State<PageInitialisationCapteur> {
                                                     etapeLoc == EtatEtape.attente
                                                       ? const SizedBox.shrink()
                                                       : etapeLoc == EtatEtape.enCours
-                                                        ? const Text('Obtention de la localisation...')
+                                                        ? Text(AppLocalizations.of(context)!.initCapteurs4GPS1)
                                                         : etapeLoc == EtatEtape.reussie
-                                                          ? const Text('Localisation obtenue.')
-                                                          : const Text('Autorisations refusées.')
+                                                          ? Text(AppLocalizations.of(context)!.initCapteurs4GPS2)
+                                                          : Text(AppLocalizations.of(context)!.initCapteurs4GPS3)
                                                   ],
                                                 );
                                               }
@@ -331,12 +353,12 @@ class _PageInitialisationCapteurState extends State<PageInitialisationCapteur> {
                                                     etapeTransmi == EtatEtape.attente
                                                       ? const SizedBox.shrink()
                                                       : etapeTransmi == EtatEtape.enCours
-                                                        ? const Text('Transmission des données...')
+                                                        ? Text(AppLocalizations.of(context)!.initCapteurs4Transmission1)
                                                         : etapeTransmi == EtatEtape.reussie
-                                                          ? const Text('Transmission des données réussie')
+                                                          ? Text(AppLocalizations.of(context)!.initCapteurs4Transmission2)
                                                           : etapeTransmi == EtatEtape.echec
-                                                            ? const Text('Echec de la connexion')
-                                                            : const Text('Capteur déjà initialisé')
+                                                            ? Text(AppLocalizations.of(context)!.initCapteurs4Transmission3)
+                                                            : Text(AppLocalizations.of(context)!.initCapteurs4Transmission4)
                                                   ],
                                                 );
                                               }

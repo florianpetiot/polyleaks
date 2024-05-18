@@ -18,7 +18,11 @@ class PolyleaksDatabase extends ChangeNotifier {
 
   
   // PARAMETRES -----------------------------------------------------------------
-  final Map<String, int> parametres = {};
+  final Map<String, int> _parametres = {'langue': 0, 'theme': 0};
+
+  Map<String, int> get parametres => _parametres;
+
+  Locale get langue => _parametres['langue'] == 0 ? const Locale('fr') : const Locale('en');
 
 
   // definition des parametres par defaut ---------------------------------------
@@ -29,7 +33,10 @@ class PolyleaksDatabase extends ChangeNotifier {
       // si le parametre n'existe pas, le creer
       final langue = ParametresModel()..nom = 'langue'..valeur = 0;
       await isar.writeTxn(() => isar.parametresModels.put(langue));
-      parametres['langue'] = 0;
+      _parametres['langue'] = 0;
+    }
+    else {
+      _parametres['langue'] = parametreLangue.valeur;
     }
 
     // chercher un parametre dont le nom est "theme"
@@ -38,21 +45,24 @@ class PolyleaksDatabase extends ChangeNotifier {
       // si le parametre n'existe pas, le creer
       final theme = ParametresModel()..nom = 'theme'..valeur = 0;
       await isar.writeTxn(() => isar.parametresModels.put(theme));
-      parametres['theme'] = 0;
+      _parametres['theme'] = 0;
     }
-
+    else{
+      _parametres['theme'] = parametreTheme.valeur;
+    }
     notifyListeners();
   }
 
 
   // obtenir un paramtre
-  Future<void> getParametre() async {
-    final parametres = await isar.parametresModels.where().findAll();
-    for (final parametre in parametres) {
-      this.parametres[parametre.nom] = parametre.valeur;
+  Future<void> getParametres() async {
+    final parametresBDD = await isar.parametresModels.where().findAll();
+    for (final parametre in parametresBDD) {
+      _parametres[parametre.nom] = parametre.valeur;
     }
     notifyListeners();
   }
+
 
   // definir un parametre
   Future<void> setParametre(String nom, int valeur) async {
@@ -60,7 +70,7 @@ class PolyleaksDatabase extends ChangeNotifier {
     final param = parametre!..valeur = valeur;
     await isar.writeTxn(() => isar.parametresModels.put(param));
 
-    parametres[nom] = valeur;
+    _parametres[nom] = valeur;
     notifyListeners();
   }
 

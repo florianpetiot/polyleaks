@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PopupErreur extends StatelessWidget {
   final int idErreur;
@@ -28,48 +29,48 @@ class PopupErreur extends StatelessWidget {
       // erreur inconnue
         iconData = Icons.error;
         iconColor = Colors.red;
-        title = 'Erreur inconnue';
-        content = 'Une erreur inconnue s\'est produite.';
+        title = AppLocalizations.of(context)!.erreur0Titre;
+        content = AppLocalizations.of(context)!.erreur0Description;
         break;
 
       case 1:
       // capteur introuvable
         iconData = Icons.warning;
         iconColor = Colors.orange;
-        title = 'Capteur introuvable';
-        content = 'Le capteur que vous essayez de joindre n\'est plus à proximité.\nVeuillez vous en raprocher puis réessayez.';
+        title = AppLocalizations.of(context)!.erreur1Titre;
+        content = AppLocalizations.of(context)!.erreur1Description;
         break;
 
       case 2:
       // capteur non initialisé
         iconData = Icons.warning;
         iconColor = Colors.orange;
-        title = 'Capteur non initialisé';
-        content = 'Le capteur que vous essayez de joindre n\'a pas été initialisé.\nVeuillez vous rendre dans la partie "Plus" pour l\'initialiser puis réessayez.';
+        title = AppLocalizations.of(context)!.erreur2Titre;
+        content = AppLocalizations.of(context)!.erreur2Description;
         break;
 
       case 3:
       // permission non accepetée
         iconData = Icons.settings;
-        title = 'Permission requise';
-        content = 'Pour le bon fonctionnement de cette application, veuiller accorder la permission d\'accès à la localisation GPS.';
+        title = AppLocalizations.of(context)!.erreur3Titre;
+        content = AppLocalizations.of(context)!.erreur3Description;
         break;
 
       case 4:
       // permission refusée définitivement
         iconData = Icons.settings;
-        title = 'Permission requise';
-        content = 'Vous avez refusé la permission d\'accès à la localisation GPS de manière définitive.\nPour le bon fonctionnement de cette application, veuiller accorder la permission d\'accès à la localisation GPS dans les paramètres de votre appareil.';
+        title =  AppLocalizations.of(context)!.erreur4Titre;
+        content = AppLocalizations.of(context)!.erreur4Description;
         actions = [
           TextButton(
-            child: const Text('Aller aux paramètres'),
+            child: Text(AppLocalizations.of(context)!.erreur4Bouton1),
             onPressed: () async {
               await Geolocator.openAppSettings();
               Navigator.of(context).pop();
             },
           ),
           TextButton(
-            child: const Text('Ignorer'),
+            child: Text(AppLocalizations.of(context)!.erreur4Bouton2),
             onPressed: () {
               Navigator.of(context).pop();
             },
@@ -80,16 +81,16 @@ class PopupErreur extends StatelessWidget {
       case 5:
         // activation manuelle du bluetooth
         iconData = Icons.bluetooth_rounded;
-        title = 'Bluetooth désactivé';
-        content = 'Pour le bon fonctionnement de cette application, veuiller activer le Bluetooth de votre appareil.';
+        title = AppLocalizations.of(context)!.erreur5Titre;
+        content = AppLocalizations.of(context)!.erreur5Description;
         break;
 
       default:
       // erreur inconnue
         iconData = Icons.error;
         iconColor = Colors.red;
-        title = 'Erreur inconnue';
-        content = 'Une erreur inconnue s\'est produite.';
+        title = AppLocalizations.of(context)!.erreur0Titre;
+        content = AppLocalizations.of(context)!.erreur0Description;
     }
 
     return AlertDialog(

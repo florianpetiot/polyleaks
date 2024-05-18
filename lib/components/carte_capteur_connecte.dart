@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:polyleaks/bluetooth/bluetooth_manager.dart';
 import 'package:polyleaks/components/bottom_sheet_details.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
@@ -74,9 +75,9 @@ class CarteCapteurConnecte extends StatelessWidget {
                       borderRadius: BorderRadius.circular(15),
                     ),
                   ),
-                  const Text(
-                    'Maintenant',
-                    style: TextStyle(
+                  Text(
+                    AppLocalizations.of(context)!.slotConnecte1,
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -98,7 +99,7 @@ class CarteCapteurConnecte extends StatelessWidget {
                   ),
                 ),
                 const Text(
-                  'L/s',
+                  'L/h',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -121,9 +122,9 @@ class CarteCapteurConnecte extends StatelessWidget {
                           borderRadius: BorderRadius.circular(15),
                         ),
                       ),
-                      child: const Text(
-                        'Détails',
-                        style: TextStyle(
+                      child: Text(
+                        AppLocalizations.of(context)!.slotConnecte2,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 18,
                         ),
@@ -131,7 +132,9 @@ class CarteCapteurConnecte extends StatelessWidget {
 
                   ElevatedButton(
                       onPressed: () => BluetoothManager().disconnectDevice(context, slot),
-                      style: ElevatedButton.styleFrom(
+                      style: ElevatedButton.styleFrom(                        
+                        minimumSize: const Size(55,40),
+                        padding: const EdgeInsets.symmetric(horizontal: 5),
                         backgroundColor: const Color(0xFF8A8A8A),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),

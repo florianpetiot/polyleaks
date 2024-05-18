@@ -59,46 +59,55 @@ class _MyAppState extends State<MyApp> {
       systemNavigationBarIconBrightness: Brightness.dark,
     ));
 
-    return MaterialApp(
-        navigatorKey: navigatorKey,
-        debugShowCheckedModeBanner: false,
-        supportedLocales: L10n.all,
-        localizationsDelegates: const [
-          AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-        ],
-        home: Scaffold(
-          body: ecrans[indexEcran],
-        
-        
-          bottomNavigationBar: BottomNavigationBar(
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: Icon(Icons.home),
-                label: 'Accueil',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.history_rounded),
-                label: 'Historique',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.more_horiz),
-                label: 'Plus',
-              )
-            ],
-        
-            currentIndex: indexEcran,
-            selectedItemColor: Colors.blue,
-            unselectedItemColor: Colors.grey,
-            onTap: (int index) {
-              setState(() {
-                indexEcran = index;
-              });
-            },
-          )
-        ),
-      );
+
+    return ChangeNotifierProvider(
+      create: (context) => PolyleaksDatabase(),
+      builder: (context, child) {
+        final provider = Provider.of<PolyleaksDatabase>(context);
+
+      return MaterialApp(
+          navigatorKey: navigatorKey,
+          debugShowCheckedModeBanner: false,
+          locale: provider.langue,
+          supportedLocales: L10n.all,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+          ],
+          home: Scaffold(
+            body: ecrans[indexEcran],
+          
+          
+            bottomNavigationBar: BottomNavigationBar(
+              items: <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: const Icon(Icons.home),
+                  label: provider.langue == const Locale('fr') ? 'Accueil' : 'Home',
+                ),
+                BottomNavigationBarItem(
+                  icon: const Icon(Icons.history_rounded),
+                  label: provider.langue == const Locale('fr') ? 'Historique' : 'History',
+                ),
+                BottomNavigationBarItem(
+                  icon: const Icon(Icons.more_horiz),
+                  label: provider.langue == const Locale('fr') ? 'Plus' : 'More',
+                )
+              ],
+          
+              currentIndex: indexEcran,
+              selectedItemColor: Colors.blue,
+              unselectedItemColor: Colors.grey,
+              onTap: (int index) {
+                setState(() {
+                  indexEcran = index;
+                });
+              },
+            )
+          ),
+        );
+      }
+    );
   }
 }

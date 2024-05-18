@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:polyleaks/database/polyleaks_database.dart';
 import 'package:polyleaks/main.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
@@ -479,7 +480,7 @@ class BluetoothManager {
       type: ToastificationType.info,
       style: ToastificationStyle.fillColored,
       icon: const Icon(Icons.info, color: Colors.white),
-      title: Text('${slot == 1 ? _device_slot1["device"].name : _device_slot2["device"].name} à été ajouté à la liste noire temporaire.'),
+      title: Text('${slot == 1 ? _device_slot1["device"].name : _device_slot2["device"].name} ${AppLocalizations.of(context)!.slotTrouve4}'),
       alignment: Alignment.bottomCenter,
       autoCloseDuration: const Duration(seconds: 7),
       boxShadow: lowModeShadow,

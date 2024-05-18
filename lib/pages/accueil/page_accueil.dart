@@ -2,9 +2,11 @@ import 'dart:ui';
 import 'package:flutter/src/painting/gradient.dart' as grad;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:polyleaks/bluetooth/bluetooth_manager.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
+import 'package:polyleaks/database/polyleaks_database.dart';
 import 'package:provider/provider.dart';
 import 'package:rive/rive.dart';
 import 'package:toastification/toastification.dart';
@@ -71,6 +73,8 @@ class _PageAccueilState extends State<PageAccueil> {
     final gpsPermission = context.watch<CapteurStateNotifier>().gpsPermission;
     final bluetoothPermission = context.watch<CapteurStateNotifier>().bluetoothPermission;
     final capteurState = context.watch<CapteurStateNotifier>();
+    final db = context.watch<PolyleaksDatabase>();
+    db.getParametres();
 
     var etat1 = context.read<CapteurStateNotifier>().getSlot(1)["state"];
     var etat2 = context.read<CapteurStateNotifier>().getSlot(2)["state"];
@@ -181,7 +185,7 @@ class _PageAccueilState extends State<PageAccueil> {
                                 onPressed: () {
                                   BluetoothManager().resetBlacklist(context);
                                 },
-                                child: const Text('Réinitialiser la blacklist'),
+                                child: Text(AppLocalizations.of(context)!.accueilBlacklistBouton),
                               )
                             : const SizedBox()
                           ],
@@ -201,8 +205,6 @@ class _PageAccueilState extends State<PageAccueil> {
             ClipRect(
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
-                  // un container centré avec de l'ombre,
-                  // a l'interieur, un texte
                   child: Container(
                     width: double.infinity,
                     height: double.infinity,
@@ -223,9 +225,9 @@ class _PageAccueilState extends State<PageAccueil> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text(
-                            'Pour pouvoir démarrer un scan, veuillez accorder l\'accès à la localisation et au Bluetooth.',
-                            style: TextStyle(
+                          Text(
+                            AppLocalizations.of(context)!.accueilWarning1,
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 20,
                             ),
@@ -244,7 +246,7 @@ class _PageAccueilState extends State<PageAccueil> {
                                   context: context,
                                   type: ToastificationType.error,
                                   style: ToastificationStyle.fillColored,
-                                  title: Text('La demande d\'accès a été refusée.'),
+                                  title: Text(AppLocalizations.of(context)!.accueilWarning2),
                                   alignment: Alignment.bottomCenter,
                                   autoCloseDuration: const Duration(seconds: 7),
                                   boxShadow: lowModeShadow,
@@ -256,7 +258,7 @@ class _PageAccueilState extends State<PageAccueil> {
                                 );
                               }
                             },
-                            child: const Text('Autoriser'),
+                            child: Text(AppLocalizations.of(context)!.accueilWarningBouton),
                           ),
                         ],
                       ),
@@ -281,24 +283,23 @@ class _PageAccueilState extends State<PageAccueil> {
         alignment: Alignment.center,
         children: <Widget>[
           Container(
-            width: 250, // Ajustez la largeur comme vous le souhaitez
-            height: 70, // Ajustez la hauteur comme vous le souhaitez
+            width: 250,
+            height: 70,
             decoration: const BoxDecoration(
               borderRadius: BorderRadius.all(Radius.elliptical(100, 50)),
-              // color: Colors.blue, // Choisissez la couleur que vous voulez
               boxShadow: [
                 BoxShadow(
                   color: Color.fromRGBO(144, 202, 249, 0.738),
                   spreadRadius: 2,
                   blurRadius: 50,
-                  offset: Offset(0, 0), // changes position of shadow
+                  offset: Offset(0, 0),
                 ),
               ],
             ),
           ),
-          const Text(
-            'Connectez vous à deux capteurs\npour commencer.',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context)!.accueilAnalyse1,
+            style: const TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.bold,
               fontStyle: FontStyle.italic,
@@ -319,25 +320,23 @@ class _PageAccueilState extends State<PageAccueil> {
         alignment: Alignment.center,
         children: <Widget>[
           Container(
-            width: 250, // Ajustez la largeur comme vous le souhaitez
-            height: 70, // Ajustez la hauteur comme vous le souhaitez
+            width: 250, 
+            height: 70,
             decoration: const BoxDecoration(
               borderRadius: BorderRadius.all(Radius.elliptical(100, 50)),
-              // color: Colors.blue, // Choisissez la couleur que vous voulez
               boxShadow: [
                 BoxShadow(
                   color: Color.fromRGBO(239, 154, 154, 0.803),
                   spreadRadius: 2,
                   blurRadius: 50,
-                  offset: Offset(0, 0), // changes position of shadow
+                  offset: Offset(0, 0),
                 ),
               ],
             ),
           ),
-          // Icon(Icons.warning_amber_rounded, size: 25,),
-          const Text(
-            'Une fuite à été détectée !',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context)!.accueilAnalyse2,
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontStyle: FontStyle.italic,
               fontSize: 20
@@ -351,24 +350,23 @@ class _PageAccueilState extends State<PageAccueil> {
         alignment: Alignment.center,
         children: <Widget>[
           Container(
-            width: 250, // Ajustez la largeur comme vous le souhaitez
-            height: 70, // Ajustez la hauteur comme vous le souhaitez
+            width: 250,
+            height: 70,
             decoration: const BoxDecoration(
               borderRadius: BorderRadius.all(Radius.elliptical(100, 50)),
-              // color: Colors.blue, // Choisissez la couleur que vous voulez
               boxShadow: [
                 BoxShadow(
                   color: Color.fromRGBO(165, 214, 167, 1),
                   spreadRadius: 2,
                   blurRadius: 50,
-                  offset: Offset(0, 0), // changes position of shadow
+                  offset: Offset(0, 0),
                 ),
               ],
             ),
           ),
-          const Text(
-            'Aucune fuite détectée.',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context)!.accueilAnalyse3,
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontStyle: FontStyle.italic,
               fontSize: 20

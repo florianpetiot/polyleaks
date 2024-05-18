@@ -1,4 +1,82 @@
 {
+    "slotRecherche": "Searching...",
+    "slotTrouve1": "Found",
+    "slotTrouve2": "Connect",
+    "slotTrouve3": "Ignore this time",
+    "slotTrouve4": "has been added to the temporary blacklist.",
+    "slotConnecte1": "Now",
+    "slotConnecte2": "Details",
+    "slotPerduDate": "Seen on {mois}/{jour}/{annee}",
+    "slotPerduHeures": "Seen {heure}h ago",
+    "slotPerduMinutes": "Seen {minute}min ago",
+    "slotPerduSecondes": "Seen {seconde}s ago",
+
+
+    
+    
+    
+    "accueilAnalyse1": "Connect to two sensors\nto get started.",
+    "accueilAnalyse2": "A leak has been detected!",
+    "accueilAnalyse3": "No leak detected.",
+    "accueilBlacklistBouton": "Reset the blacklist",
+    "accueilWarning1": "To be able to start a scan, please grant access to location and Bluetooth.",
+    "accueilWarningBouton": "Grant access",
+    "accueilWarning2": "The access request has been denied.", 
+
+
+
+
+    "erreur0Titre": "Unknown error",
+    "erreur0Description": "An unknown error has occurred.",
+
+    "erreur1Titre": "Sensor not found",
+    "erreur1Description": "The sensor you are trying to reach is no longer nearby.\nPlease move closer and try again.",
+
+    "erreur2Titre": "Sensor not initialised",
+    "erreur2Description": "The sensor you are trying to reach has not been initialised.\nPlease go to the 'More' section to initialise it and then try again.",
+
+    "erreur3Titre": "Permission required",
+    "erreur3Description": "In order for this application to work properly, please grant permission to access the GPS location.",
+
+    "erreur4Titre": "Permission required",
+    "erreur4Description": "You have permanently denied permission to access the GPS location.\nFor this application to work properly, please grant permission to access GPS location in your device settings.",
+    "erreur4Bouton1": "Go to settings",
+    "erreur4Bouton2": "Ingnore",
+
+    "erreur5Titre": "Bluetooth disabled",
+    "erreur5Description": "For this application to work properly, please enabled Bluetooth on your device.",
+
+
+
+
+    "pageHistorique": "History",
+    
+    "bs1" : "Measure",
+    "bs2" : "Last connection",
+    "bs3" : "Initialisation date",
+    "bs4" : "Open in Google Maps",
+    "bs5" : "Comparator slots",
+    "bs6" : "Put in slot",
+    "bs7" : "About 5 years of autonomy left.",
+    "bs8" : "Estimate from time since last connection.",
+
+
+
+
+    "liste1" : "Battery",
+    "liste2" : "Location",
+    "liste3" : "Numerology",
+    
+    
+    
+    
+    "plus1": "Language",
+    "plus2": "Dark mode",
+    "plus4": "Initialise a sensor",
+
+
+
+
     "aPropos0": "Aboout PolyLeaks",
     "aPropos1": "Water leaks in pipes are a major problem in water distribution in France. In fact, 20% of the clean water produced is lost through leaks. This loss represents 14 million Olympic-sized swimming pools filled every year. To find a solution to this problem, we have created an innovative leak detection system: PolyLeaks.",
     "aPropos2": "PolyLeaks is a system that uses a network of sensors to detect leaks in pipes. These sensors are placed at regular intervals along the pipes and are connected to a central computer. The computer analyzes the data collected by the sensors and alerts the operator in case of a leak. This allows the operator to quickly locate and repair the leak, reducing water loss and saving money.",   
@@ -6,5 +84,25 @@
     "aPropos4": "Secondly, to carry out our project we split the team into several divisions to optimise our working time and skills.",
     "aPropos5": "Thirdly, we carried out a literature review on the various existing leak detection methods. We also drew up a list of the advantages and disadvantages of each method.",
     "aPropos6": "In conclusion, after several months of research, we came up with an innovative solution consisting of a coupling ring fitted with a Hall-effect sensor. This method enabled leaks to be detected almost instantaneously by measuring the volume flow in the pipe.",
-    "aPropos7": "Our team even managed the challenge of 3D printing the digital design of the ring and even designing a mobile application!"
+    "aPropos7": "Our team even managed the challenge of 3D printing the digital design of the ring and even designing a mobile application!",
+
+
+
+    "initCapteursSetUp" : "Request for permissions in progress...",
+    "initCapteursTitre": "Sensors initialisation",
+    "initCapteurs1": "Placement of the ring",
+    "initCapteurs2": "Battery connection",
+    "initCapteurs3": "Sensor initialisation",
+    "initCapteurs3Titre": "Searching for sensors...",
+    "initCapteurs4": "Do not move your phone during initialisation.",
+    "initCapteurs4Bouton": "Start",
+    "initCapteurs4GPS1": "Obtaining the location...",
+    "initCapteurs4GPS2": "Location obtained.",
+    "initCapteurs4GPS3": "Permissions denied.",
+    "initCapteurs4Transmission1": "Transmission in progress...",
+    "initCapteurs4Transmission2": "Transmission completed.",
+    "initCapteurs4Transmission3": "Connection failed.",
+    "initCapteurs4Transmission4": "Sensor already initialised.",
+    "initCapteursStep1": "Next",
+    "initCapteursStep2": "Previous"
 }

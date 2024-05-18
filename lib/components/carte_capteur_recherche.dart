@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:polyleaks/components/point_clignotant.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CarteCapteurRecherche extends StatelessWidget {
   final int slot;
@@ -25,13 +26,13 @@ class CarteCapteurRecherche extends StatelessWidget {
         ),
       
         // Contenu de la carte ---------------------------------------------------
-        child: const Row(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            BlinkingDot(),
+            const BlinkingDot(),
             Text(
-              'Recherche...',
-              style: TextStyle(
+              AppLocalizations.of(context)!.slotRecherche,
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),

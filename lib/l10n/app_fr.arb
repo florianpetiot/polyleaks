@@ -1,4 +1,250 @@
 {
+    "slotRecherche": "Recherche...",
+    "@slotRecherche": {
+        "description": "slot recherche"
+    },
+    "slotTrouve1": "Trouvé",
+    "@slotTrouve1": {
+        "description": "slot trouve texte 1"
+    },
+    "slotTrouve2": "Se connecter",
+    "@slotTrouve2": {
+        "description": "slot trouve texte 2"
+    },
+    "slotTrouve3": "Ignorer cette fois",
+    "@slotTrouve3": {
+        "description": "slot trouve texte 3"
+    },
+    "slotTrouve4": "a été ajouté à la liste noire temporaire.",
+    "@slotTrouve4": {
+        "description": "slot trouve texte 4"
+    },
+    "slotConnecte1": "Maintenant",
+    "@slotConnecte1": {
+        "description": "slot connecte texte 1"
+    },
+    "slotConnecte2": "Détails",
+    "@slotConnecte2": {
+        "description": "slot connecte texte 2"
+    },
+    "slotPerduDate": "Vu le {jour}/{mois}/{annee}",
+    "@slotPerduDate": {
+        "description": "slot perdu date",
+        "placeholders": {
+            "jour": {
+                "type": "String"
+            },
+            "mois": {
+                "type": "String"
+            },
+            "annee": {
+                "type": "String"
+            }
+        }
+    },
+    "slotPerduHeures": "Vu il y a {heure}h",
+    "@slotPerduHeures": {
+        "description": "slot perdu heures",
+        "placeholders": {
+            "heure": {
+                "type": "int"
+            }
+        }
+    },
+    "slotPerduMinutes": "Vu il y a {minute}min",
+    "@slotPerduMinutes": {
+        "description": "slot perdu minutes",
+        "placeholders": {
+            "minute": {
+                "type": "int"
+            }
+        }
+    },
+    "slotPerduSecondes": "Vu il y a {seconde}s",
+    "@slotPerduSecondes": {
+        "description": "slot perdu secondes",
+        "placeholders": {
+            "seconde": {
+                "type": "int"
+            }
+        }
+    },
+    
+
+
+    
+    
+    
+    "accueilAnalyse1": "Connectez-vous à deux capteurs\npour commencer.",
+    "@accueilAnalyse1": {
+        "description": "accueil analyse 1"
+    },
+    "accueilAnalyse2": "Une fuite a été détectée !",
+    "@accueilAnalyse2": {
+        "description": "accueil analyse 2"
+    },
+    "accueilAnalyse3": "Aucune fuite détectée.",
+    "@accueilAnalyse3": {
+        "description": "accueil analyse 3"
+    },
+    "accueilBlacklistBouton": "Réinitialiser la blacklist",
+    "@accueilBlacklistBouton": {
+        "description": "accueil blacklist bouton"
+    },
+    "accueilWarning1": "Pour pouvoir démarrer un scan, veuillez accorder l'accès à la localisation et au Bluetooth.",
+    "@accueilWarning1": {
+        "description": "accueil warning 1"
+    },
+    "accueilWarningBouton": "Autoriser",
+    "@accueilWarningBouton": {
+        "description": "accueil warning bouton"
+    },
+    "accueilWarning2": "La demande d'accès a été refusée.",
+    "@accueilWarning2": {
+        "description": "accueil warning 2"
+    },
+
+
+
+
+    "erreur0Titre": "Erreur inconnue",
+    "@erreur0Titre": {
+        "description": "erreur 0 titre"
+    },
+    "erreur0Description": "Une erreur inconnue s'est produite.",
+    "@erreur0Description": {
+        "description": "erreur 0 description"
+    },
+
+    "erreur1Titre": "Capteur introuvable",
+    "@erreur1Titre": {
+        "description": "erreur 1 titre"
+    },
+    "erreur1Description": "Le capteur que vous essayez de joindre n'est plus à proximité.\nVeuillez vous en rapprocher puis réessayez.",
+    "@erreur1Description": {
+        "description": "erreur 1 description"
+    },
+
+    "erreur2Titre": "Capteur non initialisé",
+    "@erreur2Titre": {
+        "description": "erreur 2 titre"
+    },
+    "erreur2Description": "Le capteur que vous essayez de joindre n'a pas été initialisé.\nVeuillez vous rendre dans la partie 'Plus' pour l'initialiser puis réessayez.",
+    "@erreur2Description": {
+        "description": "erreur 2 description"
+    },
+    
+    "erreur3Titre": "Permission requise",
+    "@erreur3Titre": {
+        "description": "erreur 3 titre"
+    },
+    "erreur3Description": "Pour le bon fonctionnement de cette application, veuillez accorder la permission d'accès à la localisation GPS.",
+    "@erreur3Description": {
+        "description": "erreur 3 description"
+    },
+    
+    "erreur4Titre": "Permission requise",
+    "@erreur4Titre": {
+        "description": "erreur 4 titre"
+    },
+    "erreur4Description": "Vous avez refusé la permission d'accès à la localisation GPS de manière définitive.\nPour le bon fonctionnement de cette application, veuillez accorder la permission d'accès à la localisation GPS dans les paramètres de votre appareil.",
+    "@erreur4Description": {
+        "description": "erreur 4 description"
+    },
+    "erreur4Bouton1": "Aller aux paramètres",
+    "@erreur4Bouton1": {
+        "description": "erreur 4 bouton 1"
+    },
+    "erreur4Bouton2": "Ignorer",
+    "@erreur4Bouton2": {
+        "description": "erreur 4 bouton 2"
+    },
+
+    "erreur5Titre": "Bluetooth désactivé",
+    "@erreur5Titre": {
+        "description": "erreur 5 titre"
+    },
+    "erreur5Description": "Pour le bon fonctionnement de cette application, veuillez activer le Bluetooth de votre appareil.",
+    "@erreur5Description": {
+        "description": "erreur 5 description"
+    },
+
+
+
+
+
+    "pageHistorique": "Historique",
+    "@pageHistorique": {
+        "description": "page historique"
+    },
+    "bs1" : "Mesure",
+    "@bs1": {
+       "description": "bottom sheet donnee 1"
+    },
+    "bs2" : "Dernière connexion",
+    "@bs2": {
+        "description": "bottom sheet donnee 2"
+    },
+    "bs3" : "Date d'installation",
+    "@bs3": {
+        "description": "bottom sheet donnee 3"
+    },
+    "bs4" : "Ouvrir dans Google Maps",
+    "@bs4": {
+        "description": "bottom sheet donnee 4"
+    },
+    "bs5" : "Emplacements du comparateur",
+    "@bs5": {
+        "description": "bottom sheet donnee 5"
+    },
+    "bs6" : "Mettre dans l'emplacement",
+    "@bs6": {
+        "description": "bottom sheet donnee 6"
+    },
+    "bs7" : "Il reste environ 5 ans d'autonomie.",
+    "@bs7": {
+        "description": "bottom sheet donnee 7"
+    },
+    "bs8" : "Estimé grâce au temps passé depuis la dernière connexion.",
+    "@bs8": {
+        "description": "bottom sheet donnee 8"
+    },
+
+
+
+
+    "liste1" : "Batterie",
+    "@liste1": {
+        "description": "liste donnee supplementaire 1"
+    },
+    "liste2" : "Localisation",
+    "@bs10": {
+        "description": "liste donnee supplementaire 2"
+    },
+    "liste3" : "Numérologique",
+    "@liste3": {
+        "description": "liste donnee supplementaire 3"
+    },
+
+   
+   
+   
+    "plus1" : "Langue",
+    "@plus1": {
+        "description": "parametre 1"
+    },
+    "plus2" : "Mode sombre",
+    "@plus2": {
+        "description": "parametre 2"
+    },
+    "plus4" : "Initialiser un capteur",
+    "@plus4": {
+        "description": "parametre 4"
+    },
+
+
+
+   
     "aPropos0": "À propos de PolyLeaks",
     "@aPropos0": {
         "description": "a propos titre"
@@ -30,5 +276,76 @@
     "aPropos7": "Notre équipe a même réussi le challenge d'imprimer en 3D la conception numérique de la bague et même concevoir une application mobile !",
     "@aPropos7": {
         "description": "a propos paragraphe 7"
+    },
+
+
+
+    "initCapteursSetUp": "Demande des autorisations en cours...",
+    "@initCapteursSetUp": {
+        "description": "init capteurs set up"
+    },
+    "initCapteursTitre": "Initialisation des capteurs",
+    "@initCapteursTitre": {
+        "description": "init capteurs titre"
+    },
+    "initCapteurs1": "Placement de la bague",
+    "@initCapteurs1": {
+        "description": "init capteurs etape 1"
+    },
+    "initCapteurs2": "Connexion de la batterie",
+    "@initCapteurs2": {
+        "description": "init capteurs etape 2"
+    },
+    "initCapteurs3": "Initialisation du capteur",
+    "@initCapteurs3": {
+        "description": "init capteurs etape 3"
+    },
+    "initCapteurs3Titre": "Recheche de capteurs en cours...",
+    "@initCapteurs3Titre": {
+        "description": "init capteurs etape 3 titre"
+    },
+    "initCapteurs4": "Ne bougez pas votre téléphone pendant l'initialisation.",
+    "@initCapteurs4": {
+        "description": "init capteurs etape 4"
+    },
+    "initCapteurs4Bouton" : "Démarrer",
+    "@initCapteurs4Bouton": {
+        "description": "init capteurs etape 4 bouton"
+    },
+    "initCapteurs4GPS1": "Obtention de la localisation...",
+    "@initCapteurs4GPS1": {
+        "description": "init capteurs etape 4 gps 1"
+    },
+    "initCapteurs4GPS2": "Localisation obtenue.",
+    "@initCapteurs4GPS2": {
+        "description": "init capteurs etape 4 gps 2"
+    },
+    "initCapteurs4GPS3": "Autorisations refusées.",
+    "@initCapteurs4GPS3": {
+        "description": "init capteurs etape 4 gps 3"
+    },
+    "initCapteurs4Transmission1": "Transmission des données...",
+    "@initCapteurs4Transmission1": {
+        "description": "init capteurs etape 4 transmission 1"
+    },
+    "initCapteurs4Transmission2": "Transmission des données réussie.",
+    "@initCapteurs4Transmission2": {
+        "description": "init capteurs etape 4 transmission 2"
+    },
+    "initCapteurs4Transmission3": "Echec de la connexion.",
+    "@initCapteurs4Transmission3": {
+        "description": "init capteurs etape 4 transmission 3"
+    },
+    "initCapteurs4Transmission4": "Capteur déjà initialisé.",
+    "@initCapteurs4Transmission4": {
+        "description": "init capteurs etape 4 transmission 4"
+    },
+    "initCapteursStep1": "Continuer",
+    "@initCapteursStep1": {
+        "description": "init capteurs bouton"
+    },
+    "initCapteursStep2": "Précédent",
+    "@initCapteursStep2": {
+        "description": "init capteurs bouton"
     }
 }

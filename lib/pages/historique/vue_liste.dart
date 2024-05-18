@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:polyleaks/components/bottom_sheet_details.dart';
 import 'package:polyleaks/database/polyleaks_database.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
@@ -321,7 +322,7 @@ class _VueListeState extends State<VueListe> {
               Navigator.pop(context);
             },
             child: ListTile(
-              title: const Text('Numérologique'),
+              title: Text(AppLocalizations.of(context)!.liste3),
               leading: const Icon(Icons.numbers),
               iconColor: tri == Tri.numerologique ? Colors.blue : Colors.grey,
             ),
@@ -337,7 +338,7 @@ class _VueListeState extends State<VueListe> {
               Navigator.pop(context);
             },
             child: ListTile(
-              title: const Text('Mesure'),
+              title: Text(AppLocalizations.of(context)!.bs1),
               leading: const Icon(Icons.speed),
               iconColor: tri == Tri.mesure ? Colors.blue : Colors.grey,
             ),
@@ -353,7 +354,7 @@ class _VueListeState extends State<VueListe> {
               Navigator.pop(context);
             },
             child: ListTile(
-              title: const Text('Batterie'),
+              title: Text(AppLocalizations.of(context)!.liste1),
               leading: const Icon(Icons.battery_full),
               iconColor: tri == Tri.batterie ? Colors.blue : Colors.grey,
             ),
@@ -369,7 +370,7 @@ class _VueListeState extends State<VueListe> {
               Navigator.pop(context);
             },
             child: ListTile(
-              title: const Text('Dernière connexion'),
+              title: Text(AppLocalizations.of(context)!.bs2),
               leading: const Icon(Icons.access_time),
               iconColor: tri == Tri.derniereConnexion ? Colors.blue : Colors.grey,
             ),
@@ -385,7 +386,7 @@ class _VueListeState extends State<VueListe> {
               Navigator.pop(context);
             },
             child: ListTile(
-              title: const Text('Date d\'initialisation'),
+              title: Text(AppLocalizations.of(context)!.bs3),
               leading: const Icon(Icons.calendar_today),
               iconColor: tri == Tri.dateInitialisation ? Colors.blue : Colors.grey,
             ),
@@ -407,7 +408,7 @@ class _VueListeState extends State<VueListe> {
                   context: context,
                   type: ToastificationType.error,
                   style: ToastificationStyle.fillColored,
-                  title: Text('La demande d\'accès a été refusée.'),
+                  title: const Text('La demande d\'accès a été refusée.'),
                   alignment: Alignment.bottomCenter,
                   autoCloseDuration: const Duration(seconds: 5),
                   boxShadow: lowModeShadow,
@@ -442,7 +443,6 @@ class _VueListeState extends State<VueListe> {
     String? distanceString;
 
     if (capteur['nom'] == context.read<CapteurStateNotifier>().getSlot(1)["nom"] && context.read<CapteurStateNotifier>().getSlot(1)["state"] == CapteurSlotState.connecte) {
-      print("slot 1");
       valeur = context.watch<CapteurStateNotifier>().getSlot(1)["valeur"];
       dateDerniereConnexion = context.watch<CapteurStateNotifier>().getSlot(1)["derniereConnexion"];
     }
@@ -455,7 +455,7 @@ class _VueListeState extends State<VueListe> {
 
     details.add(
       Text(
-        'Mesure : $valeur L/s',
+        '${AppLocalizations.of(context)!.bs1} : $valeur L/h',
         style: const TextStyle(
           fontSize: 14,
           color: Colors.grey,
@@ -465,7 +465,7 @@ class _VueListeState extends State<VueListe> {
 
     details.add(
       Text(
-        'Batterie : $batterie%',
+        '${AppLocalizations.of(context)!.liste1} : $batterie%',
         style: const TextStyle(
           fontSize: 14,
           color: Colors.grey,
@@ -475,7 +475,7 @@ class _VueListeState extends State<VueListe> {
 
     details.add(
       Text(
-        'Derniere connexion : ${DateFormat('dd/MM/yy HH:mm:ss').format(dateDerniereConnexion)}',
+        '${AppLocalizations.of(context)!.bs2} : ${DateFormat('dd/MM/yy HH:mm:ss').format(dateDerniereConnexion)}',
         style: const TextStyle(
           fontSize: 14,
           color: Colors.grey,
@@ -486,7 +486,7 @@ class _VueListeState extends State<VueListe> {
 
     details.add(
       Text(
-        'Date d\'initialisation : ${DateFormat('dd/MM/yy HH:mm:ss').format(capteur['dateInitialisation'])}',
+        '${AppLocalizations.of(context)!.bs3} : ${DateFormat('dd/MM/yy HH:mm:ss').format(capteur['dateInitialisation'])}',
         style: const TextStyle(
           fontSize: 14,
           color: Colors.grey,
@@ -505,8 +505,8 @@ class _VueListeState extends State<VueListe> {
       Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [   
-          const Text("Localisation : ",
-            style: TextStyle(
+          Text("${AppLocalizations.of(context)!.liste2} : ",
+            style: const TextStyle(
               fontSize: 14,
               color: Colors.grey,
             )
@@ -527,16 +527,16 @@ class _VueListeState extends State<VueListe> {
             onTap: () async {
               await launchUrl(Uri.parse("https://www.google.com/maps/search/?api=1&query=${capteur['localisation'][0]},${capteur['localisation'][1]}"));
             },
-            child: const IntrinsicWidth(
+            child: IntrinsicWidth(
               child: Row(
                 children: [
-                  Text("Ouvrir dans Google Maps",
-                    style: TextStyle(
+                  Text(AppLocalizations.of(context)!.bs4,
+                    style: const TextStyle(
                       fontSize: 14,
                       color: Colors.blue,
                     )),
-                  SizedBox(width: 5),
-                  Icon(Icons.open_in_new, color: Colors.blue, size: 14),
+                  const SizedBox(width: 5),
+                  const Icon(Icons.open_in_new, color: Colors.blue, size: 14),
                 ]
               ),
             ),

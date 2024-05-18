@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:polyleaks/database/polyleaks_database.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:polyleaks/pages/plus/page_a_propos.dart';
 import 'package:polyleaks/pages/plus/page_initialisation.dart';
+import 'package:provider/provider.dart';
 
 class PagePlus extends StatefulWidget {
   const PagePlus({Key? key}) : super(key: key);
@@ -14,6 +17,7 @@ class _PagePlusState extends State<PagePlus> {
   bool isDarkModeEnabled = false;
 
   void _changeLanguage(String language) {
+    PolyleaksDatabase().setParametre('langue', language == 'Francais' ? 0 : 1);
     setState(() {
       dropdownValue = language;
     });
@@ -22,17 +26,21 @@ class _PagePlusState extends State<PagePlus> {
 
   @override
   Widget build(BuildContext context) {
+
+    final db = context.watch<PolyleaksDatabase>();
+    db.getParametres();
+
     return Scaffold(
       body: ListView(
         children: [
         ListTile(
-          title: Text('Langue'),
+          title: Text(AppLocalizations.of(context)!.plus1),
           trailing: DropdownButton<String>(
-            value: dropdownValue,
+            value: context.watch<PolyleaksDatabase>().langue == const Locale('fr') ? 'Francais' : 'English',
             onChanged: (String? newValue) {
               _changeLanguage(newValue!);
             },
-            items: <String>['Francais', 'Anglais', 'Espagnol']
+            items: <String>['Francais', 'English']
                 .map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
@@ -45,7 +53,7 @@ class _PagePlusState extends State<PagePlus> {
 
         // switch mode sombre / clair
         ListTile(
-          title: const Text('Mode sombre'),
+          title: Text(AppLocalizations.of(context)!.plus2),
           trailing: Switch(
             value: isDarkModeEnabled,
             onChanged: (bool value) {
@@ -60,8 +68,9 @@ class _PagePlusState extends State<PagePlus> {
 
         // A propos
         ListTile(
-          title: const Text('A propos'),
+          title: Text(AppLocalizations.of(context)!.aPropos0),
           leading: const Icon(Icons.info),
+          trailing: const Icon(Icons.arrow_forward_ios),
           onTap: () {
             Navigator.push(
               context,
@@ -74,7 +83,7 @@ class _PagePlusState extends State<PagePlus> {
 
         // initialisation d'un capteur
         ListTile(
-          title: const Text('Initialiser un capteur'),
+          title: Text(AppLocalizations.of(context)!.plus4),
           leading: const Icon(Icons.add),
           trailing: const Icon(Icons.arrow_forward_ios),
           onTap: () {
