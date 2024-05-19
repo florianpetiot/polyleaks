@@ -18,12 +18,27 @@ class PolyleaksDatabase extends ChangeNotifier {
 
   
   // PARAMETRES -----------------------------------------------------------------
+  // parametres généraux de l'application
   final Map<String, int> _parametres = {'langue': 0, 'theme': 0};
 
   Map<String, int> get parametres => _parametres;
 
   Locale get langue => _parametres['langue'] == 0 ? const Locale('fr') : const Locale('en');
 
+  // sauvegardes temporaires
+  int _historiqueIndexPage = 0;
+  int get historiqueIndexPage => _historiqueIndexPage;
+  set historiqueIndexPage(int index) {
+    _historiqueIndexPage = index;
+    notifyListeners();
+  }
+
+  Map<String, double> _cameraPosition = {'latitude': 47.217246, 'longitude': -1.553691, 'zoom': 11.5, 'tilt': 0.0, 'bearing': 0.0};
+  Map<String, double> get cameraPosition => _cameraPosition;
+  set cameraPosition(Map<String, double> position) {
+    _cameraPosition = position;
+    notifyListeners();
+  }
 
   // definition des parametres par defaut ---------------------------------------
   Future<void> parametresParDefaut() async {

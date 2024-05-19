@@ -10,7 +10,6 @@ import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
 
-
 class VueMaps extends StatefulWidget {
   const VueMaps({super.key});
 
@@ -35,6 +34,7 @@ class _VueMapsState extends State<VueMaps> {
   void initState() {
     super.initState();
     gpsPermission = context.read<CapteurStateNotifier>().gpsPermission;
+    loadCameraPosition();
     loadMarkers();
   }
 
@@ -45,6 +45,26 @@ class _VueMapsState extends State<VueMaps> {
       positionStream.cancel();
     }
     super.dispose();
+  }
+
+  void loadCameraPosition() async {
+    final db = context.read<PolyleaksDatabase>();
+
+    _cameraPosition = LatLng(db.cameraPosition["latitude"]!, db.cameraPosition["longitude"]!);
+    _cameraZoom = db.cameraPosition["zoom"]!;
+    _cameraBearing = db.cameraPosition["bearing"]!;
+    _cameraTilt =  db.cameraPosition["tilt"]!;
+
+    final GoogleMapController mapController = await _controller.future;
+    mapController.moveCamera(CameraUpdate.newCameraPosition(
+      CameraPosition(
+        target: _cameraPosition,
+        zoom: _cameraZoom,
+        bearing: _cameraBearing,
+        tilt: _cameraTilt,
+      ),
+    ));
+    
   }
 
   void loadMarkers() async {
@@ -70,6 +90,7 @@ class _VueMapsState extends State<VueMaps> {
 
   @override
   Widget build(BuildContext context) {
+    final db = context.read<PolyleaksDatabase>();
 
     // reset bearing and tilt function
     void resetCamera() async {
@@ -156,6 +177,13 @@ class _VueMapsState extends State<VueMaps> {
             markers: _markers,
 
             onCameraIdle: () {
+              db.cameraPosition = {
+                'latitude': _cameraPosition.latitude,
+                'longitude': _cameraPosition.longitude,
+                'zoom': _cameraZoom,
+                'bearing': _cameraBearing,
+                'tilt': _cameraTilt,
+              };
               setState(() {
                 if (cameraAuto) {
                   cameraAuto = false;

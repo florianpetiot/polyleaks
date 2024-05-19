@@ -6,9 +6,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:polyleaks/components/bottom_sheet_details.dart';
 import 'package:polyleaks/database/polyleaks_database.dart';
 import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
+import 'package:polyleaks/pages/historique/tri_popup.dart';
 import 'package:popover/popover.dart';
 import 'package:provider/provider.dart';
-import 'package:toastification/toastification.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 enum Tri { numerologique, mesure, batterie, derniereConnexion, dateInitialisation, distance }
@@ -39,66 +39,71 @@ class _VueListeState extends State<VueListe> {
     Future.microtask(() async {
       capteurs = await PolyleaksDatabase().getDetailsCapteurs();
       _pageControllers.addAll(List.generate(capteurs!.length, (index) => PageController()));
-      nouveauTri();
+      nouveauTri(Tri.numerologique);
       setState(() {});
     });
   }
 
-  void nouveauTri() {
+  void nouveauTri(newTri, {Position? positionGps}){
     int pageIndex;
 
     setState(() {
-      switch (tri) {
-      case Tri.numerologique:
-        capteurs!.sort((a, b) {
-          var aNum = int.parse(a['nom'].split('-').last);
-          var bNum = int.parse(b['nom'].split('-').last);
-          return aNum.compareTo(bNum);
-        });
-        pageIndex = 0;
-        break;
-      case Tri.mesure:
-        capteurs!.sort((a, b) => a['valeur'].compareTo(b['valeur']));
-        pageIndex = 0;
-        break;
-      case Tri.batterie:
-        capteurs!.sort((a, b) => a['batterie'].compareTo(b['batterie']));
-        pageIndex = 1;
-        break;
-      case Tri.derniereConnexion:
-        capteurs!.sort((a, b) => a['dateDerniereConnexion'].compareTo(b['dateDerniereConnexion']));
-        pageIndex = 2;
-        break;
-      case Tri.dateInitialisation:
-        capteurs!.sort((a, b) => a['dateInitialisation'].compareTo(b['dateInitialisation']));
-        pageIndex = 3;
-        break;
-      case Tri.distance:
-        capteurs!.sort((a, b) {
-          var aDistance = Geolocator.distanceBetween(a['localisation'][0], a['localisation'][1], positionGps.latitude, positionGps.longitude);
-          var bDistance = Geolocator.distanceBetween(b['localisation'][0], b['localisation'][1], positionGps.latitude, positionGps.longitude);
-          return aDistance.compareTo(bDistance);
-        });
-        pageIndex = 4;
-        break;
-    }
-    
-    rollcontrollers(pageIndex);
 
-    if (decroissant) {
-      capteurs  = capteurs!.reversed.toList();
-    }
+      tri = newTri;
+      if (positionGps != null) {
+        this.positionGps = positionGps;
+      }
+
+      switch (tri) {
+        case Tri.numerologique:
+          capteurs!.sort((a, b) {
+            var aNum = int.parse(a['nom'].split('-').last);
+            var bNum = int.parse(b['nom'].split('-').last);
+            return aNum.compareTo(bNum);
+          });
+          pageIndex = 0;
+          break;
+        case Tri.mesure:
+          capteurs!.sort((a, b) => a['valeur'].compareTo(b['valeur']));
+          pageIndex = 0;
+          break;
+        case Tri.batterie:
+          capteurs!.sort((a, b) => a['batterie'].compareTo(b['batterie']));
+          pageIndex = 1;
+          break;
+        case Tri.derniereConnexion:
+          capteurs!.sort((a, b) => a['dateDerniereConnexion'].compareTo(b['dateDerniereConnexion']));
+          pageIndex = 2;
+          break;
+        case Tri.dateInitialisation:
+          capteurs!.sort((a, b) => a['dateInitialisation'].compareTo(b['dateInitialisation']));
+          pageIndex = 3;
+          break;
+        case Tri.distance:
+          capteurs!.sort((a, b) {
+            var aDistance = Geolocator.distanceBetween(a['localisation'][0], a['localisation'][1], positionGps!.latitude, positionGps.longitude);
+            var bDistance = Geolocator.distanceBetween(b['localisation'][0], b['localisation'][1], positionGps.latitude, positionGps.longitude);
+            return aDistance.compareTo(bDistance);
+          });
+          pageIndex = 4;
+          break;
+      }
+    
+      rollcontrollers(pageIndex);
+
+      if (decroissant) {
+        capteurs  = capteurs!.reversed.toList();
+      }
 
     });
   }
 
   void rollcontrollers(pageIndex) async {
     for (var i = 0; i < capteurs!.length; i++) {
-      if(_pageControllers[i].hasClients) {
-      _pageControllers[i].animateToPage(pageIndex, duration: const Duration(milliseconds: 500), curve: Curves.ease);
+      if(_pageControllers[i].hasClients && _pageControllers[i].page != pageIndex.toDouble()) {
+        _pageControllers[i].animateToPage(pageIndex, duration: const Duration(milliseconds: 500), curve: Curves.ease);
+        await Future.delayed(const Duration(milliseconds: 150));
       }
-      // attendre 0.2s
-      await Future.delayed(const Duration(milliseconds: 150));
     }
   }
     
@@ -233,7 +238,7 @@ class _VueListeState extends State<VueListe> {
                           decroissant = !decroissant;
                           // print(decroissant);
                         });
-                        nouveauTri();
+                        nouveauTri(tri);
                       },
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(30),
@@ -274,7 +279,12 @@ class _VueListeState extends State<VueListe> {
                             return SizedBox(
                               height: 336,
                               width: 245,
-                              child: listeTri(),
+                              child: TriPopup(
+                                triActuel: tri,
+                                onTriSelected: (newTri, {Position? position}) {
+                                  nouveauTri(newTri, positionGps: position);
+                                },
+                              ),
                             );
                           },
                           direction: PopoverDirection.top,
@@ -307,132 +317,6 @@ class _VueListeState extends State<VueListe> {
       ),
     );
   }
-
-  Widget listeTri() {
-    return Material(
-      child: Column(
-        children: [
-          // numérologique
-          InkWell(
-            onTap: () {
-              setState(() {
-                tri = Tri.numerologique;
-              });
-              nouveauTri();
-              Navigator.pop(context);
-            },
-            child: ListTile(
-              title: Text(AppLocalizations.of(context)!.liste3),
-              leading: const Icon(Icons.numbers),
-              iconColor: tri == Tri.numerologique ? Colors.blue : Colors.grey,
-            ),
-          ),
-          
-          // mesure
-          InkWell(
-            onTap: () {
-              setState(() {
-                tri = Tri.mesure;
-              });
-              nouveauTri();
-              Navigator.pop(context);
-            },
-            child: ListTile(
-              title: Text(AppLocalizations.of(context)!.bs1),
-              leading: const Icon(Icons.speed),
-              iconColor: tri == Tri.mesure ? Colors.blue : Colors.grey,
-            ),
-          ),
-
-          // batterie
-          InkWell(
-            onTap: () {
-              setState(() {
-                tri = Tri.batterie;
-              });
-              nouveauTri();
-              Navigator.pop(context);
-            },
-            child: ListTile(
-              title: Text(AppLocalizations.of(context)!.liste1),
-              leading: const Icon(Icons.battery_full),
-              iconColor: tri == Tri.batterie ? Colors.blue : Colors.grey,
-            ),
-          ),
-
-          // dernière connexion
-          InkWell(
-            onTap: () {
-              setState(() {
-                tri = Tri.derniereConnexion;
-              });
-              nouveauTri();
-              Navigator.pop(context);
-            },
-            child: ListTile(
-              title: Text(AppLocalizations.of(context)!.bs2),
-              leading: const Icon(Icons.access_time),
-              iconColor: tri == Tri.derniereConnexion ? Colors.blue : Colors.grey,
-            ),
-          ),
-
-          // date d'initialisation
-          InkWell(
-            onTap: () {
-              setState(() {
-                tri = Tri.dateInitialisation;
-              });
-              nouveauTri();
-              Navigator.pop(context);
-            },
-            child: ListTile(
-              title: Text(AppLocalizations.of(context)!.bs3),
-              leading: const Icon(Icons.calendar_today),
-              iconColor: tri == Tri.dateInitialisation ? Colors.blue : Colors.grey,
-            ),
-          ),
-
-          // distance
-          InkWell(
-            onTap: () async {
-              try {
-                var newPermission = await Geolocator.getCurrentPosition();
-                setState(() {
-                  positionGps = newPermission;
-                  tri = Tri.distance;
-                });
-                nouveauTri();
-              }
-              catch (e) {
-                toastification.show(
-                  context: context,
-                  type: ToastificationType.error,
-                  style: ToastificationStyle.fillColored,
-                  title: const Text('La demande d\'accès a été refusée.'),
-                  alignment: Alignment.bottomCenter,
-                  autoCloseDuration: const Duration(seconds: 5),
-                  boxShadow: lowModeShadow,
-                  closeButtonShowType: CloseButtonShowType.none,
-                  closeOnClick: false,
-                  dragToClose: true,
-                  pauseOnHover: false,
-                  showProgressBar: false,
-                );
-              }
-              Navigator.pop(context);
-            },
-            child: ListTile(
-              title: const Text('Distance'),
-              leading: const Icon(Icons.place),
-              iconColor: tri == Tri.distance ? Colors.blue : Colors.grey,
-            ),
-          ),
-        ]
-      ),
-    );
-  }
-
-
 
   List<Widget> buildCapteurDetails(Map<String, dynamic> capteur) {
     final List<Widget> details = [];

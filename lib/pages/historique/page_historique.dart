@@ -1,7 +1,9 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:polyleaks/database/polyleaks_database.dart';
 import 'package:polyleaks/pages/historique/vue_liste.dart';
 import 'package:polyleaks/pages/historique/vue_maps.dart';
+import 'package:provider/provider.dart';
 
 class PageHistorique extends StatefulWidget {
   const PageHistorique({super.key});
@@ -18,17 +20,13 @@ class _PageHistoriqueState extends State<PageHistorique> {
     const VueMaps(),
     const VueListe(),
   ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
  
 
   @override
   Widget build(BuildContext context) {
+    final db = context.read<PolyleaksDatabase>();
+    _selectedIndex = db.historiqueIndexPage;
+
     return Scaffold(
       body: Stack(
         children: [
@@ -60,7 +58,12 @@ class _PageHistoriqueState extends State<PageHistorique> {
                       children: <Widget>[
 
                         GestureDetector(
-                          onTap: () => _onItemTapped(0),
+                          onTap: () {
+                            db.historiqueIndexPage = 0;
+                            setState(() {
+                              _selectedIndex = 0;
+                            });
+                          },
                           child: Padding(
                             padding: const EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 10),
                             child: Icon(
@@ -80,7 +83,12 @@ class _PageHistoriqueState extends State<PageHistorique> {
                         ),
 
                         GestureDetector(
-                          onTap: () => _onItemTapped(1),
+                          onTap: () {
+                            db.historiqueIndexPage = 1;
+                            setState(() {
+                              _selectedIndex = 1;
+                            });
+                          },
                           child: Padding(
                             padding: const EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 10),
                             child: Icon(
