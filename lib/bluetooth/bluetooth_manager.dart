@@ -580,10 +580,10 @@ class BluetoothManager {
     }
 
     // envoyer la position et donner la date d'initialisation
-    var latitude = position.latitude.toString().codeUnits;
-    var longitude = position.longitude.toString().codeUnits;
 
-    print("CAPTEUR NON INITIALISE - ENVOI DE LA POSITION");
+    // rogner la latitude et longitude si besoin pour que cela ne fasse pas plus de 20 de longueur
+    var latitude = position.latitude.toString().substring(0, position.latitude.toString().length > 20 ? 20 : position.latitude.toString().length).codeUnits;
+    var longitude = position.longitude.toString().substring(0, position.longitude.toString().length > 20 ? 20 : position.longitude.toString().length).codeUnits;
 
     for (BluetoothService service in services) {
 

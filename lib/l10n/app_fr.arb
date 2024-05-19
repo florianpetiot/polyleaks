@@ -74,7 +74,10 @@
 
     
     
-    
+    "accueilComparateur": "Comparateur",
+    "@accueilComparateur": {
+        "description": "accueil comparateur"
+    },
     "accueilAnalyse1": "Connectez-vous à deux capteurs\npour commencer.",
     "@accueilAnalyse1": {
         "description": "accueil analyse 1"

@@ -345,7 +345,8 @@ class BottomSheet extends StatelessWidget {
               Row(
                 children: [
                   Text(AppLocalizations.of(context)!.bs5,
-                    style: const TextStyle(
+                    style: TextStyle(
+                      color: Colors.grey[700],
                       fontSize: 15,
                     )),
                   const SizedBox(width: 5),

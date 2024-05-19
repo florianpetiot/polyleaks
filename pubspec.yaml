@@ -68,7 +68,7 @@ dev_dependencies:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/logo_polyleaks.png"
+  image_path: "assets/new_logo_polyleaks.png"
   min_sdk_android: 21
 
 # For information on the generic Dart part of this file, see the

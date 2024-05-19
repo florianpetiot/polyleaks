@@ -159,7 +159,80 @@ class _PageAccueilState extends State<PageAccueil> {
                   ],
                 )
               ),
-          
+
+              Row(
+                children: [
+                  const Expanded(
+                    flex: 1,
+                    child: SizedBox(),
+                  ),
+
+                  Expanded(
+                    flex: 2,
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: Container(
+                            height: 11,
+                            decoration: const BoxDecoration(
+                              border: Border(
+                                left: BorderSide(
+                                  color: Colors.grey,
+                                  width: 1
+                                ),
+                                )
+                              ),
+                          ),
+                        ),
+                        const Expanded(
+                          flex: 1,
+                          child: Divider(
+                            color: Colors.grey,
+                            thickness: 1,
+                          )
+                        ),
+                        const SizedBox(width: 5),
+                        Text(AppLocalizations.of(context)!.accueilComparateur,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 15
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                        const Expanded(
+                          flex: 1,
+                          child: Divider(
+                            color: Colors.grey,
+                            thickness: 1,
+                          )
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: Container(
+                            height: 11,
+                            decoration: const BoxDecoration(
+                              border: Border(
+                                right: BorderSide(
+                                  color: Colors.grey,
+                                  width: 1
+                                ),
+                                )
+                              ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const Expanded(
+                    flex: 1,
+                    child: SizedBox()
+                  ),
+                ],
+              ),
+
               // Moitié basse de l'écran --------------------------------------------
               Expanded(
                 flex: 3,
