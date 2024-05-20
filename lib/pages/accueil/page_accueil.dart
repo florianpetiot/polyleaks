@@ -172,9 +172,9 @@ class _PageAccueilState extends State<PageAccueil> {
                     child: Row(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
+                          padding: const EdgeInsets.only(bottom: 8),
                           child: Container(
-                            height: 11,
+                            height: 13,
                             decoration: const BoxDecoration(
                               border: Border(
                                 left: BorderSide(
@@ -187,31 +187,37 @@ class _PageAccueilState extends State<PageAccueil> {
                         ),
                         const Expanded(
                           flex: 1,
-                          child: Divider(
-                            color: Colors.grey,
-                            thickness: 1,
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 4),
+                            child: Divider(
+                              color: Colors.grey,
+                              thickness: 1,
+                            ),
                           )
                         ),
                         const SizedBox(width: 5),
                         Text(AppLocalizations.of(context)!.accueilComparateur,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: Colors.grey,
+                          style: TextStyle(
+                            color: Colors.grey[700],
                             fontSize: 15
                           ),
                         ),
                         const SizedBox(width: 5),
                         const Expanded(
                           flex: 1,
-                          child: Divider(
-                            color: Colors.grey,
-                            thickness: 1,
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 4),
+                            child: Divider(
+                              color: Colors.grey,
+                              thickness: 1,
+                            ),
                           )
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
+                          padding: const EdgeInsets.only(bottom: 8),
                           child: Container(
-                            height: 11,
+                            height: 13,
                             decoration: const BoxDecoration(
                               border: Border(
                                 right: BorderSide(

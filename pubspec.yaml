@@ -50,6 +50,7 @@ dependencies:
   url_launcher: ^6.2.5
   flutter_svg: ^2.0.10+1
   popover: ^0.3.0
+  flutter_native_splash: ^2.3.10
 
 dev_dependencies:
   flutter_test:
@@ -68,7 +69,7 @@ dev_dependencies:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/new_logo_polyleaks.png"
+  image_path: "assets/logo_polyleaks.png"
   min_sdk_android: 21
 
 # For information on the generic Dart part of this file, see the
@@ -113,3 +114,17 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+
+flutter_native_splash:
+  android: true
+  ios: true
+  web: false
+  image: assets/logo_polyleaks.png
+  color: "#ffffff"
+  color_dark: "#06070E"
+  android_12:
+    image: assets/splash_icon.png
+    color: "#ffffff"
+    image_dark: assets/splash_icon_dark.png
+    color_dark: "#06070E"

@@ -14,7 +14,7 @@
 
     
     
-    "accueilComparateur": "Comparator",
+    "accueilComparateur": "Leaks detector",
     "accueilAnalyse1": "Connect to two sensors\nto get started.",
     "accueilAnalyse2": "A leak has been detected!",
     "accueilAnalyse3": "No leak detected.",
@@ -57,7 +57,10 @@
     "bs4" : "Open in Google Maps",
     "bs5" : "Comparator slots",
     "bs6" : "Put in slot",
-    "bs7" : "About 5 years of autonomy left.",
+    "bs7annee" : "About {annee} years of autonomy left.",
+    "bs7mois" : "About {mois} months of autonomy left.",
+    "bs7jour" : "About {jour} days of autonomy left.",
+    "bs7heure" : "About {heure} hours of autonomy left.",
     "bs8" : "Estimate from time since last connection.",
 
 

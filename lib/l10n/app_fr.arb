@@ -74,7 +74,7 @@
 
     
     
-    "accueilComparateur": "Comparateur",
+    "accueilComparateur": "Détecteur de fuites",
     "@accueilComparateur": {
         "description": "accueil comparateur"
     },
@@ -204,9 +204,41 @@
     "@bs6": {
         "description": "bottom sheet donnee 6"
     },
-    "bs7" : "Il reste environ 5 ans d'autonomie.",
-    "@bs7": {
-        "description": "bottom sheet donnee 7"
+    "bs7annee" : "Il reste environ {annee} ans d'autonomie.",
+    "@bs7annee": {
+        "description": "bottom sheet donnee 7 annee",
+        "placeholders": {
+            "annee": {
+                "type": "int"
+            }
+        }
+    },
+    "bs7mois" : "Il reste environ {mois} mois d'autonomie.",
+    "@bs7mois": {
+        "description": "bottom sheet donnee 7 mois",
+        "placeholders": {
+            "mois": {
+                "type": "int"
+            }
+        }
+    },
+    "bs7jour" : "Il reste environ {jour} jours d'autonomie.",
+    "@bs7jour": {
+        "description": "bottom sheet donnee 7 jour",
+        "placeholders": {
+            "jour": {
+                "type": "int"
+            }
+        }
+    },
+    "bs7heure" : "Il reste environ {heure} heures d'autonomie.",
+    "@bs7heure": {
+        "description": "bottom sheet donnee 7 heure",
+        "placeholders": {
+            "heure": {
+                "type": "int"
+            }
+        }
     },
     "bs8" : "Estimé grâce au temps passé depuis la dernière connexion.",
     "@bs8": {

@@ -77,7 +77,14 @@ class _BottomSheetDetailsState extends State<BottomSheetDetails> {
       derniereConnexionStr = DateFormat('dd/MM/yy HH:mm:ss').format(derniereConnexion);
       dateInitilalisationStr = DateFormat('dd/MM/yy HH:mm:ss').format(dateInitilalisation);
 
-      return BottomSheet(nomCapteur: nomCapteur, valeurCapteur: valeurCapteur,  batterieCapteur: batterieCapteur, derniereConnexionStr: derniereConnexionStr, dateInitilalisationStr: dateInitilalisationStr, vueMaps: widget.vueMaps, vueSlot: widget.vueSlot, center: center, latitude: latitude, longitude: longitude);
+      // calcul du pourcentage réel de la batterie, estimé par rapport à la date de la dernière connexion
+      // consomation capteur = 37.9mA
+      // capacité batterie = 1 660 020 mAh
+      int nouvelleBatterie = (batterieCapteur - ((DateTime.now().difference(derniereConnexion).inHours * 37.9) / 1660020) * 100).round();
+
+      int heuresRestantes = ((nouvelleBatterie*1660020)/(37.9*100)).round();
+
+      return BottomSheet(nomCapteur: nomCapteur, valeurCapteur: valeurCapteur,  batterieCapteur: nouvelleBatterie, heuresRestantes: heuresRestantes, derniereConnexionStr: derniereConnexionStr, dateInitilalisationStr: dateInitilalisationStr, vueMaps: widget.vueMaps, vueSlot: widget.vueSlot, center: center, latitude: latitude, longitude: longitude);
 
     }
 
@@ -105,11 +112,17 @@ class _BottomSheetDetailsState extends State<BottomSheetDetails> {
             derniereConnexionStr = DateFormat('dd/MM/yy HH:mm:ss').format(derniereConnexion);
             dateInitilalisationStr = DateFormat('dd/MM/yy HH:mm:ss').format(dateInitilalisation);
 
-            // TODO: calculer la batterie par rapport à la date de la dernière connexion
-            return BottomSheet(nomCapteur: nomCapteur, valeurCapteur: valeurCapteur, batterieCapteur: batterieCapteur, derniereConnexionStr: derniereConnexionStr, dateInitilalisationStr: dateInitilalisationStr, vueMaps: widget.vueMaps, vueSlot: widget.vueSlot, center: center, latitude: latitude, longitude: longitude);
+            // calcul du pourcentage réel de la batterie, estimé par rapport à la date de la dernière connexion
+            // consomation capteur = 37.9mA
+            // capacité batterie = 1 660 020 mAh
+            int nouvelleBatterie = (batterieCapteur - ((DateTime.now().difference(derniereConnexion).inHours * 37.9) / 1660020) * 100).round();
+
+            int heuresRestantes = ((nouvelleBatterie*1660020)/(37.9*100)).round();
+
+            return BottomSheet(nomCapteur: nomCapteur, valeurCapteur: valeurCapteur, batterieCapteur: nouvelleBatterie, heuresRestantes: heuresRestantes, derniereConnexionStr: derniereConnexionStr, dateInitilalisationStr: dateInitilalisationStr, vueMaps: widget.vueMaps, vueSlot: widget.vueSlot, center: center, latitude: latitude, longitude: longitude);
           }
-          }
-    );
+        }
+      );
     }
     else {
       throw "Impossible de récupérer les données du capteur";
@@ -123,6 +136,7 @@ class BottomSheet extends StatelessWidget {
     required this.nomCapteur,
     required this.valeurCapteur,
     required this.batterieCapteur,
+    required this.heuresRestantes,
     required this.derniereConnexionStr,
     required this.dateInitilalisationStr,
     required this.vueMaps,
@@ -135,6 +149,7 @@ class BottomSheet extends StatelessWidget {
   final String nomCapteur;
   final double valeurCapteur;
   final int batterieCapteur;
+  final int heuresRestantes;
   final String derniereConnexionStr;
   final String dateInitilalisationStr;
   final bool vueMaps;
@@ -227,7 +242,7 @@ class BottomSheet extends StatelessWidget {
                           fontSize: 25,
                           fontWeight: FontWeight.bold,
                         )),
-                        BatteryLevel(batterieCapteur: batterieCapteur),
+                        BatteryLevel(batterieCapteur: batterieCapteur, heuresRestantes: heuresRestantes),
                     ],
                   ),
                   
@@ -438,9 +453,10 @@ class BottomSheet extends StatelessWidget {
 
 
 class BatteryLevel extends StatelessWidget {
-  const BatteryLevel ({super.key, required this.batterieCapteur});
+  const BatteryLevel ({super.key, required this.batterieCapteur, required this.heuresRestantes});
 
   final int batterieCapteur;
+  final int heuresRestantes;
 
   @override
   Widget build(BuildContext context) {
@@ -449,7 +465,7 @@ class BatteryLevel extends StatelessWidget {
         showPopover(context: context, 
         bodyBuilder: ((context) {
           return SizedBox(
-            width: 250,
+            width: 270,
             height: 80,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -458,14 +474,21 @@ class BatteryLevel extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   
-                  Text(AppLocalizations.of(context)!.bs7,
+                  Text(
+                    heuresRestantes/(24*365) > 1
+                    ? AppLocalizations.of(context)!.bs7annee(heuresRestantes~/(24*365)+1)
+                    : heuresRestantes/(24*30) > 1
+                    ? AppLocalizations.of(context)!.bs7mois(heuresRestantes~/(24*30))
+                    : heuresRestantes/(24) > 1
+                    ? AppLocalizations.of(context)!.bs7jour(heuresRestantes~/(24))
+                    : AppLocalizations.of(context)!.bs7heure(heuresRestantes),
                     textAlign: TextAlign.left,
                     style: const TextStyle(
                       fontSize: 15,
                     )
                   ),
               
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 10),
               
                   Text(AppLocalizations.of(context)!.bs8,
                     textAlign: TextAlign.left,
@@ -503,9 +526,9 @@ class BatteryLevel extends StatelessWidget {
             ? Icons.battery_6_bar
             : Icons.battery_full,
         
-            color: batterieCapteur == 0
+            color: batterieCapteur <= 5
             ? Colors.red
-            : batterieCapteur <= 14
+            : batterieCapteur <= 20
             ? Colors.orange
             : Colors.green,
             size: 25,
