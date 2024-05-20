@@ -145,6 +145,7 @@ class _PageAccueilState extends State<PageAccueil> {
 
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.background,
         body: Stack(
           children: [ Column(
             children: [
@@ -294,8 +295,8 @@ class _PageAccueilState extends State<PageAccueil> {
                         end: Alignment.bottomCenter,
                         colors: [
                         Colors.transparent,
-                        Colors.black.withOpacity(0.5),
-                        Colors.black.withOpacity(0.5),
+                        Theme.of(context).colorScheme.shadow,
+                        Theme.of(context).colorScheme.shadow,
                         Colors.transparent
                         ],
                       ),
@@ -379,7 +380,6 @@ class _PageAccueilState extends State<PageAccueil> {
           Text(
             AppLocalizations.of(context)!.accueilAnalyse1,
             style: const TextStyle(
-              color: Colors.black,
               fontWeight: FontWeight.bold,
               fontStyle: FontStyle.italic,
               fontSize: 20

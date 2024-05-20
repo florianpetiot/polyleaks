@@ -14,7 +14,6 @@ class PagePlus extends StatefulWidget {
 
 class _PagePlusState extends State<PagePlus> {
   String dropdownValue = 'Francais';
-  bool isDarkModeEnabled = false;
 
   void _changeLanguage(String language) {
     PolyleaksDatabase().setParametre('langue', language == 'Francais' ? 0 : 1);
@@ -30,72 +29,112 @@ class _PagePlusState extends State<PagePlus> {
     final db = context.watch<PolyleaksDatabase>();
     db.getParametres();
 
-    return Scaffold(
-      body: ListView(
-        children: [
-        ListTile(
-          title: Text(AppLocalizations.of(context)!.plus1),
-          trailing: DropdownButton<String>(
-            value: context.watch<PolyleaksDatabase>().langue == const Locale('fr') ? 'Francais' : 'English',
-            onChanged: (String? newValue) {
-              _changeLanguage(newValue!);
-            },
-            items: <String>['Francais', 'English']
-                .map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-          ),
-          leading: const Icon(Icons.language),
-        ),
-
-        // switch mode sombre / clair
-        ListTile(
-          title: Text(AppLocalizations.of(context)!.plus2),
-          trailing: Switch(
-            value: isDarkModeEnabled,
-            onChanged: (bool value) {
-              setState(() {
-                isDarkModeEnabled = value;
-              });
-              print(value);
-            },
-          ),
-          leading: const Icon(Icons.nightlight_round),
-        ),
-
-        // A propos
-        ListTile(
-          title: Text(AppLocalizations.of(context)!.aPropos0),
-          leading: const Icon(Icons.info),
-          trailing: const Icon(Icons.arrow_forward_ios),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const PageAPropos(),
+    return SafeArea(
+      child: Scaffold(
+        body: Column(
+          children: [
+            
+            Expanded(
+              flex:2,
+              child: Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset('assets/goutte.png',
+                      height: 60,
+                    ),
+                    const SizedBox(width: 30),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Transform.translate(
+                          offset: const Offset(0, 2.5),
+                          child: const Text('PolyLeaks', 
+                            style: TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                            )
+                          ),
+                        ),
+                        Transform.translate(
+                          offset: const Offset(0, -2.5),
+                          child: const Text('version 1.0.0', 
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: Colors.grey,
+                            )
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              )
+            ),
+            
+      
+      
+      
+            Expanded(
+              flex: 3,
+              child: Column(
+                children: [
+                  ListTile(
+                    title: Text(AppLocalizations.of(context)!.plus1),
+                    trailing: DropdownButton<String>(
+                      value: context.watch<PolyleaksDatabase>().langue == const Locale('fr') ? 'Francais' : 'English',
+                      onChanged: (String? newValue) {
+                        _changeLanguage(newValue!);
+                      },
+                      items: <String>['Francais', 'English']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                    leading: const Icon(Icons.language),
+                  ),
+                
+                  // A propos
+                  ListTile(
+                    title: Text(AppLocalizations.of(context)!.aPropos0),
+                    leading: const Icon(Icons.info),
+                    trailing: const Icon(Icons.arrow_forward_ios),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const PageAPropos(),
+                        ),
+                      );
+                    },
+                  ),
+      
+                  const SizedBox(height: 20),
+      
+                  // initialisation d'un capteur
+                  ListTile(
+                    title: Text(AppLocalizations.of(context)!.plus4),
+                    leading: const Icon(Icons.add),
+                    trailing: const Icon(Icons.arrow_forward_ios),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const PageInitialisationCapteur(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
-            );
-          },
+            ),
+          ]
         ),
-
-        // initialisation d'un capteur
-        ListTile(
-          title: Text(AppLocalizations.of(context)!.plus4),
-          leading: const Icon(Icons.add),
-          trailing: const Icon(Icons.arrow_forward_ios),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const PageInitialisationCapteur(),
-              ),
-            );
-          },
-        ),
-      ]),
+      ),
     );
   }
 }

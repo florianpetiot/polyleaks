@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:polyleaks/bluetooth/bluetooth_manager.dart';
 import 'package:polyleaks/database/polyleaks_database.dart';
@@ -300,6 +301,12 @@ class BottomSheet extends StatelessWidget {
                 child:  ClipRRect(
                   borderRadius: BorderRadius.circular(20),
                   child: GoogleMap(
+                    onMapCreated: (controller) async {
+                      if (Theme.of(context).brightness == Brightness.dark) {
+                        // asstes/map_styles/maps_dark_markers.json
+                        controller.setMapStyle(await  rootBundle.loadString('assets/map_styles/map_dark_markers.json'));
+                      }
+                    },
                     initialCameraPosition: CameraPosition(
                       target: center,
                       zoom: 14,
@@ -464,7 +471,8 @@ class BatteryLevel extends StatelessWidget {
       onTap: () {
         showPopover(context: context, 
         bodyBuilder: ((context) {
-          return SizedBox(
+          return Container(
+            color: Theme.of(context).colorScheme.primary,
             width: 270,
             height: 80,
             child: Padding(
@@ -504,6 +512,7 @@ class BatteryLevel extends StatelessWidget {
         }
       ),
       direction: PopoverDirection.top,
+      backgroundColor: Theme.of(context).colorScheme.primary,
      );
     },
         
@@ -544,7 +553,6 @@ class BatteryLevel extends StatelessWidget {
             alignment: Alignment.topCenter,
             child: const Icon(
               Icons.info_outline,
-              color: Colors.black,
               size: 15,
             ),
           )

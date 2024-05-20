@@ -8,6 +8,8 @@ import 'package:polyleaks/pages/accueil/capteur_slot_provider.dart';
 import 'package:polyleaks/pages/accueil/page_accueil.dart';
 import 'package:polyleaks/pages/historique/page_historique.dart';
 import 'package:polyleaks/pages/plus/page_plus.dart';
+import 'package:polyleaks/theme/dark_theme.dart';
+import 'package:polyleaks/theme/light_theme.dart';
 import 'package:provider/provider.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -68,6 +70,10 @@ class _MyAppState extends State<MyApp> {
       return MaterialApp(
           navigatorKey: navigatorKey,
           debugShowCheckedModeBanner: false,
+
+          theme: lightTheme,
+          darkTheme: darkTheme,
+
           locale: provider.langue,
           supportedLocales: L10n.all,
           localizationsDelegates: const [
@@ -76,9 +82,9 @@ class _MyAppState extends State<MyApp> {
             GlobalCupertinoLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
           ],
+
           home: Scaffold(
             body: ecrans[indexEcran],
-          
           
             bottomNavigationBar: BottomNavigationBar(
               items: <BottomNavigationBarItem>[

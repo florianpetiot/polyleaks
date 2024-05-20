@@ -154,15 +154,15 @@ class _VueListeState extends State<VueListe> {
                     margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.surface,
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: Colors.grey.withOpacity(0.3),
+                        color: Theme.of(context).colorScheme.surfaceVariant,
                         width: 2,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
+                          color: Theme.of(context).colorScheme.surfaceVariant,
                           spreadRadius: 2,
                           blurRadius: 4,
                           offset: const Offset(0, 2),
@@ -260,7 +260,7 @@ class _VueListeState extends State<VueListe> {
                               transform: Matrix4.rotationZ(decroissant ? 3.145926 : 0),
                               child: Icon(
                                 Icons.north,
-                                color: Colors.grey[600],
+                                color: Theme.of(context).colorScheme.inversePrimary,
                               ),
                             ),
                           ),
@@ -288,6 +288,7 @@ class _VueListeState extends State<VueListe> {
                             );
                           },
                           direction: PopoverDirection.top,
+                          backgroundColor: Theme.of(context).colorScheme.primary,
                         );},
                         child: Container(
                           height: 54,
@@ -302,7 +303,7 @@ class _VueListeState extends State<VueListe> {
                           ),
                           child: Icon(
                             Icons.filter_alt_rounded,
-                            color: Colors.grey[600],
+                            color: Theme.of(context).colorScheme.inversePrimary,
                           ),
                         ),
                       )

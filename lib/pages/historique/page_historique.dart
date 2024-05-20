@@ -68,7 +68,7 @@ class _PageHistoriqueState extends State<PageHistorique> {
                             padding: const EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 10),
                             child: Icon(
                               Icons.map,
-                              color: _selectedIndex == 0 ? Colors.blue : Colors.grey,
+                              color: _selectedIndex == 0 ? Colors.blue : Theme.of(context).colorScheme.tertiary,
                               size: 30,
                               ),
                           ),
@@ -93,7 +93,7 @@ class _PageHistoriqueState extends State<PageHistorique> {
                             padding: const EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 10),
                             child: Icon(
                               Icons.list, 
-                              color: _selectedIndex == 1 ? Colors.blue : Colors.grey,
+                              color: _selectedIndex == 1 ? Colors.blue : Theme.of(context).colorScheme.tertiary,
                               size: 30,
                               ),
                           ),

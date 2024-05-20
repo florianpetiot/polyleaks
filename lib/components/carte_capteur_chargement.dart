@@ -22,10 +22,10 @@ class CarteCapteurChargement extends StatelessWidget {
           width: 185,
           height: double.infinity,
           decoration: BoxDecoration(
-            color: const Color(0xFFF5F5F5),
+            color: Theme.of(context).colorScheme.primary,
             borderRadius: BorderRadius.circular(15),
             border: Border.all(
-              color: const Color(0xFFB7B7B7),
+              color: Theme.of(context).colorScheme.secondary,
               width: 1,
             ),
           ),

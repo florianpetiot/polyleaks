@@ -14,7 +14,25 @@ class PageAPropos extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 15),
         child: ListView(
           children: [
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
+            
+             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset('assets/goutte.png',
+                  height: 60,
+                ),
+                const SizedBox(width: 30),
+                const Text('PolyLeaks', 
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                  )
+                ),  
+              ],
+            ),
+
+            const SizedBox(height: 20),
             Text(
               AppLocalizations.of(context)!.aPropos1,
               textAlign: TextAlign.justify,

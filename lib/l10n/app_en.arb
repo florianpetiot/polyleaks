@@ -80,7 +80,7 @@
 
 
 
-    "aPropos0": "Aboout PolyLeaks",
+    "aPropos0": "About PolyLeaks",
     "aPropos1": "Water leaks in pipes are a major problem in water distribution in France. In fact, 20% of the clean water produced is lost through leaks. This loss represents 14 million Olympic-sized swimming pools filled every year. To find a solution to this problem, we have created an innovative leak detection system: PolyLeaks.",
     "aPropos2": "PolyLeaks is a system that uses a network of sensors to detect leaks in pipes. These sensors are placed at regular intervals along the pipes and are connected to a central computer. The computer analyzes the data collected by the sensors and alerts the operator in case of a leak. This allows the operator to quickly locate and repair the leak, reducing water loss and saving money.",   
     "aPropos3": "Firstly, we thought about how to design an innovative leak detection system.",

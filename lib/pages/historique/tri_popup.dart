@@ -21,6 +21,7 @@ class _TriPopupState extends State<TriPopup> {
   @override
   Widget build(BuildContext context) {
     return Material(
+      color: Theme.of(context).colorScheme.primary,
       child: Column(
         children: [
           // numérologique

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:polyleaks/bluetooth/bluetooth_manager.dart';
@@ -17,7 +18,7 @@ class VueMaps extends StatefulWidget {
   State<VueMaps> createState() => _VueMapsState();
 }
 
-class _VueMapsState extends State<VueMaps> {
+class _VueMapsState extends State<VueMaps> with WidgetsBindingObserver {
   LatLng _cameraPosition = const LatLng(47.217246, -1.553691);
   double _cameraZoom = 11.5;
   double _cameraBearing = 0;
@@ -28,14 +29,18 @@ class _VueMapsState extends State<VueMaps> {
   bool cameraAuto = false;
   late StreamSubscription<Position> positionStream;
   final Completer<GoogleMapController> _controller = Completer<GoogleMapController>();
+  late String _darkMapStyle;
+  late String _lightMapStyle;
   Set<Marker> _markers = {};
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     gpsPermission = context.read<CapteurStateNotifier>().gpsPermission;
     loadCameraPosition();
     loadMarkers();
+    _loadMapStyle();
   }
 
   @override
@@ -44,8 +49,36 @@ class _VueMapsState extends State<VueMaps> {
     if (gpsTracking) {
       positionStream.cancel();
     }
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
+
+  @override
+  void didChangePlatformBrightness() {
+    setState(() {
+      _setMapStyle(test: true);
+    });
+  }
+
+
+  void _loadMapStyle() async {
+    _darkMapStyle = await rootBundle.loadString('assets/map_styles/map_dark.json');
+    _lightMapStyle = await rootBundle.loadString('assets/map_styles/map_light.json');
+  }
+
+  void _setMapStyle({bool? test = false}) async {
+    final GoogleMapController mapController = await _controller.future;
+    final Brightness brightness = MediaQuery.of(context).platformBrightness;
+    if (test == true) {
+      String mapStyle = brightness == Brightness.dark ? _lightMapStyle : _darkMapStyle;
+      mapController.setMapStyle(mapStyle);
+    }
+    else {
+      String mapStyle = brightness == Brightness.dark ? _darkMapStyle : _lightMapStyle;
+      mapController.setMapStyle(mapStyle);
+    }
+  }
+
 
   void loadCameraPosition() async {
     final db = context.read<PolyleaksDatabase>();
@@ -85,6 +118,9 @@ class _VueMapsState extends State<VueMaps> {
 
   void _onMapCreated(GoogleMapController controller) {
     _controller.complete(controller);
+    setState(() {
+      _setMapStyle();
+    });
   }
 
 
@@ -163,7 +199,7 @@ class _VueMapsState extends State<VueMaps> {
 
           GoogleMap(
             onMapCreated: _onMapCreated,
-            cloudMapId: "bba0b8f0ded1ff5d",
+            // cloudMapId: "bba0b8f0ded1ff5d",
             initialCameraPosition: CameraPosition(
               target: _cameraPosition,
               zoom: _cameraZoom,
@@ -245,6 +281,7 @@ class _VueMapsState extends State<VueMaps> {
                                   padding: EdgeInsets.all(12),
                                   child: SvgPicture.asset(
                                     "assets/compass.svg",
+                                    color: Theme.of(context).colorScheme.inversePrimary,
                                   ),
                                 ),
                               ),
@@ -273,7 +310,7 @@ class _VueMapsState extends State<VueMaps> {
                             ),
                             child: Icon(
                               !gpsPermission ? Icons.gps_off : gpsTracking ? Icons.gps_fixed : Icons.gps_not_fixed,
-                              color: gpsActive ? Colors.blue : Colors.grey[600],
+                              color: gpsActive ? Colors.blue : Theme.of(context).colorScheme.inversePrimary,
                             ),
                           ),
                         ),
