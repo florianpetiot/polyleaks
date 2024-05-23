@@ -29,11 +29,14 @@ ThemeData darkTheme = ThemeData(
     primary: Colors.grey[800]!,
     secondary: Colors.grey[600]!,
     tertiary: Colors.grey[300]!,
+    tertiaryContainer: Colors.grey[600]!,
 
     inversePrimary: Colors.grey[100]!,
 
     surface: Colors.grey[800]!,
     surfaceVariant: Colors.grey.withOpacity(0.3),
+
+    outline: Colors.grey[400]!,
 
     shadow: Colors.grey.withOpacity(0.2),
   ),

@@ -252,6 +252,42 @@
     "@liste1": {
         "description": "liste donnee supplementaire 1"
     },
+    "liste1Annee": "{annee} ans",
+    "@liste1Annee": {
+        "description": "liste donnee supplementaire 1 annee",
+        "placeholders": {
+            "annee": {
+                "type": "int"
+            }
+        }
+    },
+    "liste1Mois": "{mois} mois",
+    "@liste1Mois": {
+        "description": "liste donnee supplementaire 1 mois",
+        "placeholders": {
+            "mois": {
+                "type": "int"
+            }
+        }
+    },
+    "liste1Jour": "{jour} jours",
+    "@liste1Jour": {
+        "description": "liste donnee supplementaire 1 jour",
+        "placeholders": {
+            "jour": {
+                "type": "int"
+            }
+        }
+    },
+    "liste1Heure": "{heure} heures",
+    "@liste1Heure": {
+        "description": "liste donnee supplementaire 1 heure",
+        "placeholders": {
+            "heure": {
+                "type": "int"
+            }
+        }
+    },
     "liste2" : "Localisation",
     "@bs10": {
         "description": "liste donnee supplementaire 2"

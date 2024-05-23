@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
@@ -82,7 +84,10 @@ class _BottomSheetDetailsState extends State<BottomSheetDetails> {
       // consomation capteur = 37.9mA
       // capacité batterie = 1 660 020 mAh
       int nouvelleBatterie = (batterieCapteur - ((DateTime.now().difference(derniereConnexion).inHours * 37.9) / 1660020) * 100).round();
-
+      print('$batterieCapteur - $nouvelleBatterie');
+      if (nouvelleBatterie < 0) {
+        nouvelleBatterie = 0;
+      }
       int heuresRestantes = ((nouvelleBatterie*1660020)/(37.9*100)).round();
 
       return BottomSheet(nomCapteur: nomCapteur, valeurCapteur: valeurCapteur,  batterieCapteur: nouvelleBatterie, heuresRestantes: heuresRestantes, derniereConnexionStr: derniereConnexionStr, dateInitilalisationStr: dateInitilalisationStr, vueMaps: widget.vueMaps, vueSlot: widget.vueSlot, center: center, latitude: latitude, longitude: longitude);
@@ -116,8 +121,9 @@ class _BottomSheetDetailsState extends State<BottomSheetDetails> {
             // calcul du pourcentage réel de la batterie, estimé par rapport à la date de la dernière connexion
             // consomation capteur = 37.9mA
             // capacité batterie = 1 660 020 mAh
+            
             int nouvelleBatterie = (batterieCapteur - ((DateTime.now().difference(derniereConnexion).inHours * 37.9) / 1660020) * 100).round();
-
+            print('$batterieCapteur - $nouvelleBatterie');
             int heuresRestantes = ((nouvelleBatterie*1660020)/(37.9*100)).round();
 
             return BottomSheet(nomCapteur: nomCapteur, valeurCapteur: valeurCapteur, batterieCapteur: nouvelleBatterie, heuresRestantes: heuresRestantes, derniereConnexionStr: derniereConnexionStr, dateInitilalisationStr: dateInitilalisationStr, vueMaps: widget.vueMaps, vueSlot: widget.vueSlot, center: center, latitude: latitude, longitude: longitude);
@@ -158,7 +164,6 @@ class BottomSheet extends StatelessWidget {
   final LatLng center;
   final double latitude;
   final double longitude;
-
 
 
   void modifierSlot(BuildContext context, int slot) {
@@ -209,6 +214,8 @@ class BottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     
     final List<Map<String, dynamic>> etatSlots = [context.watch<CapteurStateNotifier>().getSlot(1), context.watch<CapteurStateNotifier>().getSlot(2)];
+
+
 
     return Wrap(
       children: [
@@ -368,7 +375,7 @@ class BottomSheet extends StatelessWidget {
                 children: [
                   Text(AppLocalizations.of(context)!.bs5,
                     style: TextStyle(
-                      color: Colors.grey[700],
+                      color: Theme.of(context).colorScheme.outline,
                       fontSize: 15,
                     )),
                   const SizedBox(width: 5),
@@ -400,7 +407,7 @@ class BottomSheet extends StatelessWidget {
                       child: Container(
                         height: 50,
                         decoration: BoxDecoration(
-                          color: Colors.grey[350],
+                          color: Theme.of(context).colorScheme.tertiaryContainer,
                           borderRadius: BorderRadius.circular(10),
                         ),
                           child: Row(
@@ -413,7 +420,6 @@ class BottomSheet extends StatelessWidget {
                               textAlign: TextAlign.center,
                               style: const TextStyle(
                                 fontSize: 17,
-                                color: Colors.black,
                                 height: 1.1,
                               )
                             ),
@@ -431,7 +437,7 @@ class BottomSheet extends StatelessWidget {
                       child: Container(
                         height: 50,
                         decoration: BoxDecoration(
-                          border: Border.all(color: const Color(0xFFD6D6D6), width: 2),
+                          border: Border.all(color: Theme.of(context).colorScheme.tertiaryContainer, width: 2),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Center(
@@ -439,7 +445,6 @@ class BottomSheet extends StatelessWidget {
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               fontSize: 17,
-                              color: Colors.black,
                               height: 1.1,
                             )
                           ),
@@ -467,6 +472,7 @@ class BatteryLevel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return InkWell(
       onTap: () {
         showPopover(context: context, 
@@ -483,11 +489,11 @@ class BatteryLevel extends StatelessWidget {
                 children: [
                   
                   Text(
-                    heuresRestantes/(24*365) > 1
-                    ? AppLocalizations.of(context)!.bs7annee(heuresRestantes~/(24*365)+1)
-                    : heuresRestantes/(24*30) > 1
+                    heuresRestantes/(24*365) >= 1
+                    ? AppLocalizations.of(context)!.bs7annee(min(5, heuresRestantes~/(24*365)+1))
+                    : heuresRestantes/(24*30) >= 1
                     ? AppLocalizations.of(context)!.bs7mois(heuresRestantes~/(24*30))
-                    : heuresRestantes/(24) > 1
+                    : heuresRestantes/(24) >= 1
                     ? AppLocalizations.of(context)!.bs7jour(heuresRestantes~/(24))
                     : AppLocalizations.of(context)!.bs7heure(heuresRestantes),
                     textAlign: TextAlign.left,

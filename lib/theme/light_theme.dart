@@ -24,11 +24,14 @@ ThemeData lightTheme = ThemeData(
     primary: Colors.grey[100]!,
     secondary: Colors.grey[400]!,
     tertiary: Colors.grey,
+    tertiaryContainer: Colors.grey[350]!,
 
     inversePrimary: Colors.grey[600]!,
 
     surface: Colors.white,
     surfaceVariant: Colors.grey.withOpacity(0.3),
+
+    outline: Colors.grey[700]!,
 
     shadow: Colors.black.withOpacity(0.5),
   ),

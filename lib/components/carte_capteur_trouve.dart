@@ -96,8 +96,8 @@ class CarteCapteurTrouve extends StatelessWidget {
                     onTap: () => BluetoothManager().ignorer(context,slot),
                     child: Text(
                       AppLocalizations.of(context)!.slotTrouve3,
-                      style: const TextStyle(
-                        color: Color(0xFF8A8A8A),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.outline,
                         fontWeight: FontWeight.bold,
                         decoration: TextDecoration.underline,
                         fontSize: 16,

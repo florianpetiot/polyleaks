@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:polyleaks/database/polyleaks_database.dart';
@@ -50,17 +51,29 @@ class _MyAppState extends State<MyApp> {
   int indexEcran = 0;
 
   @override
+  void initState() {
+    super.initState();
+    final Brightness brightness = SchedulerBinding.instance.window.platformBrightness;
+    setSystemUIOverlayStyle(brightness);
+  }
+
+  void setSystemUIOverlayStyle(Brightness brightness) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: brightness == Brightness.light ? Brightness.dark : Brightness.light,
+      systemNavigationBarColor: Colors.white.withOpacity(0.002),
+      systemNavigationBarIconBrightness: Brightness.dark,
+    ));
+  }
+
+
+  @override
   Widget build(BuildContext context) {
 
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
-      systemNavigationBarColor: Colors.white.withOpacity(0.002),
-      systemNavigationBarIconBrightness: Brightness.dark,
-    ));
-
+    final Brightness brightness = MediaQuery.of(context).platformBrightness;
+    setSystemUIOverlayStyle(brightness);
 
     return ChangeNotifierProvider(
       create: (context) => PolyleaksDatabase(),
@@ -85,7 +98,6 @@ class _MyAppState extends State<MyApp> {
 
           home: Scaffold(
             body: ecrans[indexEcran],
-          
             bottomNavigationBar: BottomNavigationBar(
               items: <BottomNavigationBarItem>[
                 BottomNavigationBarItem(

@@ -200,7 +200,7 @@ class _PageAccueilState extends State<PageAccueil> {
                         Text(AppLocalizations.of(context)!.accueilComparateur,
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: Colors.grey[700],
+                            color: Theme.of(context).colorScheme.outline,
                             fontSize: 15
                           ),
                         ),

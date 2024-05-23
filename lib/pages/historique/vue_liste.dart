@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -27,7 +28,7 @@ class _VueListeState extends State<VueListe> {
   final List<PageController> _pageControllers = [];
   bool decroissant = false;
   var tri = Tri.numerologique;
-  late Position positionGps;
+  Position? positionGps;
 
   @override
   void initState() {
@@ -38,9 +39,24 @@ class _VueListeState extends State<VueListe> {
   void loadCapteurs() {
     Future.microtask(() async {
       capteurs = await PolyleaksDatabase().getDetailsCapteurs();
-      _pageControllers.addAll(List.generate(capteurs!.length, (index) => PageController()));
-      nouveauTri(Tri.numerologique);
-      setState(() {});
+
+      // changer la variable batterie en calculant le nouveau pourcentage
+      // consomation capteur = 37.9mA
+      // capacité batterie = 1 660 020 mAh
+
+      for (var capteur in capteurs!) {
+        var derniereConnexion = capteur['dateDerniereConnexion'];
+        var batterieCapteur = capteur['batterie'];
+        int nouvelleBatterie = (batterieCapteur - ((DateTime.now().difference(derniereConnexion).inHours * 37.9) / 1660020) * 100).round();
+        if (nouvelleBatterie < 0) {
+          nouvelleBatterie = 0;
+        }
+
+        capteur['batterie'] = nouvelleBatterie;
+      }
+      
+        _pageControllers.addAll(List.generate(capteurs!.length, (index) => PageController()));
+        nouveauTri(Tri.numerologique);
     });
   }
 
@@ -198,6 +214,7 @@ class _VueListeState extends State<VueListe> {
                                 child: PageView(
                                   controller: _pageControllers[index],
                                   children : buildCapteurDetails(capteur).map((widget){
+                                    print("${capteur['nom']} - ${capteur["batterie"]}");
                                     return Padding(
                                       padding: const EdgeInsets.only(top: 40),
                                       child: widget
@@ -236,9 +253,8 @@ class _VueListeState extends State<VueListe> {
                       onTap: () {
                         setState(() {
                           decroissant = !decroissant;
-                          // print(decroissant);
                         });
-                        nouveauTri(tri);
+                        nouveauTri(tri, positionGps: positionGps);
                       },
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(30),
@@ -323,6 +339,7 @@ class _VueListeState extends State<VueListe> {
     final List<Widget> details = [];
     var valeur = capteur['valeur'];
     int batterie = capteur['batterie'];
+    int heuresRestantes = ((batterie*1660020)/(37.9*100)).round();
     DateTime dateDerniereConnexion = capteur['dateDerniereConnexion'];
     double? distance;
     String? distanceString;
@@ -348,9 +365,20 @@ class _VueListeState extends State<VueListe> {
       ),
     );
 
+    // calcul du temps restant
+    Object tempsRestant = 
+    heuresRestantes ~/ (24*365) >= 1
+    ? AppLocalizations.of(context)!.liste1Annee(min(5, heuresRestantes~/(24*365)+1))
+    : heuresRestantes ~/ (24*30) >= 1
+    ? AppLocalizations.of(context)!.liste1Mois(heuresRestantes ~/ (24*30))
+    : heuresRestantes ~/ 24 >= 1
+    ? AppLocalizations.of(context)!.liste1Jour(heuresRestantes ~/ 24)
+    : AppLocalizations.of(context)!.liste1Heure(heuresRestantes);
+
+
     details.add(
       Text(
-        '${AppLocalizations.of(context)!.liste1} : $batterie%',
+        '${AppLocalizations.of(context)!.liste1} : $batterie% - $tempsRestant',
         style: const TextStyle(
           fontSize: 14,
           color: Colors.grey,
@@ -382,7 +410,7 @@ class _VueListeState extends State<VueListe> {
     // texte "ouvrir dans google maps"
 
     if (tri == Tri.distance) {
-      distance = Geolocator.distanceBetween(capteur['localisation'][0], capteur['localisation'][1], positionGps.latitude, positionGps.longitude);
+      distance = Geolocator.distanceBetween(capteur['localisation'][0], capteur['localisation'][1], positionGps!.latitude, positionGps!.longitude);
       distanceString = distance > 1000 ? "à ${(distance / 1000).toStringAsFixed(2)} kilomètres" : "à ${distance.toStringAsFixed(2)} mètres";
     }
 

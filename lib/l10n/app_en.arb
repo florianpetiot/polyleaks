@@ -67,6 +67,10 @@
 
 
     "liste1" : "Battery",
+    "liste1Annee": "{annee} years",
+    "liste1Mois": "{mois} months",
+    "liste1Jour": "{jour} days",
+    "liste1Heure": "{heure} hours",
     "liste2" : "Location",
     "liste3" : "Numerology",
     
