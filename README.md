@@ -4,9 +4,9 @@
 <img src="readme_assets/thumbnail.png" width=500px>
 </p>
 
-	Ce projet est une application mobile réalisée en 2024 dans le cadre d'un premier projet d'ingénieur, en deuxième année de Prépa intégrée.
+Ce projet est une application mobile réalisée en 2024 dans le cadre d'un premier projet d'ingénieur, en deuxième année de Prépa intégrée.
 
-	Il s'agit de la partie informatique d'un projet visant à pouvoir détecter des potentielles fuites d'eau dans les canalisations publiques.
+Il s'agit de la partie informatique d'un projet visant à pouvoir détecter des potentielles fuites d'eau dans les canalisations publiques.
 
 # Sommaire
 * **[Contexte](#contexte)**
@@ -25,9 +25,9 @@ Les fuites d'eau représentent un problème considérable en France, mais aussi 
 <!-- afficher les image des odd dans une ligne équitablement répartie -->
 <!-- flexbox -->
 <p align="center">
-<img src="https://www.agenda-2030.fr/IMG/svg/odd6.svg?1614036682" width=100px style="padding-right: 10px">
-<img src="	https://www.agenda-2030.fr/IMG/svg/odd11.svg?1614036681" width=100px style="padding-right: 10px">
-<img src="https://www.agenda-2030.fr/IMG/svg/odd12.svg?1614036681" width=100px>
+<img src="readme_assets/odd6.svg" width=100px style="padding-right: 10px">
+<img src="readme_assets/odd11.svg" width=100px style="padding-right: 10px">
+<img src="readme_assets/odd12.svg" width=100px>
 </p>
 
 # Hardware
@@ -48,7 +48,7 @@ Les fuites d'eau représentent un problème considérable en France, mais aussi 
 </table>
 Chaque capteur est en mesure de communiquer avec l'application via Bluetooth Low Energy (BLE). Voici ci-dessous la structure du serveur GATT de chaque capteur :
 <p align="center">
-<img src="readme_assets/serveur GATT.png" style="padding-top:15px" width="600px">
+<img src="readme_assets/serveur_GATT.png" style="padding-top:15px" width="600px">
 </p>
 
 # Application
