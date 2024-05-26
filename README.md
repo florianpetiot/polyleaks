@@ -48,7 +48,7 @@ Les fuites d'eau représentent un problème considérable en France, mais aussi 
 </table>
 Chaque capteur est en mesure de communiquer avec l'application via Bluetooth Low Energy (BLE). Voici ci-dessous la structure du serveur GATT de chaque capteur :
 <p align="center">
-<img src="readme_assets/serveur_GATT.png" style="padding-top:15px" width="600px">
+<img src="readme_assets/serveurGATT.png" style="padding-top:15px" width="600px">
 </p>
 
 # Application
