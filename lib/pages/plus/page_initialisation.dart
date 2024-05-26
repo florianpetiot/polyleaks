@@ -80,7 +80,6 @@ class _PageInitialisationCapteurState extends State<PageInitialisationCapteur> {
     // transmission des données
     etapeTransmission.value = EtatEtape.enCours;
     List<bool> resultat = await BluetoothManager().transmissionPosition(device, position);
-    print(resultat);
 
     if (!resultat[0]) {
       etapeTransmission.value = EtatEtape.echec;
@@ -142,16 +141,22 @@ class _PageInitialisationCapteurState extends State<PageInitialisationCapteur> {
       steps: <Step>[
         Step(
           title: Text(AppLocalizations.of(context)!.initCapteurs1),
-          content: Container(
-            alignment: Alignment.centerLeft,
-            child: const Text('lorem ipsum'),
+          content: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(AppLocalizations.of(context)!.initCapteurs1Consigne),
+              const Image(image: AssetImage('assets/init1.png')),
+            ],
         )),
 
         Step(
           title: Text(AppLocalizations.of(context)!.initCapteurs2),
-          content: Container(
-            alignment: Alignment.centerLeft,
-            child : const Text('lorem ipsum'),
+          content: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children : [
+              Text(AppLocalizations.of(context)!.initCapteurs2Consigne),
+              const Image(image: AssetImage('assets/init2.png')),
+            ],
         )),
 
         Step(

@@ -45,6 +45,7 @@ class _VueListeState extends State<VueListe> {
       // capacité batterie = 1 660 020 mAh
 
       for (var capteur in capteurs!) {
+        capteur["valeur"] = capteur["valeur"] ?? -1.0;
         var derniereConnexion = capteur['dateDerniereConnexion'];
         var batterieCapteur = capteur['batterie'];
         int nouvelleBatterie = (batterieCapteur - ((DateTime.now().difference(derniereConnexion).inHours * 37.9) / 1660020) * 100).round();
@@ -214,7 +215,6 @@ class _VueListeState extends State<VueListe> {
                                 child: PageView(
                                   controller: _pageControllers[index],
                                   children : buildCapteurDetails(capteur).map((widget){
-                                    print("${capteur['nom']} - ${capteur["batterie"]}");
                                     return Padding(
                                       padding: const EdgeInsets.only(top: 40),
                                       child: widget

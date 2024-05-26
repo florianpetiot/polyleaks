@@ -177,41 +177,34 @@ class BluetoothManager {
 
     // verifier si les cartes sont en mode recherche
     if (!([CapteurSlotState.recherche, CapteurSlotState.perdu].contains(capteurState.getSlot(1)["state"]) || [CapteurSlotState.recherche, CapteurSlotState.perdu].contains(capteurState.getSlot(2)["state"]))) {
-      print("No slot in recherche mode");
       return;
     }
 
     // verifier si un scan est deja en cours
     if (isScaning) {
-      print("Already scanning");
       return;
     }
 
     // verifier si le bluetooth est supporté
     if (await FlutterBluePlus.isSupported == false) {
-      print("Bluetooth not supported by this device");
       return;
     }
     
     // gestion des demandes de permission pour le GPS --------------------------------
     if (capteurState.gpsPermission == false) {
-      print("Location not activated");
       return;
     }
 
     if (await isLocationActivated(context) == false) {
-      print("Location not activated");
       return;
     }
 
     // gestion des demande de permission pour le bluetooth ----------------------------
     if (capteurState.bluetoothPermission == false) {
-      print("Bluetooth not activated");
       return;
     }
 
     if (await isBluetoothActivated(context) == false) {
-      print("Bluetooth not activated");
       return;
     }
 
@@ -226,7 +219,7 @@ class BluetoothManager {
           continue;
         }
 
-        print("Found device: ${r.advertisementData.advName}");
+        // print("Found device: ${r.advertisementData.advName}");
 
         // si le slot 1 est en mode perdu et que le nom du capteur est le meme que celui du slot 1
         if (capteurState.getSlot(1)["state"] == CapteurSlotState.perdu && capteurState.getSlot(1)["nom"] == r.advertisementData.advName){
@@ -284,12 +277,9 @@ class BluetoothManager {
 
     // connection de device
     try {
-      print(device);
       await device.connect(timeout: const Duration(seconds: 15));
     }
     catch (e) {
-      print("l'appareil n'est plus là.");
-      print(e);
       await showDialog(
         context: navigatorKey.currentState!.context, 
         builder: (context) => const PopupErreur(idErreur: 1)
@@ -383,13 +373,6 @@ class BluetoothManager {
     var nomStr = String.fromCharCodes(nom);
     var batterieStr = String.fromCharCodes(batterie);
     var date_initStr = String.fromCharCodes(date_init);
-
-    print("latitude: $latitudeStr");
-    print("longitude: $longitudeStr");
-    print("nom: $nomStr");
-    print("batterie: $batterieStr");
-    print("date_init: $date_initStr");
-    print(caracteristique_valeur);
     
     // verifier si le capteur est bien initialisé
     // c'est a dire si la latitude et la longitude et date d'initialisation non-vide
@@ -452,14 +435,20 @@ class BluetoothManager {
   }
 
 
-  void disconnectDevice(BuildContext context, slot) async {
+  void disconnectDevice(BuildContext context, slot, {bool triche = false}) async {
     var device = slot == 1 ? _device_slot1["device"] : _device_slot2["device"];
-    final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
-
     deconnexionVoulue[slot-1] = true;
     await device.disconnect();
-    capteurState.setSlotState(slot, state: CapteurSlotState.recherche);
-    scanForDevices(navigatorKey.currentState!.context);
+
+    if (!triche) {
+      final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
+      capteurState.setSlotState(slot, state: CapteurSlotState.recherche);
+      scanForDevices(navigatorKey.currentState!.context);
+    }
+    
+    if (triche) {
+      ignorer(navigatorKey.currentState!.context, slot, triche: triche);
+    }
   }
 
 
@@ -472,29 +461,31 @@ class BluetoothManager {
   }
 
 
-  void ignorer(BuildContext context, int slot) async {
+  void ignorer(BuildContext context, int slot, {bool triche = false}) async {
     final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
-
-    toastification.show(
-      context: context,
-      type: ToastificationType.info,
-      style: ToastificationStyle.fillColored,
-      icon: const Icon(Icons.info, color: Colors.white),
-      title: Text('${slot == 1 ? _device_slot1["device"].name : _device_slot2["device"].name} ${AppLocalizations.of(context)!.slotTrouve4}'),
-      alignment: Alignment.bottomCenter,
-      autoCloseDuration: const Duration(seconds: 7),
-      boxShadow: lowModeShadow,
-      closeButtonShowType: CloseButtonShowType.none,
-      closeOnClick: false,
-      dragToClose: true,
-      showProgressBar: false,
-    );
-
-   
-    // Ajoutez le capteur actuel à la liste noire
     capteurState.addToBlacklist(slot == 1 ? _device_slot1["device"].name : _device_slot2["device"].name);
-    capteurState.setSlotState(slot, state: CapteurSlotState.recherche);
-    scanForDevices(navigatorKey.currentState!.context);
+
+    if (!triche) {
+      toastification.show(
+        context: context,
+        type: ToastificationType.info,
+        style: ToastificationStyle.fillColored,
+        icon: const Icon(Icons.info, color: Colors.white),
+        title: Text('${slot == 1 ? _device_slot1["device"].name : _device_slot2["device"].name} ${AppLocalizations.of(context)!.slotTrouve4}'),
+        alignment: Alignment.bottomCenter,
+        autoCloseDuration: const Duration(seconds: 7),
+        boxShadow: lowModeShadow,
+        closeButtonShowType: CloseButtonShowType.none,
+        closeOnClick: false,
+        dragToClose: true,
+        showProgressBar: false,
+      );
+      
+        
+      // Ajoutez le capteur actuel à la liste noire
+      capteurState.setSlotState(slot, state: CapteurSlotState.recherche);
+      scanForDevices(navigatorKey.currentState!.context);
+    }
 
   }
 
@@ -595,7 +586,6 @@ class BluetoothManager {
           // LATITUDE
           if (c.properties.write) {
             if (c.uuid.toString() == "2aae") {
-              print("ECRITURE LATITUDE");
               await c.write(latitude);
             }
           }
@@ -603,7 +593,6 @@ class BluetoothManager {
           // LONGITUDE
           if (c.properties.write) {
             if (c.uuid.toString() == "2aaf") {
-              print("ECRITURE LONGITUDE");
               await c.write(longitude);
             }
           }
@@ -613,7 +602,6 @@ class BluetoothManager {
       // INFORMATION
       // 0000180a-0000-1000-8000-00805f9b34fb
       if (service.uuid.toString() == "180a") {
-        print("SERVICE INFORMATION");
         var characteristics = service.characteristics;
         for(BluetoothCharacteristic c in characteristics) {
 
@@ -622,8 +610,6 @@ class BluetoothManager {
             if (c.uuid.toString() == "2a08") {
               String formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
               var date = formattedDate.codeUnits;
-              print("ECRITURE DATE INIT");
-              print(formattedDate);
               await c.write(date);
             }
           }

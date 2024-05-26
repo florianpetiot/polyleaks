@@ -278,7 +278,7 @@ class _VueMapsState extends State<VueMaps> with WidgetsBindingObserver {
                               child: Transform.rotate(
                                 angle: _cameraBearing*-3.145926/180,
                                 child: Container(
-                                  padding: EdgeInsets.all(12),
+                                  padding: const EdgeInsets.all(12),
                                   child: SvgPicture.asset(
                                     "assets/compass.svg",
                                     color: Theme.of(context).colorScheme.inversePrimary,

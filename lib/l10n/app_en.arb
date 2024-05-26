@@ -97,8 +97,10 @@
 
     "initCapteursSetUp" : "Request for permissions in progress...",
     "initCapteursTitre": "Sensors initialisation",
-    "initCapteurs1": "Placement of the ring",
-    "initCapteurs2": "Battery connection",
+    "initCapteurs1": "Battery connection",
+    "initCapteurs1Consigne": "After opening the electronic compartment of the Polyleaks, connect the battery supplied to the microcontroller. A green LED should light up.",
+    "initCapteurs2Consigne": "Close the electronic compartment using the 4 screws provided. Insert the Polyleaks into your pipework, making sure that the water flows in the direction indicated by the arrow.",
+    "initCapteurs2": "Placement of the ring",
     "initCapteurs3": "Sensor initialisation",
     "initCapteurs3Titre": "Searching for sensors...",
     "initCapteurs4": "Do not move your phone during initialisation.",

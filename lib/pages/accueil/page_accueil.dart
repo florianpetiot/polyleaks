@@ -49,7 +49,7 @@ class _PageAccueilState extends State<PageAccueil> {
           setState(() => riveArtboard = artboard);
         }
         catch (e) {
-          print(e);
+          return;
         } 
       }
     );

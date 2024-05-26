@@ -35,7 +35,6 @@ class CapteurStateNotifier extends ChangeNotifier {
   }
 
   void resetBlacklist() {
-    print("resetting blacklist");
     _blacklist.clear();
     notifyListeners();
   }

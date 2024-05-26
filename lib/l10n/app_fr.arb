@@ -359,13 +359,21 @@
     "@initCapteursTitre": {
         "description": "init capteurs titre"
     },
-    "initCapteurs1": "Placement de la bague",
+    "initCapteurs1": "Connexion de la batterie",
     "@initCapteurs1": {
         "description": "init capteurs etape 1"
     },
-    "initCapteurs2": "Connexion de la batterie",
+    "initCapteurs1Consigne": "Après avoir ouvert le compartiment électronique du Polyleaks, branchez la batterie fournie au micro-contrôleur. Une LED verte doit s'allumer.",
+    "@initCapteurs1Consigne": {
+        "description": "init capteurs etape 1 consigne"
+    },
+    "initCapteurs2": "Placement de la bague",
     "@initCapteurs2": {
         "description": "init capteurs etape 2"
+    },
+    "initCapteurs2Consigne": "Refermez le compartiment électronique à l'aide des 4 vis fournies. Insérez le Polyleaks dans votre tuyauterie en veillant à ce que l'eau circule dans le sens indiqué par la flèche.",
+    "@initCapteurs2Consigne": {
+        "description": "init capteurs etape 2 consigne"
     },
     "initCapteurs3": "Initialisation du capteur",
     "@initCapteurs3": {

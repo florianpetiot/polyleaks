@@ -84,7 +84,6 @@ class _BottomSheetDetailsState extends State<BottomSheetDetails> {
       // consomation capteur = 37.9mA
       // capacité batterie = 1 660 020 mAh
       int nouvelleBatterie = (batterieCapteur - ((DateTime.now().difference(derniereConnexion).inHours * 37.9) / 1660020) * 100).round();
-      print('$batterieCapteur - $nouvelleBatterie');
       if (nouvelleBatterie < 0) {
         nouvelleBatterie = 0;
       }
@@ -107,7 +106,7 @@ class _BottomSheetDetailsState extends State<BottomSheetDetails> {
           else {
             Map<String, dynamic> data = snapshot.data!;
             nomCapteur = data["nom"];
-            valeurCapteur = data["valeur"];
+            valeurCapteur = data["valeur"] ?? -1.0;
             batterieCapteur = data["batterie"];
             derniereConnexion = data["dateDerniereConnexion"];
             dateInitilalisation = data["dateInitialisation"];
@@ -123,7 +122,6 @@ class _BottomSheetDetailsState extends State<BottomSheetDetails> {
             // capacité batterie = 1 660 020 mAh
             
             int nouvelleBatterie = (batterieCapteur - ((DateTime.now().difference(derniereConnexion).inHours * 37.9) / 1660020) * 100).round();
-            print('$batterieCapteur - $nouvelleBatterie');
             int heuresRestantes = ((nouvelleBatterie*1660020)/(37.9*100)).round();
 
             return BottomSheet(nomCapteur: nomCapteur, valeurCapteur: valeurCapteur, batterieCapteur: nouvelleBatterie, heuresRestantes: heuresRestantes, derniereConnexionStr: derniereConnexionStr, dateInitilalisationStr: dateInitilalisationStr, vueMaps: widget.vueMaps, vueSlot: widget.vueSlot, center: center, latitude: latitude, longitude: longitude);

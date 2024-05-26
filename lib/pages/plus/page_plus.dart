@@ -20,7 +20,6 @@ class _PagePlusState extends State<PagePlus> {
     setState(() {
       dropdownValue = language;
     });
-    print(language);
   }
 
   @override

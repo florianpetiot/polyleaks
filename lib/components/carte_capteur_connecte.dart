@@ -22,6 +22,7 @@ class CarteCapteurConnecte extends StatelessWidget {
   void setCapteurStateToPerdu(context){
     final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
     capteurState.setSlotState(slot, state: CapteurSlotState.perdu);
+    BluetoothManager().disconnectDevice(context, slot, triche: true);
   }
 
   String getNomCapteur(context) {
