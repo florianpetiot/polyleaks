@@ -1,3 +1,6 @@
+![Static Badge](https://img.shields.io/badge/Scolaire-1B4965?style=for-the-badge) - ![Static Badge](https://img.shields.io/badge/Mise_%C3%A0_jour-26%2F05%2F2024-E4DFDA?style=flat) - ![Static Badge](https://img.shields.io/badge/Flutter-48a8f6?style=flat) ![Static Badge](https://img.shields.io/badge/Dart-0b5d9f?style=flat)
+
+
 # Polyleaks
 
 <p align="center">
@@ -53,7 +56,7 @@ Chaque capteur est en mesure de communiquer avec l'application via Bluetooth Low
 
 # Application
 
-## fonctionnement principal
+## Fonctionnement principal
 
 Toute l’application se base autour d’une fonctionnalité principale, la comparaison des mesures de deux capteurs, fonctionnalité que l’on retrouve donc sur l’écran d’accueil, disponible dès l’ouverture de l’application. L’application est en effet capable de gérer jusqu’à deux connexions BLE simultanées. Dès son ouverture, elle scanne de manière autonome les appareils à proximité et propose à l’utilisateur de se connecter aux Polyleaks disponibles. On y voit alors la mesure de chaque capteur en direct et une animation ainsi qu’un message nous indique s’il y a une fuite dans la section observée.
 
