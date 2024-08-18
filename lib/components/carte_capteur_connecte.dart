@@ -18,12 +18,6 @@ class CarteCapteurConnecte extends StatelessWidget {
     final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
     capteurState.setSlotState(slot, state: CapteurSlotState.recherche);
   }
-  
-  void setCapteurStateToPerdu(context){
-    final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
-    capteurState.setSlotState(slot, state: CapteurSlotState.perdu);
-    BluetoothManager().disconnectDevice(context, slot, triche: true);
-  }
 
   String getNomCapteur(context) {
     final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
@@ -53,15 +47,12 @@ class CarteCapteurConnecte extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Column(children: [
-              GestureDetector(
-                onTap: () => setCapteurStateToPerdu(context),
-                child: Text(
-                  // recuperer le nom depuis le provider
-                  getNomCapteur(context),
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+              Text(
+                // recuperer le nom depuis le provider
+                getNomCapteur(context),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 10),

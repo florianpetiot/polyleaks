@@ -435,20 +435,14 @@ class BluetoothManager {
   }
 
 
-  void disconnectDevice(BuildContext context, slot, {bool triche = false}) async {
+  void disconnectDevice(BuildContext context, slot) async {
     var device = slot == 1 ? _device_slot1["device"] : _device_slot2["device"];
     deconnexionVoulue[slot-1] = true;
     await device.disconnect();
 
-    if (!triche) {
-      final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
-      capteurState.setSlotState(slot, state: CapteurSlotState.recherche);
-      scanForDevices(navigatorKey.currentState!.context);
-    }
-    
-    if (triche) {
-      ignorer(navigatorKey.currentState!.context, slot, triche: triche);
-    }
+    final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
+    capteurState.setSlotState(slot, state: CapteurSlotState.recherche);
+    scanForDevices(navigatorKey.currentState!.context);
   }
 
 
@@ -461,32 +455,29 @@ class BluetoothManager {
   }
 
 
-  void ignorer(BuildContext context, int slot, {bool triche = false}) async {
+  void ignorer(BuildContext context, int slot) async {
     final capteurState = Provider.of<CapteurStateNotifier>(context, listen: false);
     capteurState.addToBlacklist(slot == 1 ? _device_slot1["device"].name : _device_slot2["device"].name);
 
-    if (!triche) {
-      toastification.show(
-        context: context,
-        type: ToastificationType.info,
-        style: ToastificationStyle.fillColored,
-        icon: const Icon(Icons.info, color: Colors.white),
-        title: Text('${slot == 1 ? _device_slot1["device"].name : _device_slot2["device"].name} ${AppLocalizations.of(context)!.slotTrouve4}'),
-        alignment: Alignment.bottomCenter,
-        autoCloseDuration: const Duration(seconds: 7),
-        boxShadow: lowModeShadow,
-        closeButtonShowType: CloseButtonShowType.none,
-        closeOnClick: false,
-        dragToClose: true,
-        showProgressBar: false,
-      );
-      
-        
-      // Ajoutez le capteur actuel à la liste noire
-      capteurState.setSlotState(slot, state: CapteurSlotState.recherche);
-      scanForDevices(navigatorKey.currentState!.context);
-    }
-
+    toastification.show(
+      context: context,
+      type: ToastificationType.info,
+      style: ToastificationStyle.fillColored,
+      icon: const Icon(Icons.info, color: Colors.white),
+      title: Text('${slot == 1 ? _device_slot1["device"].name : _device_slot2["device"].name} ${AppLocalizations.of(context)!.slotTrouve4}'),
+      alignment: Alignment.bottomCenter,
+      autoCloseDuration: const Duration(seconds: 7),
+      boxShadow: lowModeShadow,
+      closeButtonShowType: CloseButtonShowType.none,
+      closeOnClick: false,
+      dragToClose: true,
+      showProgressBar: false,
+    );
+    
+    // Ajoutez le capteur actuel à la liste noire
+    capteurState.setSlotState(slot, state: CapteurSlotState.recherche);
+    scanForDevices(navigatorKey.currentState!.context);
+    
   }
 
 

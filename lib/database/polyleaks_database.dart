@@ -66,6 +66,20 @@ class PolyleaksDatabase extends ChangeNotifier {
       _parametres['theme'] = parametreTheme.valeur;
     }
     notifyListeners();
+
+
+    // creer 3 capteurs par defaut
+    
+    final capteurs = await isar.capteurModels.where().findAll();
+    if (capteurs.isEmpty) {
+      await ajouterCapteur('Polyleaks-546', 44, DateTime.fromMicrosecondsSinceEpoch(1712613600000000), [47.242576, -1.533686]);
+      await ajouterCapteur('Polyleaks-678', 10, DateTime.fromMicrosecondsSinceEpoch(1708381654660270), [47.240786, -1.530601]);
+      await ajouterCapteur('Polyleaks-001', 87, DateTime.fromMicrosecondsSinceEpoch(1716803816000000), [47.282098, -1.515979]);
+
+      await modifierValeurCapteur('Polyleaks-546', 23.4, 44);
+      await modifierValeurCapteur('Polyleaks-678', 23.4, 10);
+      await modifierValeurCapteur('Polyleaks-001', 49.33, 87);
+    }
   }
 
 
